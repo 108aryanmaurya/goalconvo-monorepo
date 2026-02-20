@@ -16,8 +16,11 @@ from .utils import (
     generate_dialogue_id, save_json, load_json, ensure_dir,
     validate_dialogue_format, create_metadata, update_metadata_turns
 )
+from .seed_few_shot_hub import get_seed_dialogues_by_domain
 
 logger = logging.getLogger(__name__)
+
+MIN_HUB_EXAMPLES_BEFORE_SEED = 5  # Seed hub if a domain has fewer than this many examples
 
 class DatasetStore:
     """Manages storage and retrieval of synthetic dialogues."""
@@ -253,6 +256,34 @@ class DatasetStore:
         logger.info(f"Added {added_count} dialogues to few-shot hub")
         return added_count
     
+    def ensure_seed_few_shot_hub(self, domain: str) -> None:
+        """
+        If the hub has fewer than MIN_HUB_EXAMPLES_BEFORE_SEED examples for this domain,
+        write seed dialogues so both experience generation and simulation see good patterns.
+        """
+        hub_domain_dir = self.few_shot_hub_dir / domain
+        ensure_dir(str(hub_domain_dir))
+        existing = list(hub_domain_dir.glob("*.json"))
+        if len(existing) >= MIN_HUB_EXAMPLES_BEFORE_SEED:
+            return
+        seed_dialogues = get_seed_dialogues_by_domain(domain)
+        if not seed_dialogues:
+            return
+        written = 0
+        for i, dialogue in enumerate(seed_dialogues):
+            if written >= MIN_HUB_EXAMPLES_BEFORE_SEED:
+                break
+            dialogue_id = dialogue.get("dialogue_id") or generate_dialogue_id()
+            dialogue["dialogue_id"] = dialogue_id
+            file_path = hub_domain_dir / f"seed_{i}_{dialogue_id}.json"
+            try:
+                save_json(dialogue, str(file_path))
+                written += 1
+            except Exception as e:
+                logger.warning(f"Failed to write seed example for {domain}: {e}")
+        if written:
+            logger.info(f"Seeded {written} few-shot examples for domain {domain}")
+
     def load_few_shot_examples(
         self, 
         domain: str, 
@@ -260,6 +291,7 @@ class DatasetStore:
     ) -> List[Dict[str, Any]]:
         """
         Load few-shot examples from the hub for a specific domain.
+        Seeds the hub with strong examples if the domain has fewer than 5.
         
         Args:
             domain: Target domain
@@ -268,6 +300,7 @@ class DatasetStore:
         Returns:
             List of example dialogues
         """
+        self.ensure_seed_few_shot_hub(domain)
         hub_domain_dir = self.few_shot_hub_dir / domain
         
         if not hub_domain_dir.exists():

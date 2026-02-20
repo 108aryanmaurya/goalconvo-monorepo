@@ -131,6 +131,20 @@ Key hyperparameters (from research paper):
 - **Lexical Diversity**: Distinct n-gram ratios (~0.46 target)
 - **Goal Relevance**: Percentage of dialogues achieving their goal (~85% target)
 
+## Evaluation: API Keys and Optional Components
+
+Evaluation uses the **same LLM provider** as generation (no separate evaluation API key).
+
+- **Requires API key (same as generation):**
+  - **Quality filtering (Step 3):** 3 LLM calls per dialogue (coherence, goal relevance, overall quality). At least one of `GROQ_API_KEY`, `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, or `OLLAMA_ENABLED=true` must be set.
+  - **Comprehensive evaluation – LLM-as-a-Judge:** One LLM call per dialogue when enabled. Set `EVAL_SKIP_LLM_JUDGE=1` in `.env` to disable and avoid extra API usage; GCR, TSR, diversity, length, repetition still run.
+
+- **No API key:**
+  - **BERTScore:** Uses HuggingFace model (download on first run; no key).
+  - **GCR, TSR, BLEU, lexical diversity, length, repetition:** Pure Python/NLTK.
+
+- **MultiWOZ (reference dialogues):** Required only for **BERTScore** and **BLEU**. Reference file: `data/multiwoz/processed_dialogues.json` (create by running `python scripts/download_multiwoz.py`). If the file is missing, BERTScore and BLEU are skipped; evaluation does not error and other metrics still run.
+
 ## Usage Examples
 
 ### Generate Dialogues for Specific Domain

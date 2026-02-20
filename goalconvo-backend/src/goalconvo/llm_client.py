@@ -7,7 +7,7 @@ Supports multiple providers with retry logic, rate limiting, and error handling.
 import json
 import time
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -24,6 +24,11 @@ class LLMClient:
         self.config = config
         self.api_config = config.get_api_config()
         self.session = self._create_session()
+        # Simple in-memory cache for prompt responses (per-process, best-effort)
+        # Key: (provider, model, prompt, temperature, top_p, max_tokens)
+        # Value: generated text
+        self._cache: Dict[Tuple[str, str, str, float, float, int], str] = {}
+        self._cache_max_size: int = 256
         
     def _create_session(self) -> requests.Session:
         """Create a requests session with retry strategy."""
@@ -69,17 +74,47 @@ class LLMClient:
         temperature = temperature or self.config.temperature
         top_p = top_p or self.config.top_p
         max_tokens = max_tokens or self.config.max_tokens
-        
-        if self.api_config["provider"] == "gemini":
-            return self._call_gemini_api(prompt, temperature, top_p, max_tokens, **kwargs)
-        elif self.api_config["provider"] == "ollama":
-            return self._call_ollama_api(prompt, temperature, top_p, max_tokens, **kwargs)
-        elif self.api_config["provider"] == "mistral":
-            return self._call_mistral_api(prompt, temperature, top_p, max_tokens, **kwargs)
-        elif self.api_config["provider"] == "openai":
-            return self._call_openai_api(prompt, temperature, top_p, max_tokens, **kwargs)
+
+        provider = self.api_config["provider"]
+        model = self.api_config.get("model", "")
+
+        # Build a simple cache key (ignore kwargs for now to keep it small)
+        cache_key = (provider, model, prompt, float(temperature), float(top_p), int(max_tokens))
+
+        # Return cached response when available
+        cached = self._cache.get(cache_key)
+        if cached is not None:
+            logger.debug("LLMClient cache hit for provider=%s model=%s", provider, model)
+            return cached
+
+        if provider == "openrouter":
+            result = self._call_openrouter_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "groq":
+            result = self._call_groq_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "deepseek":
+            result = self._call_deepseek_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "gemini":
+            result = self._call_gemini_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "ollama":
+            result = self._call_ollama_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "mistral":
+            result = self._call_mistral_api(prompt, temperature, top_p, max_tokens, **kwargs)
+        elif provider == "openai":
+            result = self._call_openai_api(prompt, temperature, top_p, max_tokens, **kwargs)
         else:
-            raise ValueError(f"Unsupported provider: {self.api_config['provider']}")
+            raise ValueError(f"Unsupported provider: {provider}")
+
+        # Update cache with simple eviction when over capacity
+        try:
+            if len(self._cache) >= self._cache_max_size:
+                # Pop an arbitrary item (insertion order not guaranteed before 3.7,
+                # but for best-effort caching this is acceptable)
+                self._cache.pop(next(iter(self._cache)))
+            self._cache[cache_key] = result
+        except Exception as cache_error:
+            logger.debug("LLMClient cache update failed: %s", cache_error)
+
+        return result
     
     def _call_mistral_api(
         self,
@@ -266,6 +301,132 @@ class LLMClient:
                     pass
             raise Exception(f"API call failed: {e}")
     
+    def _call_groq_api(
+        self,
+        prompt: str,
+        temperature: float,
+        top_p: float,
+        max_tokens: int,
+        **kwargs
+    ) -> str:
+        """Call Groq API (OpenAI-compatible). Uses max_completion_tokens per Groq docs."""
+        base = self.api_config["api_base"].rstrip("/")
+        url = f"{base}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_config['api_key']}",
+            "Content-Type": "application/json"
+        }
+        # Groq prefers max_completion_tokens over deprecated max_tokens; only send supported params
+        data = {
+            "model": self.api_config["model"],
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_completion_tokens": max_tokens,
+        }
+        try:
+            response = self.session.post(
+                url,
+                headers=headers,
+                json=data,
+                timeout=self.config.timeout
+            )
+            if not response.ok:
+                try:
+                    err_body = response.json()
+                    if response.status_code == 429:
+                        logger.warning(
+                            "Groq rate limit (429). Use another provider by unsetting GROQ_API_KEY in .env "
+                            "(e.g. use DeepSeek or OpenAI), or wait and retry. Error: %s", err_body
+                        )
+                    else:
+                        logger.error("Groq API error response: %s", err_body)
+                except Exception:
+                    if response.status_code == 429:
+                        logger.warning("Groq rate limit (429). Unset GROQ_API_KEY to use another provider.")
+                    else:
+                        logger.error("Groq API call failed: %s %s", response.status_code, response.text[:500])
+                response.raise_for_status()
+            result = response.json()
+            return result["choices"][0]["message"]["content"].strip()
+        except requests.exceptions.RequestException as e:
+            logger.error("Groq API call failed: %s", e)
+            raise Exception(f"API call failed: {e}") from e
+
+    def _call_openrouter_api(
+        self,
+        prompt: str,
+        temperature: float,
+        top_p: float,
+        max_tokens: int,
+        **kwargs
+    ) -> str:
+        """Call OpenRouter.ai API (OpenAI-compatible unified gateway)."""
+        base = self.api_config["api_base"].rstrip("/")
+        url = f"{base}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_config['api_key']}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": self.api_config["model"],
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_tokens": max_tokens,
+            **kwargs
+        }
+        try:
+            response = self.session.post(
+                url,
+                headers=headers,
+                json=data,
+                timeout=self.config.timeout
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result["choices"][0]["message"]["content"].strip()
+        except requests.exceptions.RequestException as e:
+            logger.error("OpenRouter API call failed: %s", e)
+            raise Exception(f"API call failed: {e}") from e
+
+    def _call_deepseek_api(
+        self,
+        prompt: str,
+        temperature: float,
+        top_p: float,
+        max_tokens: int,
+        **kwargs
+    ) -> str:
+        """Call DeepSeek API (OpenAI-compatible)."""
+        base = self.api_config["api_base"].rstrip("/")
+        url = f"{base}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.api_config['api_key']}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": self.api_config["model"],
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_tokens": max_tokens,
+            **kwargs
+        }
+        try:
+            response = self.session.post(
+                url,
+                headers=headers,
+                json=data,
+                timeout=self.config.timeout
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result["choices"][0]["message"]["content"].strip()
+        except requests.exceptions.RequestException as e:
+            logger.error("DeepSeek API call failed: %s", e)
+            raise Exception(f"API call failed: {e}") from e
+
     def _call_openai_api(
         self,
         prompt: str,

@@ -1,0 +1,989 @@
+{
+  "20260219_180156": {
+    "version_id": "20260219_180156",
+    "timestamp": "2026-02-19T18:01:56.735017",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel', 'restaurant']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 21.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel",
+        "restaurant"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gemini-pro",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "4737059daf8b4d55",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_192252": {
+    "version_id": "20260219_192252",
+    "timestamp": "2026-02-19T19:22:52.848668",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel', 'restaurant']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel",
+        "restaurant"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gemini-pro",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_195532": {
+    "version_id": "20260219_195532",
+    "timestamp": "2026-02-19T19:55:32.194953",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel', 'restaurant']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel",
+        "restaurant"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gemini-pro",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_200409": {
+    "version_id": "20260219_200409",
+    "timestamp": "2026-02-19T20:04:09.734246",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_200936": {
+    "version_id": "20260219_200936",
+    "timestamp": "2026-02-19T20:09:36.254776",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_201911": {
+    "version_id": "20260219_201911",
+    "timestamp": "2026-02-19T20:19:11.832325",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gemini-1.5-flash",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_202543": {
+    "version_id": "20260219_202543",
+    "timestamp": "2026-02-19T20:25:43.414775",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_202932": {
+    "version_id": "20260219_202932",
+    "timestamp": "2026-02-19T20:29:32.187250",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260219_203230": {
+    "version_id": "20260219_203230",
+    "timestamp": "2026-02-19T20:32:30.222574",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "gemini-2.0-flash",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_110247": {
+    "version_id": "20260220_110247",
+    "timestamp": "2026-02-20T11:02:47.248119",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "deepseek-chat",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_110846": {
+    "version_id": "20260220_110846",
+    "timestamp": "2026-02-20T11:08:46.728333",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.1-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_111739": {
+    "version_id": "20260220_111739",
+    "timestamp": "2026-02-20T11:17:39.729733",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.1-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_112708": {
+    "version_id": "20260220_112708",
+    "timestamp": "2026-02-20T11:27:08.208890",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_112947": {
+    "version_id": "20260220_112947",
+    "timestamp": "2026-02-20T11:29:47.060526",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_113147": {
+    "version_id": "20260220_113147",
+    "timestamp": "2026-02-20T11:31:47.363681",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_113917": {
+    "version_id": "20260220_113917",
+    "timestamp": "2026-02-20T11:39:17.346454",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_115010": {
+    "version_id": "20260220_115010",
+    "timestamp": "2026-02-20T11:50:10.327352",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 10,
+      "min_turns": 3,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_120039": {
+    "version_id": "20260220_120039",
+    "timestamp": "2026-02-20T12:00:39.939741",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_120832": {
+    "version_id": "20260220_120832",
+    "timestamp": "2026-02-20T12:08:32.894114",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_121115": {
+    "version_id": "20260220_121115",
+    "timestamp": "2026-02-20T12:11:15.876539",
+    "description": "Pipeline run: 1 dialogues, domains: ['restaurant']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "restaurant"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "2445f7435e77c850",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_121332": {
+    "version_id": "20260220_121332",
+    "timestamp": "2026-02-20T12:13:32.180198",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel', 'attraction', 'train', 'taxi']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel",
+        "attraction",
+        "train",
+        "taxi"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_122002": {
+    "version_id": "20260220_122002",
+    "timestamp": "2026-02-20T12:20:02.816741",
+    "description": "Pipeline run: 1 dialogues, domains: ['train', 'attraction']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "train",
+        "attraction"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "llama-3.3-70b-versatile",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_170647": {
+    "version_id": "20260220_170647",
+    "timestamp": "2026-02-20T17:06:47.184854",
+    "description": "Pipeline run: 1 dialogues, domains: ['attraction']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "attraction"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_173117": {
+    "version_id": "20260220_173117",
+    "timestamp": "2026-02-20T17:31:17.925088",
+    "description": "Pipeline run: 1 dialogues, domains: ['train']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "train"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_174811": {
+    "version_id": "20260220_174811",
+    "timestamp": "2026-02-20T17:48:11.071248",
+    "description": "Pipeline run: 1 dialogues, domains: ['taxi']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "taxi"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_180029": {
+    "version_id": "20260220_180029",
+    "timestamp": "2026-02-20T18:00:29.717508",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_180440": {
+    "version_id": "20260220_180440",
+    "timestamp": "2026-02-20T18:04:40.571569",
+    "description": "Pipeline run: 1 dialogues, domains: ['restaurant']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "restaurant"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  },
+  "20260220_195028": {
+    "version_id": "20260220_195028",
+    "timestamp": "2026-02-20T19:50:28.072191",
+    "description": "Pipeline run: 1 dialogues, domains: ['hotel']",
+    "metadata": {
+      "total_dialogues": 2,
+      "avg_turns": 14.0,
+      "domains": [
+        "hotel"
+      ]
+    },
+    "dialogue_count": 2,
+    "domain_distribution": {
+      "hotel": 2
+    },
+    "generation_config": {
+      "num_dialogues": 1,
+      "domains": [
+        "hotel"
+      ],
+      "temperature": 0.7,
+      "max_turns": 15,
+      "min_turns": 6,
+      "few_shot_examples": 4,
+      "model": "openai/gpt-3.5-turbo",
+      "overrides": null,
+      "experiment_tag": null
+    },
+    "checksum": "93b5e785af5dc667",
+    "parent_version": null,
+    "tags": [
+      "pipeline",
+      "auto-generated"
+    ]
+  }
+}

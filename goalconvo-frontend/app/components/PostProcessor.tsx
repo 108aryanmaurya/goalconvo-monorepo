@@ -292,8 +292,8 @@ export default function PostProcessor({ conversations = [], filteredConversation
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-300">Score:</span>
-                  <span className={`font-semibold ${(result.score * 100).toFixed(0)}`}>
-                    {(result.score * 100).toFixed(0)}%
+                  <span className={`font-semibold ${(result.score * 100)?.toFixed(0)}`}>
+                    {(result.score * 100)?.toFixed(0)}%
                   </span>
                 </div>
               </div>
@@ -308,7 +308,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
                     <div className={`text-sm font-semibold ${
                       result.metadata.similarity_score < 0.3 ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {(result.metadata.similarity_score * 100).toFixed(1)}%
+                      {(result.metadata.similarity_score * 100)?.toFixed(1)}%
                     </div>
                   </div>
                 )}
@@ -318,7 +318,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
                     <div className={`text-sm font-semibold ${
                       result.metadata.fluency_score > 0.8 ? 'text-green-400' : 'text-yellow-400'
                     }`}>
-                      {(result.metadata.fluency_score * 100).toFixed(1)}%
+                      {(result.metadata.fluency_score * 100)?.toFixed(1)}%
                     </div>
                   </div>
                 )}
@@ -328,7 +328,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
                     <div className={`text-sm font-semibold ${
                       result.metadata.coherence_score > 0.8 ? 'text-green-400' : 'text-yellow-400'
                     }`}>
-                      {(result.metadata.coherence_score * 100).toFixed(1)}%
+                      {(result.metadata.coherence_score * 100)?.toFixed(1)}%
                     </div>
                   </div>
                 )}
@@ -338,7 +338,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
                     <div className={`text-sm font-semibold ${
                       result.metadata.task_success_score > 0.8 ? 'text-green-400' : 'text-yellow-400'
                     }`}>
-                      {(result.metadata.task_success_score * 100).toFixed(1)}%
+                      {(result.metadata.task_success_score * 100)?.toFixed(1)}%
                     </div>
                   </div>
                 )}

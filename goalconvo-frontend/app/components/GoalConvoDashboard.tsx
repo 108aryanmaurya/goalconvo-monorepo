@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Users, Filter, Database, TrendingUp, Play, RotateCcw, Download } from 'lucide-react';
+import { Brain, Users, Filter, Database, TrendingUp, Play, RotateCcw, Download, ClipboardList, GitBranch } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { API_CONFIG } from '@/lib/api-config';
@@ -11,6 +11,8 @@ import MultiAgentSimulator from './MultiAgentSimulator';
 import PostProcessor from './PostProcessor';
 import DatasetConstructor from './DatasetConstructor';
 import Evaluator from './Evaluator';
+import Versions from './Versions';
+import HumanEvaluation from './HumanEvaluation';
 
 interface Experience {
   experience_id: string;
@@ -166,6 +168,23 @@ export default function GoalConvoDashboard() {
   // Pipeline configuration state
   const [selectedDomains, setSelectedDomains] = useState<string[]>(['hotel']);
   const [numDialogues, setNumDialogues] = useState<number>(1);
+  // Ablation / experiment options (optional)
+  const [experimentTag, setExperimentTag] = useState<string>('');
+  const [ablationQualityJudgeOff, setAblationQualityJudgeOff] = useState<boolean>(false);
+  const [ablationFewShot, setAblationFewShot] = useState<string>('');
+  const [ablationTemperature, setAblationTemperature] = useState<string>('');
+
+  // Top-level tabs: Pipeline | Versions | Human Evaluation
+  const [activeTab, setActiveTab] = useState<'pipeline' | 'versions' | 'human-eval'>('pipeline');
+  
+  // Live dialogue viewer (during pipeline run)
+  const [liveDialogue, setLiveDialogue] = useState<{
+    current_turns: Array<{ role: string; text: string }>;
+    step_message: string;
+    dialogue_index?: number;
+    total_dialogues?: number;
+    goal?: string;
+  } | null>(null);
   
   // Backend connection status
   const [backendConnected, setBackendConnected] = useState<boolean>(false);
@@ -349,12 +368,18 @@ export default function GoalConvoDashboard() {
       // Update pipeline data based on step
       if (step === 'experience_generation' && stepData.data?.experience) {
         const exp = stepData.data.experience;
+        const userPersona = exp.user_persona;
+        const userPersonaName = typeof userPersona === 'string'
+          ? userPersona
+          : (userPersona && typeof userPersona === 'object' && 'name' in userPersona
+            ? String((userPersona as { name?: string }).name || 'User')
+            : 'User');
         const experience: Experience = {
           experience_id: exp.experience_id || `exp_${Date.now()}`,
           domain: exp.domain || 'unknown',
           task: exp.goal || exp.task || '',
           personas: [
-            { role: 'user', name: exp.user_persona || 'User', traits: [], memory: [] },
+            { role: 'user', name: userPersonaName, traits: [], memory: [] },
             { role: 'assistant', name: 'SupportBot', traits: ['helpful', 'professional'], memory: [] }
           ],
           situation: exp.context || '',
@@ -398,13 +423,19 @@ export default function GoalConvoDashboard() {
         
         console.log('Processed turns array:', turnsArray);
         
+        const dialUserPersona = dial.user_persona;
+        const dialUserPersonaName = typeof dialUserPersona === 'string'
+          ? dialUserPersona
+          : (dialUserPersona && typeof dialUserPersona === 'object' && 'name' in dialUserPersona
+            ? String((dialUserPersona as { name?: string }).name || 'User')
+            : 'User');
         const conversation: Conversation = {
           conv_id: dial.dialogue_id || `conv_${Date.now()}`,
           domain: dial.domain || 'unknown',
           task: dial.goal || '',
           experience_id: dial.experience_id || '',
           personas: [
-            { role: 'user', name: dial.user_persona || 'User', traits: [], memory: [] },
+            { role: 'user', name: dialUserPersonaName, traits: [], memory: [] },
             { role: 'assistant', name: 'SupportBot', traits: ['helpful', 'professional'], memory: [] }
           ],
           situation: dial.context || '',
@@ -461,6 +492,18 @@ export default function GoalConvoDashboard() {
       }
     });
     
+    socket.on('live_dialogue', (data: any) => {
+      const payload = data.data || {};
+      if (data.session_id && data.session_id !== sessionIdRef.current) return;
+      setLiveDialogue({
+        current_turns: Array.isArray(payload.current_turns) ? payload.current_turns : [],
+        step_message: payload.step_message || 'Generating...',
+        dialogue_index: payload.dialogue_index,
+        total_dialogues: payload.total_dialogues,
+        goal: payload.goal
+      });
+    });
+    
     socket.on('log', (data: any) => {
       console.log('Log received:', data);
       const logData = data.data || {};
@@ -506,6 +549,7 @@ export default function GoalConvoDashboard() {
         console.log('Final data:', completeData.final_data);
       }
       
+      setLiveDialogue(null);
       setIsRunning(false);
       setCurrentStep(4); // Move to evaluation step
     });
@@ -520,6 +564,7 @@ export default function GoalConvoDashboard() {
         status: 'error',
         message: errorData.message || 'Pipeline failed'
       });
+      setLiveDialogue(null);
       setIsRunning(false);
     });
     
@@ -672,13 +717,43 @@ export default function GoalConvoDashboard() {
     }
   ], [isRunning, currentStep, pipelineData, pipelineRunId]);
 
+  const normalizeExperiencePersonaName = (name: unknown): string => {
+    if (typeof name === 'string') return name;
+    if (name && typeof name === 'object' && 'name' in (name as object))
+      return String((name as { name?: string }).name || 'User');
+    return 'User';
+  };
+
   const handleStepComplete = (stepIndex: number, data: unknown) => {
     const newPipelineData = { ...pipelineData };
 
     switch (stepIndex) {
-      case 0:
-        newPipelineData.experiences = data as Experience[];
+      case 0: {
+        const raw = (data as Experience[]).map((exp) => {
+          const personas = (exp.personas && exp.personas.length >= 2)
+            ? exp.personas.map((p) => ({
+                ...p,
+                name: normalizeExperiencePersonaName(p.name),
+                traits: Array.isArray(p.traits) ? p.traits : [],
+                memory: Array.isArray(p.memory) ? p.memory : []
+              }))
+            : [
+                { role: 'user', name: normalizeExperiencePersonaName((exp as any).user_persona), traits: [], memory: [] },
+                { role: 'assistant', name: 'SupportBot', traits: ['helpful', 'professional'], memory: [] as string[] }
+              ];
+          return {
+            ...exp,
+            situation: (exp as any).situation ?? (exp as any).context ?? '',
+            conversation_starter: (exp as any).conversation_starter ?? (exp as any).first_utterance ?? '',
+            goal: exp.goal ?? (exp as any).goal ?? '',
+            task: exp.task ?? (exp as any).task ?? (exp as any).goal ?? '',
+            constraints: exp.constraints ?? { max_turns: 10, max_tokens_per_turn: 100 },
+            personas
+          };
+        });
+        newPipelineData.experiences = raw;
         break;
+      }
       case 1:
         newPipelineData.conversations = data as Conversation[];
         break;
@@ -749,17 +824,29 @@ export default function GoalConvoDashboard() {
     });
     
     try {
+      // Build request body (ablation overrides)
+      const pipelineBody: Record<string, unknown> = {
+        num_dialogues: numDialogues,
+        domains: selectedDomains.length > 0 ? selectedDomains : undefined,
+        session_id: sessionIdRef.current,
+      };
+      if (experimentTag.trim()) pipelineBody.experiment_tag = experimentTag.trim();
+      if (ablationQualityJudgeOff || ablationFewShot.trim() || ablationTemperature.trim()) {
+        const overrides: Record<string, unknown> = {};
+        if (ablationQualityJudgeOff) overrides.quality_judge = false;
+        const few = parseInt(ablationFewShot.trim(), 10);
+        if (ablationFewShot.trim() && !Number.isNaN(few)) overrides.few_shot_examples = few;
+        const temp = parseFloat(ablationTemperature.trim());
+        if (ablationTemperature.trim() && !Number.isNaN(temp)) overrides.temperature = temp;
+        if (Object.keys(overrides).length > 0) pipelineBody.overrides = overrides;
+      }
       // Call the new unified pipeline API
       const response = await fetch(API_CONFIG.getUrl(API_CONFIG.endpoints.runPipeline), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          num_dialogues: numDialogues,
-          domains: selectedDomains.length > 0 ? selectedDomains : undefined,
-          session_id: sessionIdRef.current
-        }),
+        body: JSON.stringify(pipelineBody),
       });
       
       if (!response.ok) {
@@ -898,6 +985,48 @@ export default function GoalConvoDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Top-level tabs */}
+      <div className="flex gap-2 mb-6 p-1 bg-white/5 rounded-xl border border-white/10 w-fit">
+        <button
+          onClick={() => setActiveTab('pipeline')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            activeTab === 'pipeline' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Play className="w-4 h-4" /> Pipeline
+        </button>
+        <button
+          onClick={() => setActiveTab('versions')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            activeTab === 'versions' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <GitBranch className="w-4 h-4" /> Versions
+        </button>
+        <button
+          onClick={() => setActiveTab('human-eval')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            activeTab === 'human-eval' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4" /> Human Evaluation
+        </button>
+      </div>
+
+      {activeTab === 'versions' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+          <Versions />
+        </motion.div>
+      )}
+
+      {activeTab === 'human-eval' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+          <HumanEvaluation />
+        </motion.div>
+      )}
+
+      {activeTab === 'pipeline' && (
+        <>
       {/* Control Panel */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -957,7 +1086,9 @@ export default function GoalConvoDashboard() {
         </div>
 
         {/* Pipeline Configuration */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 '>
+
+        <div className="grid grid-cols-1  gap-4 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
           <div>
             <label className="block text-sm font-semibold text-white mb-2">
               Number of Dialogues
@@ -1009,7 +1140,122 @@ export default function GoalConvoDashboard() {
               <p className="text-xs text-yellow-400 mt-2">⚠️ Please select at least one domain</p>
             )}
           </div>
+           {/* Request Log Stack */}
+            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white/5 rounded-xl border border-white/10  rounded-2xl p-4  flex flex-col max-h-[11.7rem]"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h3 className="text-lg font-semibold text-white">Request Log</h3>
+              <p className="text-xs text-gray-400">Latest API calls across the pipeline</p>
+            </div>
+            <span className="text-xs text-gray-300 bg-white/10 px-2 py-1 rounded-full">
+              {requestLogs.length} events
+            </span>
+          </div>
+
+          <div className="mt-2 space-y-2 overflow-y-auto">
+            {requestLogs.length === 0 ? (
+              <p className="text-xs text-gray-400">
+                No requests yet. Run the pipeline to see activity.
+              </p>
+            ) : (
+              requestLogs.map((log) => (
+                <div
+                  key={log.id}
+                  className={`rounded-lg border px-3 py-2 text-xs flex flex-col gap-1 ${
+                    log.status === 'success'
+                      ? 'border-green-400/40 bg-green-500/10'
+                      : 'border-red-400/40 bg-red-500/10'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-white">
+                      {log.stepName}
+                    </span>
+                    <span className="text-[10px] text-gray-300">
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[11px] text-cyan-200">
+                      {log.endpoint}
+                    </span>
+                    <span
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                        log.status === 'success'
+                        ? 'bg-green-500/30 text-green-100'
+                        : 'bg-red-500/30 text-red-100'
+                      }`}
+                      >
+                      {log.status.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-100 line-clamp-2">
+                    {log.message}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </motion.div>
         </div>
+
+        {/* Experiment / ablation options (for tagging and comparing versions) */}
+        {/* <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+          <h4 className="text-sm font-semibold text-gray-300 mb-3">Experiment / ablation (optional)</h4>
+          <p className="text-xs text-gray-400 mb-3">Use these to run ablations (e.g. no quality judge, few-shot=0, different temperature) and tag versions for comparison in the Versions tab.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Experiment tag</label>
+              <input
+                type="text"
+                value={experimentTag}
+                onChange={(e) => setExperimentTag(e.target.value)}
+                disabled={isRunning}
+                placeholder="e.g. ablation-no-judge"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={ablationQualityJudgeOff}
+                  onChange={(e) => setAblationQualityJudgeOff(e.target.checked)}
+                  disabled={isRunning}
+                  className="w-4 h-4 text-cyan-500 rounded focus:ring-cyan-500"
+                />
+                <span className="text-sm text-gray-300">Disable quality judge</span>
+              </label>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Few-shot examples (blank = default)</label>
+              <input
+                type="text"
+                value={ablationFewShot}
+                onChange={(e) => setAblationFewShot(e.target.value)}
+                disabled={isRunning}
+                placeholder="e.g. 0"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Temperature (blank = default)</label>
+              <input
+                type="text"
+                value={ablationTemperature}
+                onChange={(e) => setAblationTemperature(e.target.value)}
+                disabled={isRunning}
+                placeholder="e.g. 0.5"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+          </div>
+        </div> */}
 
         {/* Progress Overview */}
         <div className="grid grid-cols-5 gap-4 mb-6">
@@ -1047,8 +1293,44 @@ export default function GoalConvoDashboard() {
         </div>
       </motion.div>
 
+      {/* Live dialogue viewer (during simulation) */}
+      {isRunning && liveDialogue && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-cyan-500/30"
+        >
+          <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            Live dialogue
+            {liveDialogue.dialogue_index != null && liveDialogue.total_dialogues != null && (
+              <span className="text-gray-400 font-normal">
+                (dialogue {liveDialogue.dialogue_index} of {liveDialogue.total_dialogues})
+              </span>
+            )}
+          </h3>
+          <p className="text-sm text-cyan-300 mb-4">{liveDialogue.step_message}</p>
+          {liveDialogue.goal && (
+            <p className="text-xs text-gray-400 mb-3 truncate" title={liveDialogue.goal}>Goal: {liveDialogue.goal}</p>
+          )}
+          <div className="space-y-2 max-h-64 overflow-y-auto rounded-lg bg-black/20 p-3">
+            {liveDialogue.current_turns.map((turn: { role: string; text: string }, idx: number) => (
+              <div
+                key={idx}
+                className={`text-sm p-2 rounded-lg ${
+                  turn.role === 'User' ? 'bg-cyan-500/20 text-left' : 'bg-purple-500/20 text-left ml-4'
+                }`}
+              >
+                <span className="font-medium text-gray-300">{turn.role}: </span>
+                <span className="text-white">{turn.text || ''}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Evaluation Display (when complete) or Current Step Display + Request Log Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1  gap-6">
       <AnimatePresence mode="wait">
         {!isRunning && pipelineData.evaluations ? (
           // Show Evaluation Display when pipeline is complete
@@ -1106,67 +1388,7 @@ export default function GoalConvoDashboard() {
         )}
       </AnimatePresence>
 
-        {/* Request Log Stack */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex flex-col max-h-[32rem]"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h3 className="text-lg font-semibold text-white">Request Log</h3>
-              <p className="text-xs text-gray-400">Latest API calls across the pipeline</p>
-            </div>
-            <span className="text-xs text-gray-300 bg-white/10 px-2 py-1 rounded-full">
-              {requestLogs.length} events
-            </span>
-          </div>
-
-          <div className="mt-2 space-y-2 overflow-y-auto">
-            {requestLogs.length === 0 ? (
-              <p className="text-xs text-gray-400">
-                No requests yet. Run the pipeline to see activity.
-              </p>
-            ) : (
-              requestLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className={`rounded-lg border px-3 py-2 text-xs flex flex-col gap-1 ${
-                    log.status === 'success'
-                      ? 'border-green-400/40 bg-green-500/10'
-                      : 'border-red-400/40 bg-red-500/10'
-                  }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-white">
-                      {log.stepName}
-                    </span>
-                    <span className="text-[10px] text-gray-300">
-                      {new Date(log.timestamp).toLocaleTimeString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[11px] text-cyan-200">
-                      {log.endpoint}
-                    </span>
-                    <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                        log.status === 'success'
-                          ? 'bg-green-500/30 text-green-100'
-                          : 'bg-red-500/30 text-red-100'
-                      }`}
-                    >
-                      {log.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-gray-100 line-clamp-2">
-                    {log.message}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
-        </motion.div>
+       
       </div>
 
       {/* Pipeline Data Summary */}
@@ -1304,7 +1526,7 @@ export default function GoalConvoDashboard() {
                               />
                             </div>
                             <span className="text-xs text-white font-semibold">
-                              {conversation.judge_score.toFixed(1)}/5.0
+                              {conversation.judge_score?.toFixed(1)}/5.0
                             </span>
                           </div>
                         )}
@@ -1344,6 +1566,8 @@ export default function GoalConvoDashboard() {
             </div>
           )}
         </motion.div>
+      )}
+        </>
       )}
     </div>
   );

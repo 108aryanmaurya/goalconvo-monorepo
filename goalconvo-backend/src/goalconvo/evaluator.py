@@ -8,6 +8,7 @@ as described in the research paper.
 import json
 import logging
 import math
+import re
 from typing import Dict, List, Any, Optional, Tuple
 from collections import Counter
 from pathlib import Path
@@ -68,6 +69,36 @@ class Evaluator:
         
         return results
     
+    BERTSCORE_FALLBACK_MODEL = "bert-base-uncased"
+
+    def _bertscore_one_pair(self, cand_text: str, ref_text: str, max_chars: int = 1000) -> Optional[float]:
+        """Compute BERTScore for one pair; retry with shorter text, then fallback model on overflow."""
+        def run_bertscore(cand: str, ref: str, model: str):
+            P, R, F1 = bert_score([cand], [ref], model_type=model, verbose=False)
+            return float(F1.item())
+
+        try:
+            return run_bertscore(cand_text, ref_text, self.bertscore_model)
+        except (OverflowError, ValueError, Exception) as e:
+            err_str = str(e).lower()
+            if "int too big to convert" not in err_str and "overflow" not in err_str:
+                logger.warning("Error computing BERTScore: %s", e)
+                return None
+        for cap in [400, 200]:
+            c = cand_text[:cap] if len(cand_text) > cap else cand_text
+            r = ref_text[:cap] if len(ref_text) > cap else ref_text
+            try:
+                return run_bertscore(c, r, self.bertscore_model)
+            except (OverflowError, ValueError, Exception):
+                continue
+        try:
+            c = cand_text[:512] if len(cand_text) > 512 else cand_text
+            r = ref_text[:512] if len(ref_text) > 512 else ref_text
+            return run_bertscore(c, r, self.BERTSCORE_FALLBACK_MODEL)
+        except Exception as e:
+            logger.warning("Error computing BERTScore (fallback model): %s", e)
+            return None
+
     def _compute_semantic_similarity(
         self, 
         synthetic_dialogues: List[Dict[str, Any]], 
@@ -96,25 +127,17 @@ class Evaluator:
             # Find closest real dialogue in same domain
             synthetic_text = self._extract_dialogue_text(synthetic_dialogue)
             best_score = 0.0
+            # Truncate to avoid "int too big to convert" / overflow (DeBERTa max 512 tokens)
+            max_chars = 1000
+            syn_trunc = synthetic_text[:max_chars] if len(synthetic_text) > max_chars else synthetic_text
             
             for real_dialogue in real_by_domain[domain]:
                 real_text = self._extract_dialogue_text(real_dialogue)
+                ref_trunc = real_text[:max_chars] if len(real_text) > max_chars else real_text
                 
-                try:
-                    # Compute BERTScore
-                    P, R, F1 = bert_score(
-                        [synthetic_text], 
-                        [real_text], 
-                        model_type=self.bertscore_model,
-                        verbose=False
-                    )
-                    
-                    score = F1.item()
+                score = self._bertscore_one_pair(syn_trunc, ref_trunc, max_chars)
+                if score is not None:
                     best_score = max(best_score, score)
-                    
-                except Exception as e:
-                    logger.error(f"Error computing BERTScore: {e}")
-                    continue
             
             bert_scores.append(best_score)
             
@@ -165,38 +188,35 @@ class Evaluator:
         }
     
     def _compute_dialogue_diversity(self, texts: List[str]) -> Dict[str, float]:
-        """Compute diversity metrics for a set of dialogue texts."""
+        """Compute diversity (Distinct-1, Distinct-2). Per-dialogue average + word-level tokenization (matches comprehensive eval)."""
         if not texts:
             return {"distinct_1": 0.0, "distinct_2": 0.0, "combined": 0.0}
-        
-        # Tokenize all texts
-        all_tokens = []
+
+        def tokenize(text: str) -> List[str]:
+            return re.findall(r'\b\w+\b', text.lower())
+
+        def distinct_for_tokens(tokens: List[str]) -> Tuple[float, float]:
+            if not tokens:
+                return 0.0, 0.0
+            uniq_1 = len(set(tokens)) / len(tokens)
+            bigrams = [f"{tokens[i]} {tokens[i+1]}" for i in range(len(tokens) - 1)]
+            uniq_2 = len(set(bigrams)) / len(bigrams) if bigrams else 0.0
+            return uniq_1, uniq_2
+
+        per_d1, per_d2 = [], []
         for text in texts:
-            tokens = text.lower().split()
-            all_tokens.extend(tokens)
-        
-        if not all_tokens:
+            tokens = tokenize(text)
+            d1, d2 = distinct_for_tokens(tokens)
+            if tokens:
+                per_d1.append(d1)
+                per_d2.append(d2)
+
+        if not per_d1:
             return {"distinct_1": 0.0, "distinct_2": 0.0, "combined": 0.0}
-        
-        # Compute distinct-1 (unique unigrams / total unigrams)
-        unique_unigrams = len(set(all_tokens))
-        total_unigrams = len(all_tokens)
-        distinct_1 = unique_unigrams / total_unigrams
-        
-        # Compute distinct-2 (unique bigrams / total bigrams)
-        bigrams = []
-        for text in texts:
-            tokens = text.lower().split()
-            for i in range(len(tokens) - 1):
-                bigrams.append(f"{tokens[i]} {tokens[i+1]}")
-        
-        unique_bigrams = len(set(bigrams))
-        total_bigrams = len(bigrams)
-        distinct_2 = unique_bigrams / total_bigrams if total_bigrams > 0 else 0.0
-        
-        # Combined score (as used in paper)
+
+        distinct_1 = float(np.mean(per_d1))
+        distinct_2 = float(np.mean(per_d2))
         combined = (distinct_1 + distinct_2) / 2
-        
         return {
             "distinct_1": distinct_1,
             "distinct_2": distinct_2,
@@ -256,9 +276,9 @@ class Evaluator:
         recent_turns = turns[-3:] if len(turns) >= 3 else turns
         
         completion_keywords = [
-            "thank you", "thanks", "perfect", "great", "excellent",
-            "booked", "confirmed", "reserved", "done", "completed",
-            "that's exactly what I needed", "sounds good"
+            "thank you", "thanks", "perfect", "great", "excellent", "that's great", "that works",
+            "sounds good", "all set", "i'm all set", "that's exactly what I needed", "that'll work",
+            "booked", "confirmed", "reserved", "done", "completed", "appreciate it", "good, thank"
         ]
         
         for turn in recent_turns:

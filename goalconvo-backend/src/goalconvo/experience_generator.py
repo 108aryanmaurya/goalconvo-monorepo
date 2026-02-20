@@ -85,57 +85,149 @@ class ExperienceGenerator:
         }
     
     def _create_prompt_templates(self) -> Dict[str, str]:
-        """Create prompt templates for different domains."""
+        """Create prompt templates optimized for evaluation metrics (TSR, GCR, coherence, diversity)."""
         return {
-            "system": """You are an expert at creating realistic user scenarios for task-oriented dialogues. 
-Your task is to take a simple user goal and expand it into a rich, realistic scenario with context and a natural first utterance.
+            "system": """You are an expert at creating realistic, evaluable user scenarios for task-oriented dialogues. 
+Your task is to expand a simple user goal into a rich scenario that will produce high-quality dialogues with:
+- Clear, achievable goals with explicit constraints and requestables (for Goal Completion Rate)
+- Natural context that enables coherent conversations (for Coherence)
+- Varied, natural first utterances (for Diversity and Fluency)
 
-Given a user goal, you should:
-1. Create a realistic context/situation for the user
-2. Add relevant background information
-3. Generate a natural first utterance that a real user would say
-4. Make the scenario specific and detailed
+CRITICAL REQUIREMENTS FOR EVALUATION:
+1. **Goal must be specific and measurable**: Include explicit constraints (area, price_range, type, etc.) and requestables (phone, address, reference number) that can be verified.
+2. **Context should be realistic and detailed**: Provide background that explains why the user needs this, enabling natural conversation flow.
+3. **First utterance should be natural and varied**: Use different phrasing patterns across examples—avoid templates.
+4. **Include structured fields when helpful**: Use subgoals (steps to achieve goal) and constraints (specific requirements) to make goals evaluable.
 
-The output should be in JSON format with fields: goal, context, first_utterance, user_persona""",
+The output should be in JSON format with fields: goal, context, first_utterance, user_persona.
+OPTIONAL but RECOMMENDED for better evaluation:
+- subgoals: array of steps (e.g. ["find options", "compare prices", "confirm booking"])
+- constraints: object with specific requirements (e.g. {"price_range": "budget", "area": "centre", "type": "hotel"})
+- user_persona_traits: communication style (e.g. "formal and concise" or "friendly and detailed")
+- supportbot_style: desired assistant style (e.g. "formal and brief" or "friendly and detailed")
+
+IMPORTANT: Make goals specific enough that completion can be clearly detected (e.g., "book a hotel" → "book a budget hotel in the city center for tonight").""",
             
-            "user": """Here are some examples of how to expand user goals:
+            "user": """Here are examples of well-structured goals that lead to high evaluation scores:
 
-Example 1:
-Goal: "Book a hotel room for tonight"
-Context: "I'm traveling for business and need a hotel room for tonight. I'll be arriving late and need something comfortable and convenient to the city center."
-First utterance: "Hi, I need to book a hotel room for tonight. I'm arriving around 9 PM and would prefer something in the city center."
+Example 1 (Hotel - explicit constraints):
+Goal: "Book a budget hotel room in the city center for tonight"
+Context: "I'm traveling for business and arriving late tonight. I need a comfortable hotel in the city center that's budget-friendly and close to public transport."
+First utterance: "Hi, I'm looking for a hotel room for tonight. I'd prefer something in the city center that's not too expensive—budget range if possible."
+Constraints (for the goal above): price_range=budget, area=city center, date=tonight
+Requestables (information the user may want): phone, address, reference_number
 
-Example 2:
-Goal: "Find a restaurant serving Italian food"
-Context: "I'm celebrating my anniversary with my partner and want to find a nice Italian restaurant for dinner. We prefer authentic cuisine and a romantic atmosphere."
-First utterance: "Hello, I'm looking for a good Italian restaurant for dinner tonight. It's our anniversary, so we'd like somewhere special with authentic Italian food."
+Example 2 (Restaurant - specific requirements):
+Goal: "Find an Italian restaurant for dinner tonight with vegetarian options"
+Context: "I'm celebrating my anniversary with my partner tonight. We want authentic Italian food, but one of us is vegetarian, so we need a place with good vegetarian options."
+First utterance: "Hello, I'm looking for an Italian restaurant for dinner tonight. We'd like authentic Italian cuisine, and it's important that they have good vegetarian options."
+Constraints (for the goal above): cuisine=Italian, meal=dinner, dietary=vegetarian
+Requestables (information the user may want): phone, address, reservation_confirmation
 
-Now expand this goal: {goal}"""
+IMPORTANT: If the goal below is in MultiWOZ format (e.g., "hotel-name: Alpha-Milton guest house" or "taxi-leaveat: 10:00; taxi-departure: Jesus College"), you MUST convert it to natural language FIRST, then expand it.
+
+For example:
+- "hotel-name: Alpha-Milton guest house" → "Book a room at Alpha-Milton guest house"
+- "restaurant-name: City Stop Restaurant" → "Find information about City Stop Restaurant" or "Make a reservation at City Stop Restaurant"
+- "taxi-leaveat: 10:00; taxi-departure: Jesus College" → "Book a taxi leaving at 10:00 from Jesus College"
+
+Now expand this goal with explicit constraints and requestables: {goal}"""
         }
     
-    def generate_experience(self, goal: str, domain: Optional[str] = None) -> Dict[str, Any]:
+    def _normalize_goal(self, goal: str) -> str:
+        """Convert MultiWOZ format goals to natural language."""
+        goal = goal.strip()
+        # Strip outer braces if present (e.g. "{train-leaveat: 11:30}" -> "train-leaveat: 11:30")
+        if goal.startswith("{") and goal.endswith("}"):
+            goal = goal[1:-1].strip()
+
+        # Check if it's MultiWOZ format (contains ":" or ";" separators)
+        if ":" not in goal and ";" not in goal:
+            return goal  # Already natural language
+
+        # Handle train format (e.g. "train-leaveat: 11:30" or "train-leaveat: 13:45")
+        if "train-leaveat:" in goal.lower():
+            leaveat = goal.split("train-leaveat:")[-1].split(";")[0].strip()
+            return f"Catch a train leaving at {leaveat}"
+        if "train-" in goal.lower():
+            return "Book or find information about a train journey"
+
+        # Handle attraction (generic)
+        if "attraction" in goal.lower() or "attraction-" in goal.lower():
+            return "Find information about attractions or things to do"
+
+        # Handle hotel-name format
+        if goal.startswith("hotel-name:"):
+            hotel_name = goal.replace("hotel-name:", "").strip()
+            return f"Book a room at {hotel_name}" or f"Find information about {hotel_name}"
+        
+        # Handle restaurant-name format
+        if goal.startswith("restaurant-name:"):
+            restaurant_name = goal.replace("restaurant-name:", "").strip()
+            return f"Find information about {restaurant_name}" or f"Make a reservation at {restaurant_name}"
+        
+        # Handle taxi format (e.g., "taxi-leaveat: 10:00; taxi-departure: Jesus College")
+        if "taxi-" in goal:
+            parts = []
+            if "taxi-leaveat:" in goal:
+                leaveat = goal.split("taxi-leaveat:")[1].split(";")[0].strip()
+                parts.append(f"leaving at {leaveat}")
+            if "taxi-departure:" in goal:
+                departure = goal.split("taxi-departure:")[1].split(";")[0].strip()
+                # Remove list brackets if present
+                departure = departure.replace("[", "").replace("]", "").replace("'", "").replace('"', "").strip()
+                parts.append(f"from {departure}")
+            if "taxi-destination:" in goal:
+                destination = goal.split("taxi-destination:")[1].split(";")[0].strip()
+                destination = destination.replace("[", "").replace("]", "").replace("'", "").replace('"', "").strip()
+                parts.append(f"to {destination}")
+            
+            if parts:
+                return f"Book a taxi {' '.join(parts)}"
+        
+        # Generic conversion: try to extract meaningful parts
+        # Replace common patterns
+        goal = goal.replace("hotel-name:", "book a room at")
+        goal = goal.replace("restaurant-name:", "find information about")
+        goal = goal.replace("taxi-leaveat:", "taxi leaving at")
+        goal = goal.replace("taxi-departure:", "from")
+        goal = goal.replace("taxi-destination:", "to")
+        goal = goal.replace(";", " and")
+        
+        # Clean up extra spaces and brackets
+        goal = " ".join(goal.split())
+        goal = goal.replace("[", "").replace("]", "").replace("'", "").replace('"', "")
+        
+        return goal.strip()
+    
+    def generate_experience(self, goal: str, domain: Optional[str] = None, few_shot_override: Optional[int] = None) -> Dict[str, Any]:
         """
         Generate a rich experience setup for a given goal.
         
         Args:
-            goal: User goal to expand
+            goal: User goal to expand (may be in MultiWOZ format)
             domain: Optional domain hint
+            few_shot_override: Optional override for number of few-shot examples (e.g. 0 for ablation)
             
         Returns:
             Dictionary with goal, domain, context, first_utterance, and user_persona
         """
+        # Normalize MultiWOZ format goals to natural language
+        normalized_goal = self._normalize_goal(goal)
+        
         # Determine domain if not provided
         if domain is None:
-            domain = extract_domain_from_goal(goal)
+            domain = extract_domain_from_goal(normalized_goal)
         
+        num_examples = few_shot_override if few_shot_override is not None else self.config.few_shot_examples
         # Get few-shot examples for this domain
         few_shot_examples = self.dataset_store.load_few_shot_examples(
             domain=domain, 
-            num_examples=self.config.few_shot_examples
+            num_examples=num_examples
         )
         
-        # Create prompt with few-shot examples
-        prompt = self._create_generation_prompt(goal, domain, few_shot_examples)
+        # Create prompt with few-shot examples (use override for slicing in _create_generation_prompt via instance attr or pass)
+        prompt = self._create_generation_prompt(normalized_goal, domain, few_shot_examples, num_examples=num_examples)
         
         try:
             # Generate response using LLM
@@ -146,30 +238,31 @@ Now expand this goal: {goal}"""
                 max_tokens=self.config.max_tokens
             )
             
-            # Parse JSON response
-            experience_data = self._parse_response(response, goal, domain)
+            # Parse JSON response (use normalized goal)
+            experience_data = self._parse_response(response, normalized_goal, domain)
             
             logger.info(f"Generated experience for goal: {goal[:50]}...")
             return experience_data
             
         except Exception as e:
             logger.error(f"Error generating experience for goal '{goal}': {e}")
-            # Return fallback experience
-            return self._create_fallback_experience(goal, domain)
+            # Return fallback experience (use normalized goal)
+            return self._create_fallback_experience(normalized_goal, domain)
     
     def _create_generation_prompt(
         self, 
         goal: str, 
         domain: str, 
-        few_shot_examples: List[Dict[str, Any]]
+        few_shot_examples: List[Dict[str, Any]],
+        num_examples: Optional[int] = None
     ) -> str:
         """Create the generation prompt with few-shot examples."""
         prompt_parts = [self.prompt_templates["system"]]
-        
+        n = num_examples if num_examples is not None else self.config.few_shot_examples
         # Add few-shot examples if available
-        if few_shot_examples:
+        if few_shot_examples and n > 0:
             prompt_parts.append("\nHere are some examples:")
-            for i, example in enumerate(few_shot_examples[:self.config.few_shot_examples]):
+            for i, example in enumerate(few_shot_examples[:n]):
                 turns = example.get("turns", [])
                 if turns:
                     first_turn = turns[0]
@@ -186,7 +279,23 @@ Now expand this goal: {goal}"""
         prompt_parts.append(f"\n{self.prompt_templates['user'].format(goal=goal)}")
         
         return "\n".join(prompt_parts)
-    
+
+    @staticmethod
+    def _user_persona_to_string(value: Any) -> str:
+        """Normalize user_persona to a string; LLM may return a dict e.g. {'name': 'Emily', 'user_persona_traits': '...'}."""
+        if isinstance(value, str):
+            return value.strip() or "General user"
+        if isinstance(value, dict):
+            name = value.get("name") or value.get("user_persona") or ""
+            traits = value.get("user_persona_traits") or value.get("traits")
+            if isinstance(traits, list):
+                traits = ", ".join(str(t) for t in traits) if traits else ""
+            elif not isinstance(traits, str):
+                traits = ""
+            name = str(name).strip() if name else "General user"
+            return f"{name} ({traits})" if traits else name
+        return "General user"
+
     def _parse_response(self, response: str, goal: str, domain: str) -> Dict[str, Any]:
         """Parse LLM response into structured data."""
         try:
@@ -197,14 +306,28 @@ Now expand this goal: {goal}"""
                 json_str = response[start_idx:end_idx]
                 
                 parsed_data = json.loads(json_str)
-                
-                return {
-                    "goal": parsed_data.get("goal", goal),
+                raw_persona = parsed_data.get("user_persona", "")
+                user_persona_str = self._user_persona_to_string(raw_persona)
+                raw_goal = parsed_data.get("goal", goal)
+                # Normalize only when goal looks like slot format (e.g. train-leaveat: 11:30 or {train-leaveat: 11:30})
+                looks_like_slot = raw_goal and (str(raw_goal).strip().startswith("{") or "train-leaveat:" in str(raw_goal).lower() or "taxi-" in str(raw_goal).lower() or "hotel-name:" in str(raw_goal).lower() or "restaurant-name:" in str(raw_goal).lower())
+                natural_goal = self._normalize_goal(raw_goal) if looks_like_slot else raw_goal
+                out = {
+                    "goal": natural_goal or raw_goal or goal,
                     "domain": domain,
                     "context": parsed_data.get("context", ""),
                     "first_utterance": parsed_data.get("first_utterance", ""),
-                    "user_persona": parsed_data.get("user_persona", "")
+                    "user_persona": user_persona_str
                 }
+                if "subgoals" in parsed_data and isinstance(parsed_data["subgoals"], list):
+                    out["subgoals"] = parsed_data["subgoals"]
+                if "constraints" in parsed_data and isinstance(parsed_data["constraints"], dict):
+                    out["constraints"] = parsed_data["constraints"]
+                if parsed_data.get("user_persona_traits"):
+                    out["user_persona_traits"] = parsed_data.get("user_persona_traits", "")
+                if parsed_data.get("supportbot_style"):
+                    out["supportbot_style"] = parsed_data.get("supportbot_style", "")
+                return out
         except (json.JSONDecodeError, KeyError) as e:
             logger.warning(f"Failed to parse JSON response: {e}")
         
@@ -236,14 +359,25 @@ Now expand this goal: {goal}"""
         }
     
     def _create_fallback_experience(self, goal: str, domain: str) -> Dict[str, Any]:
-        """Create a fallback experience when generation fails."""
+        """Create a fallback experience when generation fails. Use natural-language goal."""
+        natural_goal = self._normalize_goal(goal)
         return {
-            "goal": goal,
+            "goal": natural_goal,
             "domain": domain,
-            "context": f"User needs assistance with {goal.lower()}",
-            "first_utterance": f"Hi, I need help with {goal.lower()}",
+            "context": f"User needs assistance with {natural_goal.lower()}",
+            "first_utterance": f"Hi, I need help with {natural_goal.lower()}",
             "user_persona": "General user"
         }
+    
+    @staticmethod
+    def goal_complexity(experience_data: Dict[str, Any]) -> float:
+        """Compute a simple goal complexity score (0+). Used for optional filtering or analytics."""
+        score = 0.0
+        if experience_data.get("subgoals"):
+            score += len(experience_data["subgoals"])
+        if experience_data.get("constraints"):
+            score += len(experience_data["constraints"])
+        return score
     
     def generate_batch_experiences(
         self, 

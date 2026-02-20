@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./goalconvo-backend
+      dockerfile: Dockerfile
+    container_name: goalconvo-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATA_DIR=/app/data
+      - PYTHONPATH=/app/src
+      # API Configuration - set these via .env file
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OLLAMA_ENABLED=${OLLAMA_ENABLED:-false}
+      - OLLAMA_API_BASE=${OLLAMA_API_BASE:-http://host.docker.internal:11434}
+    volumes:
+      - ./goalconvo-backend/data:/app/data
+      - ./goalconvo-backend/logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - goalconvo-network
+
+  frontend:
+    build:
+      context: ./goalconvo-frontend
+      dockerfile: Dockerfile
+    container_name: goalconvo-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - goalconvo-network
+
+networks:
+  goalconvo-network:
+    driver: bridge
+
+volumes:
+  goalconvo-data:
+    driver: local

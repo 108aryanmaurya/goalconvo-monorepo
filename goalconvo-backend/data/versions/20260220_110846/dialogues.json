@@ -1,0 +1,278 @@
+[
+  {
+    "dialogue_id": "7201ef86-8d9f-42ae-b037-21d15010e401",
+    "goal": "hotel-name: Alpha-Milton guest house",
+    "domain": "hotel",
+    "context": "User needs assistance with hotel-name: alpha-milton guest house",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with hotel-name: alpha-milton guest house",
+        "timestamp": "2026-02-19T17:10:54.605221"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you book at City Centre North B&B. What dates do you need the room for?",
+        "timestamp": "2026-02-19T17:10:55.010474"
+      },
+      {
+        "role": "User",
+        "text": "What's the price per night?",
+        "timestamp": "2026-02-19T17:10:55.131261"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The City Centre North B&B is \u00a365 per night. For 2 nights, that's \u00a3130 total including WiFi and breakfast. Would you like to proceed with the booking?",
+        "timestamp": "2026-02-19T17:10:55.447200"
+      },
+      {
+        "role": "User",
+        "text": "Do you have rooms available this weekend?",
+        "timestamp": "2026-02-19T17:10:55.582531"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, I can book a room for 2 nights at City Centre North B&B for \u00a3130. Shall I proceed?",
+        "timestamp": "2026-02-19T17:10:55.876322"
+      },
+      {
+        "role": "User",
+        "text": "What amenities are included?",
+        "timestamp": "2026-02-19T17:10:55.998511"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The City Centre North B&B includes free WiFi, continental breakfast, and city center location. The rate is \u00a365 per night.",
+        "timestamp": "2026-02-19T17:10:56.443728"
+      },
+      {
+        "role": "User",
+        "text": "I'd like to know more about the room options and pricing.",
+        "timestamp": "2026-02-19T17:10:56.743582"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Perfect! I have all the details. Your booking for 2 nights at City Centre North B&B for \u00a3130 is ready. Would you like me to confirm the reservation?",
+        "timestamp": "2026-02-19T17:10:56.867897"
+      },
+      {
+        "role": "User",
+        "text": "I need a room for 2 nights, preferably with WiFi.",
+        "timestamp": "2026-02-19T17:10:57.165037"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great! I can confirm your booking for 2 nights at City Centre North B&B for \u00a3130. Would you like me to complete the reservation?",
+        "timestamp": "2026-02-19T17:10:57.600102"
+      },
+      {
+        "role": "User",
+        "text": "What's the price per night?",
+        "timestamp": "2026-02-19T17:10:57.743992"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great! I can confirm your booking for 2 nights at City Centre North B&B for \u00a3130. Would you like me to complete the reservation?",
+        "timestamp": "2026-02-19T17:10:58.044613"
+      },
+      {
+        "role": "User",
+        "text": "Do you have rooms available this weekend?",
+        "timestamp": "2026-02-19T17:10:58.162116"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, I can book a room for 2 nights at City Centre North B&B for \u00a3130. Shall I proceed?",
+        "timestamp": "2026-02-19T17:10:58.592697"
+      },
+      {
+        "role": "User",
+        "text": "What amenities are included?",
+        "timestamp": "2026-02-19T17:10:58.722048"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The City Centre North B&B includes free WiFi, continental breakfast, and city center location. The rate is \u00a365 per night.",
+        "timestamp": "2026-02-19T17:10:59.005924"
+      },
+      {
+        "role": "User",
+        "text": "I'd like to know more about the room options and pricing.",
+        "timestamp": "2026-02-19T17:10:59.153682"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Perfect! I have all the details. Your booking for 2 nights at City Centre North B&B for \u00a3130 is ready. Would you like me to confirm the reservation?",
+        "timestamp": "2026-02-19T17:10:59.571603"
+      },
+      {
+        "role": "User",
+        "text": "I need a room for 2 nights, preferably with WiFi.",
+        "timestamp": "2026-02-19T17:10:59.883062"
+      }
+    ],
+    "metadata": {
+      "num_turns": 21,
+      "generated_at": "2026-02-19T17:10:59.883536",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": true,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.278,
+      "generation_start_time": "2026-02-19T17:10:54.605182",
+      "generation_end_time": "2026-02-19T17:10:59.883535",
+      "quality_score": 0.6699999999999999,
+      "quality_assessment": {
+        "dialogue_id": "7201ef86-8d9f-42ae-b037-21d15010e401",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": false,
+            "num_turns": 21,
+            "min_required": 3,
+            "max_allowed": 10,
+            "message": "Dialogue has 21 turns (required: 3-10)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 0.8333333333333334
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6699999999999999,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-19T17:11:05.389296"
+      }
+    }
+  },
+  {
+    "dialogue_id": "c7408fbc-4112-42e6-ad73-0291dd59d87b",
+    "goal": "Book a room at Alpha Milton guesthouse",
+    "domain": "hotel",
+    "context": "User needs assistance with book a room at alpha milton guesthouse",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with book a room at alpha milton guesthouse",
+        "timestamp": "2026-02-19T19:20:58.660752"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you book at Alpha Milton Guesthouse. What dates do you need the room for?",
+        "timestamp": "2026-02-19T19:20:58.854064"
+      },
+      {
+        "role": "User",
+        "text": "I need a room for 2 nights, preferably with WiFi.",
+        "timestamp": "2026-02-19T19:20:59.095632"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Alpha Milton Guesthouse includes free WiFi, continental breakfast, and is located in the city center. The rate is \u00a365 per night. Would you like to make a reservation?",
+        "timestamp": "2026-02-19T19:20:59.281245"
+      },
+      {
+        "role": "User",
+        "text": "What's the price per night?",
+        "timestamp": "2026-02-19T19:20:59.525713"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great! I can confirm your booking for 2 nights at Alpha Milton Guesthouse for \u00a3130. Would you like me to complete the reservation?",
+        "timestamp": "2026-02-19T19:20:59.716855"
+      },
+      {
+        "role": "User",
+        "text": "Yes please, that would be great!",
+        "timestamp": "2026-02-19T19:20:59.964211"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-19T19:20:59.964671",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 1.304,
+      "generation_start_time": "2026-02-19T19:20:58.660710",
+      "generation_end_time": "2026-02-19T19:20:59.964669",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "c7408fbc-4112-42e6-ad73-0291dd59d87b",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 3,
+            "max_allowed": 10,
+            "message": "Dialogue has 7 turns (required: 3-10)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-19T19:21:01.292129"
+      }
+    }
+  }
+]

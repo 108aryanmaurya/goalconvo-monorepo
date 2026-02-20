@@ -335,7 +335,7 @@ export default function MultiAgentSimulator({ experiences = [], conversations: p
                   <div>
                     <h5 className="font-semibold text-white">{conversation.conv_id}</h5>
                     <p className="text-sm text-gray-300">
-                      {conversation.turns.length} turns • MTLD: {conversation.mtld.toFixed(1)}
+                      {conversation.turns.length} turns • MTLD: {conversation.mtld?.toFixed(1)}
                     </p>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export default function MultiAgentSimulator({ experiences = [], conversations: p
                     {conversation.task_success ? 'Success' : 'Failed'}
                   </span>
                   <span className="px-2 py-1 rounded text-xs font-semibold bg-blue-500/20 text-blue-300">
-                    Judge: {conversation.judge_score.toFixed(1)}
+                    Judge: {conversation.judge_score?.toFixed(1)}
                   </span>
                 </div>
               </div>
@@ -407,11 +407,11 @@ export default function MultiAgentSimulator({ experiences = [], conversations: p
                     </div>
                     <div className="text-center">
                       <div className="text-gray-400">Judge Score</div>
-                      <div className="text-white font-semibold">{conversation.judge_score.toFixed(1)}</div>
+                      <div className="text-white font-semibold">{conversation.judge_score?.toFixed(1)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-gray-400">MTLD</div>
-                      <div className="text-white font-semibold">{conversation.mtld.toFixed(1)}</div>
+                      <div className="text-white font-semibold">{conversation.mtld?.toFixed(1)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-gray-400">Model</div>

@@ -37,47 +37,74 @@ class QualityJudge:
         ]
     
     def _create_quality_prompts(self) -> Dict[str, str]:
-        """Create prompts for LLM-based quality assessment."""
+        """Create prompts aligned with evaluation metrics (TSR, GCR, Coherence, Diversity, Fluency, Groundedness)."""
         return {
-            "coherence": """Evaluate the coherence and quality of this dialogue on a scale of 1-5.
+            "coherence": """Evaluate the coherence of this dialogue on a scale of 1-5, aligned with evaluation metrics.
 
 Dialogue:
 {history}
 
-Rate the dialogue on:
-1. Logical flow and coherence
-2. Natural conversation patterns
-3. Appropriate responses
-4. Overall quality
+Rate coherence based on:
+1. **Logical flow**: Do turns follow naturally from previous turns? Is context maintained?
+2. **Context awareness**: Do responses reference what was said earlier?
+3. **Conversation patterns**: Does it follow natural dialogue structure (question-answer, clarification, confirmation)?
+4. **Consistency**: Are there contradictions or confusing jumps?
 
-Respond with only a number from 1-5 (1=very poor, 5=excellent).""",
+Score guide:
+- 5: Excellent—perfect logical flow, strong context awareness, natural patterns
+- 4: Good—mostly coherent with minor issues
+- 3: Acceptable—some coherence issues but understandable
+- 2: Poor—significant coherence problems
+- 1: Very poor—confusing, illogical flow
+
+Respond with only a number from 1-5.""",
             
-            "goal_relevance": """Determine if this dialogue successfully addresses the user's goal.
+            "goal_relevance": """Determine if this dialogue successfully addresses the user's goal (aligned with Goal Completion Rate and Task Success Rate).
 
 User Goal: {goal}
 Dialogue:
 {history}
 
-Has the user's goal been properly addressed in this conversation? Consider:
-1. Did the support assistant understand the user's needs?
-2. Were appropriate solutions or information provided?
-3. Was the user's goal achieved or progress made toward it?
+Evaluate goal relevance based on:
+1. **Goal Completion (GCR)**: Were all constraints and requestables from the goal satisfied?
+2. **Task Success (TSR)**: Was the user's intent fulfilled? Did the user express satisfaction?
+3. **Completeness**: Was the goal fully achieved (not just partially addressed)?
 
-Respond with only "YES" if the goal was addressed, or "NO" if it wasn't.""",
+Respond "YES" if:
+- The goal was COMPLETELY addressed (all constraints satisfied, requestables provided)
+- The user expressed satisfaction (thanks, perfect, great, etc.)
+- The assistant confirmed completion (booked, confirmed, provided all info)
+
+Respond "NO" if:
+- The goal was only partially addressed
+- Information is incomplete or pending
+- The user hasn't expressed satisfaction
+- The conversation is still ongoing
+
+Respond with only "YES" or "NO".""",
             
-            "overall_quality": """Evaluate this dialogue for overall quality and usefulness.
+            "overall_quality": """Evaluate this dialogue for overall quality, considering all evaluation metrics.
 
 User Goal: {goal}
 Dialogue:
 {history}
 
-Rate the dialogue on:
-1. Helpfulness and relevance
-2. Natural conversation flow
-3. Appropriate length and detail
-4. Overall quality for training data
+Rate overall quality (1-5) considering:
+1. **Task Success**: Was the goal achieved? Did the user express satisfaction?
+2. **Coherence**: Logical flow and context awareness
+3. **Diversity**: Varied language and phrasing (not repetitive)
+4. **Fluency**: Natural grammar and language
+5. **Groundedness**: Responses based on domain knowledge (not fabricated)
+6. **Appropriate length**: Not too short or too long
 
-Respond with only a number from 1-5 (1=very poor, 5=excellent)."""
+Score guide:
+- 5: Excellent—high scores on all dimensions, natural and complete
+- 4: Good—strong quality with minor issues
+- 3: Acceptable—meets basic quality standards
+- 2: Poor—significant quality issues
+- 1: Very poor—low quality across dimensions
+
+Respond with only a number from 1-5."""
         }
     
     def judge_dialogue(self, dialogue_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -308,9 +335,13 @@ Respond with only a number from 1-5 (1=very poor, 5=excellent)."""
                 return 3.0  # Default middle score
                 
         except Exception as e:
-            logger.error(f"Error evaluating coherence: {e}")
+            err_str = str(e)
+            if "429" in err_str or "rate_limit" in err_str.lower():
+                logger.warning("Quality evaluation (coherence) skipped due to API rate limit; using default score 3.0")
+            else:
+                logger.error(f"Error evaluating coherence: {e}")
             return 3.0
-    
+
     def _evaluate_goal_relevance(self, goal: str, history: str) -> bool:
         """Evaluate goal relevance using LLM."""
         prompt = self.quality_prompts["goal_relevance"].format(goal=goal, history=history)
@@ -325,9 +356,13 @@ Respond with only a number from 1-5 (1=very poor, 5=excellent)."""
             return "YES" in response.upper()
             
         except Exception as e:
-            logger.error(f"Error evaluating goal relevance: {e}")
+            err_str = str(e)
+            if "429" in err_str or "rate_limit" in err_str.lower():
+                logger.warning("Quality evaluation (goal relevance) skipped due to API rate limit; using default False")
+            else:
+                logger.error(f"Error evaluating goal relevance: {e}")
             return False
-    
+
     def _evaluate_overall_quality(self, goal: str, history: str) -> float:
         """Evaluate overall quality using LLM."""
         prompt = self.quality_prompts["overall_quality"].format(goal=goal, history=history)
@@ -347,9 +382,13 @@ Respond with only a number from 1-5 (1=very poor, 5=excellent)."""
                 return 3.0  # Default middle score
                 
         except Exception as e:
-            logger.error(f"Error evaluating overall quality: {e}")
+            err_str = str(e)
+            if "429" in err_str or "rate_limit" in err_str.lower():
+                logger.warning("Quality evaluation (overall quality) skipped due to API rate limit; using default score 3.0")
+            else:
+                logger.error(f"Error evaluating overall quality: {e}")
             return 3.0
-    
+
     def _calculate_overall_score(
         self, 
         heuristic_results: Dict[str, Any], 

@@ -361,7 +361,7 @@ export default function DatasetConstructor({ filteredConversations = [], dataset
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-white/20 text-center">
             <div className="text-2xl font-bold text-cyan-400">
-              {(dataset.reduce((acc, item) => acc + item.metadata.quality_score, 0) / dataset.length * 100).toFixed(1)}%
+              {(dataset.reduce((acc, item) => acc + item.metadata.quality_score, 0) / dataset.length * 100)?.toFixed(1)}%
             </div>
             <div className="text-sm text-gray-400">Avg Quality</div>
           </div>
@@ -473,7 +473,7 @@ export default function DatasetConstructor({ filteredConversations = [], dataset
                     </div>
                     <div>
                       <span className="text-gray-400">Quality Score:</span>
-                      <div className="text-white font-semibold">{(item.metadata.quality_score * 100).toFixed(1)}%</div>
+                      <div className="text-white font-semibold">{(item.metadata.quality_score * 100)?.toFixed(1)}%</div>
                     </div>
                     <div>
                       <span className="text-gray-400">Created:</span>

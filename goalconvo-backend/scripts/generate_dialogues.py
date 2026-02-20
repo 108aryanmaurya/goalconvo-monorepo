@@ -23,6 +23,7 @@ from goalconvo.experience_generator import ExperienceGenerator
 from goalconvo.multi_agent_simulator import DialogueSimulator
 from goalconvo.quality_judge import QualityJudge
 from goalconvo.dataset_store import DatasetStore
+from goalconvo.dataset_versioning import DatasetVersionManager
 from goalconvo.utils import load_json, save_json, ensure_dir
 
 logger = logging.getLogger(__name__)
@@ -56,7 +57,8 @@ class GoalConvoGenerator:
         num_dialogues: int, 
         domains: Optional[List[str]] = None,
         resume: bool = False,
-        emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None
+        emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+        overrides: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Generate synthetic dialogues using the complete pipeline.
@@ -65,6 +67,7 @@ class GoalConvoGenerator:
             num_dialogues: Number of dialogues to generate
             domains: List of domains to generate for (None for all)
             resume: Whether to resume from existing progress
+            overrides: Optional ablation/experiment overrides: quality_judge (bool), few_shot_examples (int)
             
         Returns:
             Generation statistics and results
@@ -122,24 +125,32 @@ class GoalConvoGenerator:
             domain_dialogues = self._generate_domain_dialogues(
                 domain, 
                 domain_dialogue_count,
-                emit_callback
+                emit_callback,
+                overrides
             )
             
             logger.info(f"\n{'='*80}")
             logger.info(f"STEP 3: Quality Filtering - Domain: {domain}")
             logger.info(f"{'='*80}")
-            logger.info(f"Filtering {len(domain_dialogues)} generated dialogues...")
+            use_quality_judge = overrides is None or overrides.get("quality_judge", True)
+            if use_quality_judge:
+                logger.info(f"Filtering {len(domain_dialogues)} generated dialogues...")
+            else:
+                logger.info("Quality judge disabled (ablation): accepting all dialogues")
             
             if emit_callback:
                 emit_callback('step_start', {
                     'step': 'quality_filtering',
                     'step_name': 'Quality Filtering',
                     'domain': domain,
-                    'message': f'Filtering {len(domain_dialogues)} dialogues for quality...'
+                    'message': f'Filtering {len(domain_dialogues)} dialogues for quality...' if use_quality_judge else 'Accepting all (quality judge off)'
                 })
             
-            # Process dialogues through quality filter
-            accepted, rejected = self.quality_judge.filter_dialogues(domain_dialogues)
+            # Process dialogues through quality filter (or accept all if ablation)
+            if use_quality_judge:
+                accepted, rejected = self.quality_judge.filter_dialogues(domain_dialogues)
+            else:
+                accepted, rejected = list(domain_dialogues), []
             
             if emit_callback:
                 emit_callback('step_data', {
@@ -290,9 +301,10 @@ class GoalConvoGenerator:
         
         return self.stats
     
-    def _generate_domain_dialogues(self, domain: str, num_dialogues: int, emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None) -> List[Dict[str, Any]]:
+    def _generate_domain_dialogues(self, domain: str, num_dialogues: int, emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None, overrides: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """Generate dialogues for a specific domain."""
         logger.info(f"Generating {num_dialogues} dialogues for domain: {domain}")
+        few_shot_override = (overrides or {}).get("few_shot_examples")
         
         dialogues = []
         
@@ -302,7 +314,7 @@ class GoalConvoGenerator:
                 logger.info(f"STEP 1: Experience Generation - Dialogue {i+1}/{num_dialogues}")
                 logger.info(f"{'='*80}")
                 
-                # Generate experience
+                # Generate experience (uses config.few_shot_examples, seeded hub via load_few_shot_examples)
                 goal = self.experience_generator.get_random_goal(domain)
                 logger.info(f"Selected goal: {goal}")
                 
@@ -313,7 +325,7 @@ class GoalConvoGenerator:
                         'step': 'experience_generation'
                     })
                 
-                experience_data = self.experience_generator.generate_experience(goal, domain)
+                experience_data = self.experience_generator.generate_experience(goal, domain, few_shot_override=few_shot_override)
                 
                 if emit_callback:
                     emit_callback('step_data', {
@@ -347,8 +359,18 @@ class GoalConvoGenerator:
                         'message': f'Simulating dialogue {i+1}/{num_dialogues}...'
                     })
                 
-                # Simulate dialogue
-                dialogue = self.dialogue_simulator.simulate_dialogue(experience_data)
+                def on_live_progress(turns_so_far: list, step_message: str) -> None:
+                    if emit_callback:
+                        emit_callback('live_dialogue', {
+                            'current_turns': turns_so_far,
+                            'step_message': step_message,
+                            'dialogue_index': i + 1,
+                            'total_dialogues': num_dialogues,
+                            'goal': experience_data.get('goal', '')[:80],
+                        })
+                
+                # Simulate dialogue (uses last-K-turns context, domain schema, progress hint, stricter goal-check, config truncation)
+                dialogue = self.dialogue_simulator.simulate_dialogue(experience_data, progress_callback=on_live_progress)
                 dialogue_id = dialogue.get('dialogue_id', 'unknown')
                 num_turns = len(dialogue.get('turns', []))
                 
@@ -643,6 +665,30 @@ def main():
         
         for domain, domain_stats in stats['by_domain'].items():
             logger.info(f"Domain {domain}: {domain_stats['accepted']}/{domain_stats['generated']} accepted")
+        
+        # Create dataset version snapshot with config
+        try:
+            all_dialogues = generator.dataset_store.load_dialogues(domain=None, limit=None)
+            if all_dialogues:
+                version_manager = DatasetVersionManager(config.data_dir)
+                api_config = config.get_api_config()
+                version_id = version_manager.create_version(
+                    dialogues=all_dialogues,
+                    description=f"Script run: {len(all_dialogues)} dialogues, domains: {args.domains or config.domains}",
+                    generation_config={
+                        "num_dialogues": args.num_dialogues,
+                        "domains": args.domains or config.domains,
+                        "temperature": config.temperature,
+                        "max_turns": config.max_turns,
+                        "min_turns": config.min_turns,
+                        "few_shot_examples": config.few_shot_examples,
+                        "model": api_config.get("model", config.mistral_model),
+                    },
+                    tags=["script", "auto-generated"]
+                )
+                logger.info(f"Created dataset version {version_id}")
+        except Exception as version_error:
+            logger.warning(f"Version creation failed: {version_error}")
         
         # Run evaluation if requested
         if args.run_evaluation:

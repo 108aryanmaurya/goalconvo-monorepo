@@ -1,24 +1,19 @@
 {
-  "total_generated": 5,
-  "total_accepted": 5,
+  "total_generated": 1,
+  "total_accepted": 1,
   "total_rejected": 0,
   "by_domain": {
     "hotel": {
-      "generated": 2,
-      "accepted": 2,
+      "generated": 1,
+      "accepted": 1,
       "rejected": 0
     },
     "restaurant": {
-      "generated": 2,
-      "accepted": 2,
-      "rejected": 0
-    },
-    "taxi": {
       "generated": 1,
       "accepted": 1,
       "rejected": 0
     }
   },
-  "start_time": "2026-02-15T11:55:14.665713",
-  "end_time": "2026-02-15T11:55:35.949467"
+  "start_time": "2026-02-20T19:48:13.865953",
+  "end_time": "2026-02-20T19:48:26.840369"
 }
