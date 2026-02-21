@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0c0c12;
+  --foreground: #f2f2f7;
+  /* Creative chain: coral → fuchsia → indigo → sky → lime → gold */
+  --coral: #fb923c;
+  --fuchsia: #d946ef;
+  --indigo: #818cf8;
+  --sky: #38bdf8;
+  --lime: #a3e635;
+  --gold: #facc15;
+  --glow-coral: rgba(251, 146, 60, 0.45);
+  --glow-fuchsia: rgba(217, 70, 239, 0.45);
+  --glow-indigo: rgba(129, 140, 248, 0.4);
+  --glow-lime: rgba(163, 230, 53, 0.35);
 }
 
 @theme inline {
@@ -14,13 +25,96 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #08080c;
+    --foreground: #e8e8ef;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Ambient gradient background - chained orbs */
+.app-canvas {
+  position: relative;
+  min-height: 100vh;
+}
+
+.app-canvas::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 15%, rgba(251, 146, 60, 0.14) 0%, transparent 48%),
+    radial-gradient(ellipse 55% 35% at 85% 15%, rgba(217, 70, 239, 0.16) 0%, transparent 48%),
+    radial-gradient(ellipse 50% 40% at 50% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 35% at 8% 75%, rgba(163, 230, 53, 0.1) 0%, transparent 48%),
+    radial-gradient(ellipse 40% 30% at 92% 80%, rgba(250, 204, 21, 0.08) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.app-canvas::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Pipeline step box: creative conic gradient */
+.pipeline-step-active-border {
+  position: relative;
+  padding: 3px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.pipeline-step-active-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(from 0deg, #fb923c, #d946ef, #818cf8, #38bdf8, #a3e635, #facc15, #fb923c);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: pipeline-step-rotate 2.5s linear infinite;
+}
+
+.pipeline-step-active-border > .pipeline-step-inner {
+  position: relative;
+  border-radius: calc(0.75rem - 2px);
+  z-index: 1;
+}
+
+@keyframes pipeline-step-rotate {
+  to { transform: rotate(360deg); }
+}
+
+.btn-glow-fuchsia {
+  box-shadow: 0 0 24px var(--glow-fuchsia);
+}
+
+.btn-glow-lime {
+  box-shadow: 0 0 20px var(--glow-lime);
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
 }

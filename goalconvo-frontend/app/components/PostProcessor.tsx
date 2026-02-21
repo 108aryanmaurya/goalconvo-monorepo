@@ -196,7 +196,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
             <Filter className="w-6 h-6 text-pink-400" />
             <h3 className="text-xl font-semibold text-white">Post-Processing & Filtering</h3>
           </div>
-          <motion.button
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={startProcessing}
@@ -214,7 +214,7 @@ export default function PostProcessor({ conversations = [], filteredConversation
                 Start Processing
               </>
             )}
-          </motion.button>
+          </motion.button> */}
         </div>
 
         {/* Processing Progress */}

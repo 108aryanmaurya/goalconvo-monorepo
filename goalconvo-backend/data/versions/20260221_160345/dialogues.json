@@ -1,0 +1,126 @@
+[
+  {
+    "dialogue_id": "595d6a8b-55bd-43a5-ae05-ad7b0af6322d",
+    "goal": "Find information about Golden Wok",
+    "domain": "restaurant",
+    "context": "I have a craving for Chinese food tonight and heard great things about Golden Wok. I want to know more about their menu, location, and if they offer takeout options.",
+    "user_persona": "casual and inquisitive",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hey there, I'm interested in finding out more about Golden Wok. Could you provide me with information about their menu, location, and whether they offer takeout?",
+        "timestamp": "2026-02-21T16:02:42.094406"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Golden Wok is a popular Chinese restaurant known for its diverse menu options. They are located at 123 Main Street and offer takeout services. Would you like me to check their menu for you?",
+        "timestamp": "2026-02-21T16:02:42.874898"
+      },
+      {
+        "role": "User",
+        "text": "Could you please check the menu for me?",
+        "timestamp": "2026-02-21T16:02:43.439004"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'm on it! I'll check the menu at Golden Wok for you. Just a moment while I gather that information.",
+        "timestamp": "2026-02-21T16:02:44.193265"
+      },
+      {
+        "role": "User",
+        "text": "Could you also provide me with the address of Golden Wok?",
+        "timestamp": "2026-02-21T16:02:44.789766"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The address for Golden Wok is 123 Main Street. I'll confirm the menu details for you shortly.",
+        "timestamp": "2026-02-21T16:02:45.508843"
+      },
+      {
+        "role": "User",
+        "text": "Could you also let me know if Golden Wok offers any vegetarian options on their menu?",
+        "timestamp": "2026-02-21T16:02:46.428295"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, Golden Wok does offer vegetarian options on their menu. I'll provide you with the details along with the menu shortly.",
+        "timestamp": "2026-02-21T16:02:47.713706"
+      },
+      {
+        "role": "User",
+        "text": "Can you also confirm if Golden Wok offers any gluten-free options on their menu?",
+        "timestamp": "2026-02-21T16:02:48.393553"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, Golden Wok does offer gluten-free options on their menu. I'll include those details when I provide you with the full menu information shortly.",
+        "timestamp": "2026-02-21T16:02:49.211773"
+      },
+      {
+        "role": "User",
+        "text": "Can you also provide me with the takeout options available at Golden Wok?",
+        "timestamp": "2026-02-21T16:02:49.927796"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-02-21T16:02:50.428870",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 8.335,
+      "generation_start_time": "2026-02-21T16:02:42.094348",
+      "generation_end_time": "2026-02-21T16:02:50.428866",
+      "goal_complexity": 2,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "595d6a8b-55bd-43a5-ae05-ad7b0af6322d",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:02:51.961597"
+      }
+    }
+  }
+]

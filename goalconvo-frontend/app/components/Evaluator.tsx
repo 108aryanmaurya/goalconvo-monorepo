@@ -20,6 +20,7 @@ interface EvaluationMetrics {
     };
     domain_distribution: Record<string, number>;
     task_success_by_domain: Record<string, number>;
+    goal_completion_by_domain?: Record<string, number>;
   };
   comprehensive_metrics?: {
     bertscore_similarity?: {
@@ -213,8 +214,8 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 0.9) return 'text-green-400 bg-green-500/20 border-green-400/30';
-    if (score >= 0.8) return 'text-blue-400 bg-blue-500/20 border-blue-400/30';
+    if (score >= 0.9) return 'text-lime-400 bg-lime-500/20 border-lime-400/30';
+    if (score >= 0.8) return 'text-sky-400 bg-sky-500/20 border-sky-400/30';
     if (score >= 0.7) return 'text-yellow-400 bg-yellow-500/20 border-yellow-400/30';
     return 'text-red-400 bg-red-500/20 border-red-400/30';
   };
@@ -232,7 +233,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
       <div className="bg-white/5 rounded-xl p-6 border border-white/20">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-6 h-6 text-cyan-400" />
+            <TrendingUp className="w-6 h-6 text-fuchsia-400" />
             <h3 className="text-xl font-semibold text-white">Evaluation Framework</h3>
           </div>
           {/* <motion.button
@@ -240,7 +241,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
             whileTap={{ scale: 0.95 }}
             onClick={startEvaluation}
             disabled={isEvaluating}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-sky-500 text-white font-semibold rounded-xl hover:from-fuchsia-600 hover:to-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {isEvaluating ? (
               <>
@@ -265,13 +266,13 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
           >
             <div className="flex items-center justify-between">
               <span className="text-gray-300">{evaluationStep}</span>
-              <span className="text-cyan-400 font-semibold">{Math.round(progress)}%</span>
+              <span className="text-fuchsia-400 font-semibold">{Math.round(progress)}%</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-3">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
-                className="bg-gradient-to-r from-cyan-400 to-blue-600 h-3 rounded-full"
+                className="bg-gradient-to-r from-fuchsia-400 to-sky-500 h-3 rounded-full"
               />
             </div>
           </motion.div>
@@ -287,24 +288,24 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
         >
           {/* BERTScore Semantic Similarity - Prominent Display */}
           {metrics.comprehensive_metrics?.bertscore_similarity && (
-            <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl p-6 border-2 border-blue-400/50 mb-6">
+            <div className="bg-gradient-to-r from-sky-500/20 to-fuchsia-500/20 rounded-xl p-6 border-2 border-sky-400/50 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <TrendingUp className="w-8 h-8 text-blue-400" />
+                  <TrendingUp className="w-8 h-8 text-sky-400" />
                   <div>
                     <h3 className="text-2xl font-bold text-white">BERTScore Semantic Similarity</h3>
                     <p className="text-sm text-gray-300">Measures semantic similarity to MultiWOZ reference dialogues</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl font-bold text-blue-400">
+                  <div className="text-4xl font-bold text-sky-400">
                     {metrics.comprehensive_metrics.bertscore_similarity.overall_bertscore?.toFixed(3)}
                   </div>
                   <div className="text-sm text-gray-300">
                     Target: {metrics.comprehensive_metrics.bertscore_similarity.target_score?.toFixed(2)}
                   </div>
                   {metrics.comprehensive_metrics.bertscore_similarity.overall_bertscore >= metrics.comprehensive_metrics.bertscore_similarity.target_score ? (
-                    <div className="text-green-400 text-sm font-semibold mt-1">✅ Above Target</div>
+                    <div className="text-lime-400 text-sm font-semibold mt-1">✅ Above Target</div>
                   ) : (
                     <div className="text-yellow-400 text-sm font-semibold mt-1">⚠️ Below Target</div>
                   )}
@@ -312,7 +313,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               </div>
               <div className="w-full bg-white/20 rounded-full h-4">
                 <div
-                  className="bg-gradient-to-r from-blue-400 to-cyan-600 h-4 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-sky-400 to-fuchsia-500 h-4 rounded-full transition-all duration-500"
                   style={{ width: `${(metrics.comprehensive_metrics.bertscore_similarity.overall_bertscore / metrics.comprehensive_metrics.bertscore_similarity.target_score) * 100}%` }}
                 />
               </div>
@@ -332,24 +333,24 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
 
           {/* Lexical Diversity - Prominent Display */}
           {metrics.comprehensive_metrics?.lexical_diversity && (
-            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-6 border-2 border-purple-400/50 mb-6">
+            <div className="bg-gradient-to-r from-fuchsia-500/20 to-pink-500/20 rounded-xl p-6 border-2 border-fuchsia-400/50 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <BarChart3 className="w-8 h-8 text-purple-400" />
+                  <BarChart3 className="w-8 h-8 text-fuchsia-400" />
                   <div>
                     <h3 className="text-2xl font-bold text-white">Lexical Diversity</h3>
                     <p className="text-sm text-gray-300">Measures vocabulary richness using Distinct-1 and Distinct-2 metrics</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl font-bold text-purple-400">
+                  <div className="text-4xl font-bold text-fuchsia-400">
                     {metrics.comprehensive_metrics.lexical_diversity.combined?.toFixed(3)}
                   </div>
                   <div className="text-sm text-gray-300">
                     Target: {metrics.comprehensive_metrics.lexical_diversity.target_diversity?.toFixed(2)}
                   </div>
                   {metrics.comprehensive_metrics.lexical_diversity.combined >= metrics.comprehensive_metrics.lexical_diversity.target_diversity ? (
-                    <div className="text-green-400 text-sm font-semibold mt-1">✅ Above Target</div>
+                    <div className="text-lime-400 text-sm font-semibold mt-1">✅ Above Target</div>
                   ) : (
                     <div className="text-yellow-400 text-sm font-semibold mt-1">⚠️ Below Target</div>
                   )}
@@ -358,7 +359,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-white/10 rounded-lg p-3">
                   <div className="text-xs text-gray-400 mb-1">Distinct-1</div>
-                  <div className="text-2xl font-bold text-purple-300">
+                  <div className="text-2xl font-bold text-fuchsia-300">
                     {metrics.comprehensive_metrics.lexical_diversity.distinct_1?.toFixed(3)}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">Unique unigrams / Total</div>
@@ -373,7 +374,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               </div>
               <div className="w-full bg-white/20 rounded-full h-4">
                 <div
-                  className="bg-gradient-to-r from-purple-400 to-pink-600 h-4 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-fuchsia-400 to-pink-600 h-4 rounded-full transition-all duration-500"
                   style={{ width: `${Math.min((metrics.comprehensive_metrics.lexical_diversity.combined / metrics.comprehensive_metrics.lexical_diversity.target_diversity) * 100, 100)}%` }}
                 />
               </div>
@@ -393,24 +394,26 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
 
           {/* Response Time - Prominent Display */}
           {metrics.comprehensive_metrics?.response_time && (
-            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl p-6 border-2 border-green-400/50 mb-6">
+            <div className="bg-gradient-to-r from-lime-500/20 to-emerald-500/20 rounded-xl p-6 border-2 border-lime-400/50 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <Clock className="w-8 h-8 text-green-400" />
+                  <Clock className="w-8 h-8 text-lime-400" />
                   <div>
                     <h3 className="text-2xl font-bold text-white">Response Time</h3>
-                    <p className="text-sm text-gray-300">Measures dialogue generation time per dialogue</p>
+                    <p className="text-sm text-gray-300" title="Gaps between turn timestamps set at generation time, not wall-clock user response time">
+                      Inter-turn gaps from generation timestamps (not wall-clock). Min is floored to ignore artifact gaps.
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl font-bold text-green-400">
+                  <div className="text-4xl font-bold text-lime-400">
                     {metrics.comprehensive_metrics?.response_time?.avg_response_time?.toFixed(2)}s
                   </div>
                   <div className="text-sm text-gray-300">
                     Target: {metrics.comprehensive_metrics.response_time.target_time?.toFixed(1)}s
                   </div>
                   {metrics.comprehensive_metrics?.response_time?.avg_response_time <= metrics.comprehensive_metrics?.response_time?.target_time ? (
-                    <div className="text-green-400 text-sm font-semibold mt-1">✅ Within Target</div>
+                    <div className="text-lime-400 text-sm font-semibold mt-1">✅ Within Target</div>
                   ) : (
                     <div className="text-yellow-400 text-sm font-semibold mt-1">⚠️ Above Target</div>
                   )}
@@ -425,7 +428,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                 </div>
                 <div className="bg-white/10 rounded-lg p-3">
                   <div className="text-xs text-gray-400 mb-1">Per Turn</div>
-                  <div className="text-2xl font-bold text-emerald-300">
+                  <div className="text-2xl font-bold text-lime-300">
                     {metrics.comprehensive_metrics.response_time.avg_time_per_turn?.toFixed(3)}s
                   </div>
                 </div>
@@ -444,7 +447,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               </div>
               <div className="w-full bg-white/20 rounded-full h-4">
                 <div
-                  className="bg-gradient-to-r from-green-400 to-emerald-600 h-4 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-lime-400 to-emerald-600 h-4 rounded-full transition-all duration-500"
                   style={{ width: `${Math.min((metrics.comprehensive_metrics.response_time.target_time / Math.max(metrics.comprehensive_metrics.response_time.avg_response_time, 0.1)) * 100, 100)}%` }}
                 />
               </div>
@@ -530,25 +533,25 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
 
           {/* Detailed Metrics */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Lexical Diversity */}
+            {/* Lexical Diversity (Distinct-1/2 based, 0–100 scale) */}
             <div className="bg-white/5 rounded-xl p-6 border border-white/20">
               <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-purple-400" />
+                <BarChart3 className="w-5 h-5 text-fuchsia-400" />
                 Lexical Diversity
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300">MTLD Score</span>
+                  <span className="text-gray-300" title="From Distinct-1/2 combined score, scaled 0–100">Score (0–100)</span>
                   <span className="font-semibold text-white">{metrics.categories.lexical_diversity?.toFixed(1)}</span>
                 </div>
                 <div className="w-full bg-white/20 rounded-full h-2">
                   <div
-                    className="bg-gradient-to-r from-purple-400 to-pink-600 h-2 rounded-full"
-                    style={{ width: `${(metrics.categories.lexical_diversity / 100) * 100}%` }}
+                    className="bg-gradient-to-r from-fuchsia-400 to-pink-600 h-2 rounded-full"
+                    style={{ width: `${Math.min(100, metrics.categories.lexical_diversity ?? 0)}%` }}
                   />
                 </div>
                 <p className="text-sm text-gray-400">
-                  Higher MTLD indicates greater lexical diversity and richness in vocabulary
+                  Vocabulary richness from Distinct-1/2 (unique n-grams). Higher = more diverse wording.
                 </p>
               </div>
             </div>
@@ -556,7 +559,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
             {/* Conversation Length */}
             <div className="bg-white/5 rounded-xl p-6 border border-white/20">
               <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-green-400" />
+                <Target className="w-5 h-5 text-lime-400" />
                 Conversation Statistics
               </h4>
               <div className="space-y-3">
@@ -578,7 +581,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
           {/* Domain Distribution */}
           <div className="bg-white/5 rounded-xl p-6 border border-white/20">
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-cyan-400" />
+              <BarChart3 className="w-5 h-5 text-sky-400" />
               Domain Distribution
             </h4>
 
@@ -586,7 +589,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               {Object.entries(metrics.categories.domain_distribution).map(([domain, percentage]) => (
                 <div key={domain} className="text-center">
                   <div className="text-lg font-bold text-white mb-1 capitalize">{domain.replace('_', ' ')}</div>
-                  <div className="text-2xl font-bold text-cyan-400">{percentage}%</div>
+                  <div className="text-2xl font-bold text-sky-400">{percentage}%</div>
                 </div>
               ))}
             </div>
@@ -597,7 +600,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                   <div className="w-24 text-sm text-gray-300 capitalize">{domain.replace('_', ' ')}</div>
                   <div className="flex-1 bg-white/20 rounded-full h-3">
                     <div
-                      className="bg-gradient-to-r from-cyan-400 to-blue-600 h-3 rounded-full"
+                      className="bg-gradient-to-r from-fuchsia-400 to-sky-500 h-3 rounded-full"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -607,13 +610,15 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
             </div>
           </div>
 
-          {/* Task Success by Domain */}
+          {/* Task Success by Domain (TSR: intent + user satisfaction) */}
           <div className="bg-white/5 rounded-xl p-6 border border-white/20">
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-lime-400" />
               Task Success by Domain
             </h4>
-
+            <p className="text-sm text-gray-400 mb-3" title="Intent fulfilled and user expressed satisfaction">
+              Task success: intent fulfilled and user expressed satisfaction (e.g. thanks, perfect).
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {Object.entries(metrics.categories.task_success_by_domain).map(([domain, successRate]) => (
                 <div key={domain} className={`rounded-lg p-4 border ${getScoreColor(successRate)}`}>
@@ -630,26 +635,53 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
             </div>
           </div>
 
+          {/* Goal Completion by Domain (GCR: constraints + requestables) */}
+          {metrics.categories.goal_completion_by_domain && Object.keys(metrics.categories.goal_completion_by_domain).length > 0 && (
+            <div className="bg-white/5 rounded-xl p-6 border border-white/20">
+              <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5 text-orange-400" />
+                Goal Completion by Domain
+              </h4>
+              <p className="text-sm text-gray-400 mb-3" title="Constraints and requestables from goal satisfied in dialogue">
+                Goal completion: constraints and requestables from the goal satisfied in the dialogue.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {Object.entries(metrics.categories.goal_completion_by_domain).map(([domain, rate]) => (
+                  <div key={domain} className={`rounded-lg p-4 border ${getScoreColor(rate)}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      {getScoreIcon(rate)}
+                      <span className="font-semibold text-white capitalize">{domain.replace('_', ' ')}</span>
+                    </div>
+                    <div className="text-xl font-bold text-white">
+                      {(rate * 100)?.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-gray-300">Completion Rate</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Comprehensive Metrics Section */}
           {metrics.comprehensive_metrics && (
             <div className="space-y-6">
               <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                <BarChart3 className="w-6 h-6 text-cyan-400" />
+                <BarChart3 className="w-6 h-6 text-fuchsia-400" />
                 Comprehensive Evaluation Metrics
               </h3>
 
               {/* BERTScore Semantic Similarity - Detailed View */}
               {metrics.comprehensive_metrics.bertscore_similarity && (
-                <div className="bg-white/5 rounded-xl p-6 border border-blue-400/30">
+                <div className="bg-white/5 rounded-xl p-6 border border-sky-400/30">
                   <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-blue-400" />
+                    <TrendingUp className="w-5 h-5 text-sky-400" />
                     BERTScore Semantic Similarity
                   </h4>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Overall BERTScore</span>
                       <div className="text-right">
-                        <span className="text-3xl font-bold text-blue-400">
+                        <span className="text-3xl font-bold text-sky-400">
                           {metrics.comprehensive_metrics.bertscore_similarity.overall_bertscore?.toFixed(3)}
                         </span>
                         <span className="text-gray-400 ml-2">
@@ -662,7 +694,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-blue-400 to-cyan-600 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-sky-400 to-fuchsia-500 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((metrics.comprehensive_metrics.bertscore_similarity.overall_bertscore / metrics.comprehensive_metrics.bertscore_similarity.target_score) * 100, 100)}%` }}
                       />
                     </div>
@@ -690,16 +722,16 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
 
               {/* Lexical Diversity - Detailed View */}
               {metrics.comprehensive_metrics.lexical_diversity && (
-                <div className="bg-white/5 rounded-xl p-6 border border-purple-400/30">
+                <div className="bg-white/5 rounded-xl p-6 border border-fuchsia-400/30">
                   <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-purple-400" />
+                    <BarChart3 className="w-5 h-5 text-fuchsia-400" />
                     Lexical Diversity
                   </h4>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-white/10 rounded-lg p-4">
                         <div className="text-sm text-gray-400 mb-2">Combined Score</div>
-                        <div className="text-3xl font-bold text-purple-400">
+                        <div className="text-3xl font-bold text-fuchsia-400">
                           {metrics.comprehensive_metrics.lexical_diversity.combined?.toFixed(3)}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
@@ -708,7 +740,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                       </div>
                       <div className="bg-white/10 rounded-lg p-4">
                         <div className="text-sm text-gray-400 mb-2">Distinct-1</div>
-                        <div className="text-2xl font-bold text-purple-300">
+                        <div className="text-2xl font-bold text-fuchsia-300">
                           {metrics.comprehensive_metrics.lexical_diversity.distinct_1?.toFixed(3)}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">Unique unigrams / Total</div>
@@ -723,7 +755,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-purple-400 to-pink-600 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-fuchsia-400 to-pink-600 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((metrics.comprehensive_metrics.lexical_diversity.combined / metrics.comprehensive_metrics.lexical_diversity.target_diversity) * 100, 100)}%` }}
                       />
                     </div>
@@ -740,7 +772,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                         {metrics.comprehensive_metrics.lexical_diversity.diversity_ratio && (
                           <>
                             <div className="text-sm text-gray-400">Diversity Ratio:</div>
-                            <div className="text-sm font-semibold text-purple-400">
+                            <div className="text-sm font-semibold text-fuchsia-400">
                               {metrics.comprehensive_metrics.lexical_diversity.diversity_ratio?.toFixed(2)}x
                             </div>
                           </>
@@ -771,16 +803,16 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
 
               {/* Response Time - Detailed View */}
               {metrics.comprehensive_metrics.response_time && (
-                <div className="bg-white/5 rounded-xl p-6 border border-green-400/30">
+                <div className="bg-white/5 rounded-xl p-6 border border-lime-400/30">
                   <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-green-400" />
+                    <Clock className="w-5 h-5 text-lime-400" />
                     Response Time
                   </h4>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="bg-white/10 rounded-lg p-4">
                         <div className="text-sm text-gray-400 mb-2">Average Time</div>
-                        <div className="text-3xl font-bold text-green-400">
+                        <div className="text-3xl font-bold text-lime-400">
                           {metrics.comprehensive_metrics?.response_time?.avg_response_time?.toFixed(2)}s
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
@@ -812,12 +844,12 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                     </div>
                     <div className="w-full bg-white/20 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-green-400 to-emerald-600 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-lime-400 to-emerald-600 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((metrics.comprehensive_metrics.response_time.target_time / Math.max(metrics.comprehensive_metrics.response_time.avg_response_time, 0.1)) * 100, 100)}%` }}
                       />
                     </div>
-                    <p className="text-sm text-gray-400 mt-2">
-                      {metrics.comprehensive_metrics.response_time.note || "Measures dialogue generation time in seconds"}
+                    <p className="text-sm text-gray-400 mt-2" title="Inter-turn gaps from generation timestamps; not wall-clock user response time">
+                      {metrics.comprehensive_metrics.response_time.note || "Inter-turn gaps from generation timestamps (not wall-clock). Min floored to ignore artifact gaps."}
                     </p>
                     {metrics.comprehensive_metrics.response_time.domain_response_times && (
                       <div className="mt-4 space-y-2">
@@ -844,13 +876,13 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                 {metrics.comprehensive_metrics.goal_completion_rate && (
                   <div className="bg-white/5 rounded-xl p-6 border border-white/20">
                     <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-green-400" />
+                      <Target className="w-5 h-5 text-lime-400" />
                       Goal Completion Rate (GCR)
                     </h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Overall GCR</span>
-                        <span className="text-2xl font-bold text-green-400">
+                        <span className="text-2xl font-bold text-lime-400">
                           {metrics.comprehensive_metrics.goal_completion_rate.overall_gcr?.toFixed(1)}%
                         </span>
                       </div>
@@ -859,7 +891,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                       </div>
                       <div className="w-full bg-white/20 rounded-full h-3">
                         <div
-                          className="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full"
+                          className="bg-gradient-to-r from-lime-400 to-green-600 h-3 rounded-full"
                           style={{ width: `${metrics.comprehensive_metrics.goal_completion_rate.overall_gcr}%` }}
                         />
                       </div>
@@ -881,13 +913,13 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                 {metrics.comprehensive_metrics.task_success_rate && (
                   <div className="bg-white/5 rounded-xl p-6 border border-white/20">
                     <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-blue-400" />
+                      <CheckCircle className="w-5 h-5 text-sky-400" />
                       Task Success Rate (TSR)
                     </h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Overall TSR</span>
-                        <span className="text-2xl font-bold text-blue-400">
+                        <span className="text-2xl font-bold text-sky-400">
                           {metrics.comprehensive_metrics.task_success_rate.overall_tsr?.toFixed(1)}%
                         </span>
                       </div>
@@ -896,7 +928,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                       </div>
                       <div className="w-full bg-white/20 rounded-full h-3">
                         <div
-                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full"
+                          className="bg-gradient-to-r from-sky-400 to-indigo-600 h-3 rounded-full"
                           style={{ width: `${metrics.comprehensive_metrics.task_success_rate.overall_tsr}%` }}
                         />
                       </div>
@@ -921,13 +953,13 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                 {metrics.comprehensive_metrics.bleu_score && (
                   <div className="bg-white/5 rounded-xl p-6 border border-white/20">
                     <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-purple-400" />
+                      <TrendingUp className="w-5 h-5 text-fuchsia-400" />
                       BLEU Score
                     </h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Average BLEU</span>
-                        <span className="text-2xl font-bold text-purple-400">
+                        <span className="text-2xl font-bold text-fuchsia-400">
                           {metrics.comprehensive_metrics.bleu_score.average_bleu?.toFixed(3)}
                         </span>
                       </div>
@@ -936,7 +968,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
                       </div>
                       <div className="w-full bg-white/20 rounded-full h-3">
                         <div
-                          className="bg-gradient-to-r from-purple-400 to-pink-600 h-3 rounded-full"
+                          className="bg-gradient-to-r from-fuchsia-400 to-pink-600 h-3 rounded-full"
                           style={{ width: `${(metrics.comprehensive_metrics.bleu_score.average_bleu * 100)}%` }}
                         />
                       </div>
@@ -981,7 +1013,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               {metrics.comprehensive_metrics.llm_judge?.overall_scores && (
                 <div className="bg-white/5 rounded-xl p-6 border border-white/20">
                   <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-cyan-400" />
+                    <Award className="w-5 h-5 text-fuchsia-400" />
                     LLM-as-a-Judge Evaluation
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -1052,7 +1084,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
               {metrics.comprehensive_metrics.dialogue_length && (
                 <div className="bg-white/5 rounded-xl p-6 border border-white/20">
                   <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <Target className="w-5 h-5 text-green-400" />
+                    <Target className="w-5 h-5 text-lime-400" />
                     Dialogue Length Statistics
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1087,7 +1119,7 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
           )}
 
           {/* Evaluation Summary */}
-          <div className="bg-gradient-to-r from-cyan-500/20 to-purple-600/20 rounded-xl p-6 border border-cyan-400/30">
+          <div className="bg-gradient-to-r from-fuchsia-500/20 via-indigo-500/20 to-sky-500/20 rounded-xl p-6 border border-fuchsia-400/30">
             <h4 className="text-lg font-semibold text-white mb-3">Evaluation Summary</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>

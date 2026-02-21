@@ -1,0 +1,127 @@
+[
+  {
+    "dialogue_id": "0fdd07ff-a67a-4305-8f57-d2eb353503db",
+    "goal": "Book a taxi leaving at 5:45 from Churchill College",
+    "domain": "taxi",
+    "context": "I have an early meeting at the city center and I need a reliable taxi to take me there. I'm currently at Churchill College and I want to make sure I arrive on time.",
+    "user_persona": "General user (formal and concise)",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need to book a taxi for 5:45 AM from Churchill College. Can you help me with that?",
+        "timestamp": "2026-02-21T20:51:07.234686"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can assist you with booking a taxi from Churchill College. To confirm, you would like a taxi to pick you up at 5:45 AM from Churchill College and take you to the city center, is that correct? I'll check the availability of taxi services in that area to ensure a reliable pickup at the specified time.",
+        "timestamp": "2026-02-21T20:51:07.698013"
+      },
+      {
+        "role": "User",
+        "text": "You've confirmed my pickup details, now could you please check the availability of taxi services and provide me with a reference number for the booking? I'd like to ensure that a taxi will be available at 5:45 AM from Churchill College to take me to the city center.",
+        "timestamp": "2026-02-21T20:51:08.211153"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability of taxi services and found that City Cabs has a taxi available to pick you up at 5:45 AM from Churchill College. Your taxi will be a silver Toyota Prius, and the driver will be waiting for you at the main entrance of the college. Your booking reference number is CITY-005, and I've confirmed the pickup time and location to ensure a smooth journey to the city center.",
+        "timestamp": "2026-02-21T20:51:08.824916"
+      },
+      {
+        "role": "User",
+        "text": "I've taken note of the booking reference number CITY-005 and the details of the silver Toyota Prius from City Cabs. Could you please confirm the estimated arrival time at the city center, so I can plan my meeting schedule accordingly?",
+        "timestamp": "2026-02-21T20:51:09.225237"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The estimated arrival time at the city center is 6:15 AM, considering normal traffic conditions, and you will receive a confirmation call from City Cabs 10 minutes prior to the pickup time to reconfirm the details. With your booking reference number CITY-005, you can be assured that the silver Toyota Prius from City Cabs will be waiting for you at the main entrance of Churchill College at 5:45 AM. Please note that you can also track the taxi's location using the",
+        "timestamp": "2026-02-21T20:51:09.815833"
+      },
+      {
+        "role": "User",
+        "text": "I appreciate the confirmation of the estimated arrival time at 6:15 AM and the reassurance of a confirmation call from City Cabs prior to pickup. To finalize, could you please let me know if there are any additional charges or requirements I should be aware of for the journey from Churchill College to",
+        "timestamp": "2026-02-21T20:51:10.338268"
+      },
+      {
+        "role": "SupportBot",
+        "text": "There are no additional charges for the journey from Churchill College to the city center, and you can pay by card or cash directly to the driver. Your booking with City Cabs, reference number CITY-005, includes all applicable taxes and fees, and you will receive a receipt at the end of the trip. Please note that if you need to make any changes to your booking, you can contact City Cabs directly using the reference number CITY-005.",
+        "timestamp": "2026-02-21T20:51:11.237382"
+      },
+      {
+        "role": "User",
+        "text": "I've noted that my booking with City Cabs, reference number CITY-005, includes all applicable taxes and fees, and I can pay by card or cash directly to the driver. To ensure a smooth payment process, could you please let me know if there's a specific card machine or payment terminal",
+        "timestamp": "2026-02-21T20:51:11.665432"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Your taxi with Swift Cabs from Churchill College is confirmed for 3:00 PM pickup at the main entrance. Reference: TAXI-CHUR-001. Is there anything else?",
+        "timestamp": "2026-02-21T20:51:11.941943"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T20:51:11.941968"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-02-21T20:51:11.942241",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 4.708,
+      "generation_start_time": "2026-02-21T20:51:07.234641",
+      "generation_end_time": "2026-02-21T20:51:11.942239",
+      "goal_complexity": 6,
+      "supportbot_style": "formal and brief",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "0fdd07ff-a67a-4305-8f57-d2eb353503db",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T20:51:12.366064"
+      }
+    }
+  }
+]

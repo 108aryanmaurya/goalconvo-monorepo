@@ -1,0 +1,100 @@
+[
+  {
+    "dialogue_id": "94b7c1c4-6794-4e6a-abc1-b1a7e5bccb0e",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "User needs assistance with find information about attractions or things to do",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with find information about attractions or things to do",
+        "timestamp": "2026-02-21T19:13:55.578269"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with attractions. Are you interested in museums, tours, or outdoor activities?",
+        "timestamp": "2026-02-21T19:13:55.630963"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-21T19:13:55.691862"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-21T19:13:55.759998"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-21T19:13:55.956855"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-21T19:13:56.013895"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-21T19:13:56.072058",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.494,
+      "generation_start_time": "2026-02-21T19:13:55.578220",
+      "generation_end_time": "2026-02-21T19:13:56.072052",
+      "quality_score": 0.6599999999999999,
+      "quality_assessment": {
+        "dialogue_id": "94b7c1c4-6794-4e6a-abc1-b1a7e5bccb0e",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 2.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6599999999999999,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T19:13:57.699140"
+      }
+    }
+  }
+]

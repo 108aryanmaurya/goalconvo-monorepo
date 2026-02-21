@@ -1,0 +1,614 @@
+[
+  {
+    "dialogue_id": "4e3c05a1-ba2c-4884-ac3d-33122814498c",
+    "goal": "Book a room at Cityroomz",
+    "domain": "hotel",
+    "context": "I'm planning a weekend getaway with my partner and we need a cozy place to stay. Cityroomz has great reviews and is centrally located, which is perfect for exploring the city.",
+    "user_persona": "friendly and detail-oriented",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm interested in booking a room at Cityroomz for a weekend getaway with my partner.",
+        "timestamp": "2026-02-21T17:11:45.213919"
+      },
+      {
+        "role": "SupportBot",
+        "text": "That sounds like a wonderful plan! Let me check the availability for a double room at Cityroomz for your weekend getaway with your partner. I'll confirm the room type and price for you shortly.",
+        "timestamp": "2026-02-21T17:11:46.019810"
+      },
+      {
+        "role": "User",
+        "text": "Can you please confirm the availability of the double room at Cityroomz for the weekend getaway?",
+        "timestamp": "2026-02-21T17:11:46.652543"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'm happy to inform you that a double room at Cityroomz is available for your weekend getaway with your partner. The price for the room is $150 per night. Would you like me to proceed with making the reservation for you?",
+        "timestamp": "2026-02-21T17:11:47.538359"
+      },
+      {
+        "role": "User",
+        "text": "Great, I'd like to proceed with making the reservation for the double room at Cityroomz for the weekend getaway. Thank you!",
+        "timestamp": "2026-02-21T17:11:48.299915"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I have successfully made the reservation for the double room at Cityroomz for your weekend getaway. Your room is booked for two nights at $150 per night. Enjoy your stay!",
+        "timestamp": "2026-02-21T17:11:49.226659"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for making the reservation! Could you confirm the check-in and check-out times for the weekend getaway at Cityroomz?",
+        "timestamp": "2026-02-21T17:11:49.970809"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The check-in time at Cityroomz for your weekend getaway is at 3:00 pm and the check-out time is at 11:00 am. Enjoy your stay!",
+        "timestamp": "2026-02-21T17:11:50.817278"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T17:11:50.817306"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-21T17:11:50.817549",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.604,
+      "generation_start_time": "2026-02-21T17:11:45.213864",
+      "generation_end_time": "2026-02-21T17:11:50.817547",
+      "goal_complexity": 7,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "4e3c05a1-ba2c-4884-ac3d-33122814498c",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T17:11:52.323424"
+      }
+    }
+  },
+  {
+    "dialogue_id": "d536d573-efec-47c6-9335-4aec30e403c9",
+    "goal": "Find a Scottish restaurant for dinner tonight with vegetarian options",
+    "domain": "restaurant",
+    "context": "I have guests visiting from out of town who want to experience Scottish cuisine. One of them is vegetarian, so we need a restaurant that offers vegetarian options.",
+    "user_persona": "Friendly and detail-oriented",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hello, I'm looking for a Scottish restaurant for dinner tonight. We'd like to try authentic Scottish cuisine, and it's important that they have good vegetarian options.",
+        "timestamp": "2026-02-21T17:11:54.580418"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've found a great Scottish restaurant for you for dinner tonight. The place is called \"Highland Feast\" and they offer excellent vegetarian options. Would you like me to make a reservation for you?",
+        "timestamp": "2026-02-21T17:11:55.490870"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the location of \"Highland Feast\" and the reservation time for tonight?",
+        "timestamp": "2026-02-21T17:11:56.422382"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The \"Highland Feast\" restaurant is located at 123 Main Street. Your reservation is set for 7:30 pm tonight.",
+        "timestamp": "2026-02-21T17:11:57.198668"
+      },
+      {
+        "role": "User",
+        "text": "Could you also confirm if \"Highland Feast\" offers any traditional Scottish vegetarian dishes on their menu?",
+        "timestamp": "2026-02-21T17:11:58.163257"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, \"Highland Feast\" does offer traditional Scottish vegetarian dishes on their menu. You can enjoy options like vegetarian haggis, neeps, and tatties.",
+        "timestamp": "2026-02-21T17:11:58.982471"
+      },
+      {
+        "role": "User",
+        "text": "Could you also let me know if \"Highland Feast\" has a cozy atmosphere or any specific ambiance?",
+        "timestamp": "2026-02-21T17:11:59.698723"
+      },
+      {
+        "role": "SupportBot",
+        "text": "\"Highland Feast\" has a cozy atmosphere with a traditional Scottish vibe, perfect for your guests to experience Scottish cuisine.",
+        "timestamp": "2026-02-21T17:12:00.855483"
+      },
+      {
+        "role": "User",
+        "text": "Could you provide some recommendations for traditional Scottish vegetarian dishes at \"Highland Feast\"?",
+        "timestamp": "2026-02-21T17:12:01.592500"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Certainly! Some traditional Scottish vegetarian dishes I recommend at \"Highland Feast\" include vegetarian haggis, neeps, and tatties. These dishes will give your guests a delicious taste of Scottish cuisine while catering to their dietary preferences.",
+        "timestamp": "2026-02-21T17:12:02.566545"
+      },
+      {
+        "role": "User",
+        "text": "Could you also tell me if \"Highland Feast\" takes reservations for tonight?",
+        "timestamp": "2026-02-21T17:12:03.283252"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Yes, \"Highland Feast\" does take reservations for tonight. I've secured a table for you at 7:30 pm. Enjoy your traditional Scottish dining experience with vegetarian options!",
+        "timestamp": "2026-02-21T17:12:04.598783"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T17:12:04.598807"
+      }
+    ],
+    "metadata": {
+      "num_turns": 13,
+      "generated_at": "2026-02-21T17:12:04.599007",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 10.019,
+      "generation_start_time": "2026-02-21T17:11:54.580377",
+      "generation_end_time": "2026-02-21T17:12:04.599005",
+      "goal_complexity": 3,
+      "quality_score": 0.81,
+      "quality_assessment": {
+        "dialogue_id": "d536d573-efec-47c6-9335-4aec30e403c9",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 13,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 13 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": false,
+            "profane_turns": [
+              0
+            ],
+            "message": "Found profanity in 1 turns"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 0.8333333333333334
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.81,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T17:12:06.499171"
+      }
+    }
+  },
+  {
+    "dialogue_id": "b6c23201-4e1f-4238-b6ee-0a45f5572f23",
+    "goal": "Book a taxi leaving at 15:00 from Arbury Lodge Guesthouse",
+    "domain": "taxi",
+    "context": "I am staying at Arbury Lodge Guesthouse and need to catch a flight in the afternoon. I want to ensure a timely and reliable taxi service to take me to the airport.",
+    "user_persona": "efficient and detail-oriented",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need to arrange for a taxi to pick me up from Arbury Lodge Guesthouse at 15:00. I have a flight to catch in the afternoon.",
+        "timestamp": "2026-02-21T17:12:08.507736"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I have arranged for a taxi to pick you up from Arbury Lodge Guesthouse at 3:00 PM. Your taxi is all set for your airport transfer.",
+        "timestamp": "2026-02-21T17:12:09.427157"
+      },
+      {
+        "role": "User",
+        "text": "Could you please provide the name of the taxi company for my pickup at Arbury Lodge Guesthouse at 15:00?",
+        "timestamp": "2026-02-21T17:12:10.246710"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The taxi company that will pick you up from Arbury Lodge Guesthouse at 15:00 is called Swift Cabs. They will be there on time for your airport transfer.",
+        "timestamp": "2026-02-21T17:12:11.067897"
+      },
+      {
+        "role": "User",
+        "text": "Great, thank you for confirming the name of the taxi company. That's all I needed to know.",
+        "timestamp": "2026-02-21T17:12:12.089878"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! If you need any more assistance or information in the future, feel free to ask. Have a safe trip to the airport!",
+        "timestamp": "2026-02-21T17:12:12.845833"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for confirming the name of the taxi company. Have a safe trip to the airport!",
+        "timestamp": "2026-02-21T17:12:13.565985"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! If you have any more questions or need further assistance, feel free to ask. Have a safe trip to the airport!",
+        "timestamp": "2026-02-21T17:12:14.911665"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T17:12:14.911693"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-21T17:12:14.911908",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.404,
+      "generation_start_time": "2026-02-21T17:12:08.507683",
+      "generation_end_time": "2026-02-21T17:12:14.911907",
+      "goal_complexity": 2,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "b6c23201-4e1f-4238-b6ee-0a45f5572f23",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T17:12:16.565670"
+      }
+    }
+  },
+  {
+    "dialogue_id": "2398f65f-36f9-4839-af83-0c74eecc3a81",
+    "goal": "Catch a train leaving after 16:15",
+    "domain": "train",
+    "context": "I have a meeting in the afternoon and need to catch a train to attend a conference. I must leave after 16:15 to make it on time. I prefer to travel by train for comfort and convenience.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need to catch a train after 4:15 pm. Can you help me find a suitable train schedule for my trip?",
+        "timestamp": "2026-02-21T17:12:18.631748"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with that. Let me check the train schedules departing after 4:15 pm for your trip to the conference. Just a moment while I find the best option for you.",
+        "timestamp": "2026-02-21T17:12:19.414937"
+      },
+      {
+        "role": "User",
+        "text": "Could you please provide me with the details of the train schedule departing after 4:15 pm?",
+        "timestamp": "2026-02-21T17:12:20.288579"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I found a suitable train departing at 16:30 that fits your schedule for the conference. Would you like me to proceed with booking this train for you?",
+        "timestamp": "2026-02-21T17:12:21.408238"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the details of the train schedule, such as the departure time and destination?",
+        "timestamp": "2026-02-21T17:12:22.169387"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The train you'll be taking departs at 16:30. It will take you to the conference venue in time for your event.",
+        "timestamp": "2026-02-21T17:12:23.046934"
+      },
+      {
+        "role": "User",
+        "text": "Can you also confirm the destination of the train departing at 16:30?",
+        "timestamp": "2026-02-21T17:12:24.013871"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The destination of the train departing at 16:30 is the conference venue. It will take you there in time for your event.",
+        "timestamp": "2026-02-21T17:12:25.504436"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T17:12:25.504474"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-21T17:12:25.504724",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.873,
+      "generation_start_time": "2026-02-21T17:12:18.631713",
+      "generation_end_time": "2026-02-21T17:12:25.504724",
+      "goal_complexity": 2,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "2398f65f-36f9-4839-af83-0c74eecc3a81",
+        "domain": "train",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T17:12:27.298048"
+      }
+    }
+  },
+  {
+    "dialogue_id": "85835bc9-1684-4410-b203-8c15bbd1ef40",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "I have some free time this weekend and want to explore the city. I'm looking for recommendations on popular attractions or activities to make the most of my visit.",
+    "user_persona": "Curious traveler seeking local insights",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hey there, I'm excited to explore the city this weekend. Can you suggest any must-visit attractions or fun activities I should check out?",
+        "timestamp": "2026-02-21T17:12:29.050076"
+      },
+      {
+        "role": "SupportBot",
+        "text": "That sounds like a great plan! I recommend checking out the city's iconic landmarks like the Central Park or the Museum of Modern Art. These attractions offer a unique experience and are perfect for a weekend exploration. Enjoy your time discovering the city!",
+        "timestamp": "2026-02-21T17:12:29.907401"
+      },
+      {
+        "role": "User",
+        "text": "Can you provide more details about the Museum of Modern Art?",
+        "timestamp": "2026-02-21T17:12:30.500004"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The Museum of Modern Art, often referred to as MoMA, is located in Midtown Manhattan and is known for its impressive collection of modern and contemporary art. It's a must-visit for art enthusiasts looking to explore unique and innovative works.",
+        "timestamp": "2026-02-21T17:12:31.394995"
+      },
+      {
+        "role": "User",
+        "text": "Could you provide information on the operating hours and admission fees for the Museum of Modern Art?",
+        "timestamp": "2026-02-21T17:12:32.026027"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The Museum of Modern Art is open from 10:30 am to 5:30 pm every day except Tuesdays when it's closed. The admission fee for adults is $25, seniors $18, and students $14. Enjoy your visit!",
+        "timestamp": "2026-02-21T17:12:33.184557"
+      },
+      {
+        "role": "User",
+        "text": "What are some other popular attractions I should consider visiting this weekend?",
+        "timestamp": "2026-02-21T17:12:33.821033"
+      },
+      {
+        "role": "SupportBot",
+        "text": "For more popular attractions to visit this weekend, I recommend exploring the High Line Park for a unique urban green space experience or checking out the Empire State Building for breathtaking views of the city skyline. Both are iconic landmarks that offer a memorable experience during your visit. Enjoy your weekend exploration!",
+        "timestamp": "2026-02-21T17:12:35.713574"
+      },
+      {
+        "role": "User",
+        "text": "What are the operating hours and admission fees for the Empire State Building?",
+        "timestamp": "2026-02-21T17:12:36.309808"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The Empire State Building is open from 8:00 am to 2:00 am daily, with the last elevator going up at 1:15 am. The general admission fee for adults is $42, seniors $39, and children $36. Enjoy your visit and the stunning views from the top!",
+        "timestamp": "2026-02-21T17:12:37.266705"
+      },
+      {
+        "role": "User",
+        "text": "What are the operating hours and admission fees for the High Line Park?",
+        "timestamp": "2026-02-21T17:12:37.997147"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The High Line Park is open from 7:00 am to 11:00 pm daily. Admission to the park is free for all visitors. Enjoy your time exploring this unique urban green space this weekend!",
+        "timestamp": "2026-02-21T17:12:39.534567"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T17:12:39.534600"
+      }
+    ],
+    "metadata": {
+      "num_turns": 13,
+      "generated_at": "2026-02-21T17:12:39.534805",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 10.485,
+      "generation_start_time": "2026-02-21T17:12:29.050032",
+      "generation_end_time": "2026-02-21T17:12:39.534804",
+      "goal_complexity": 1,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "85835bc9-1684-4410-b203-8c15bbd1ef40",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 13,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 13 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T17:12:41.158294"
+      }
+    }
+  }
+]

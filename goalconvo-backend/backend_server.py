@@ -209,27 +209,33 @@ def convert_evaluation_to_frontend_format(eval_results: Dict[str, Any]) -> Dict[
     avg_turns = length_metrics.get("avg_turns", 0)
     std_turns = length_metrics.get("std_turns", 0)
     
-    # Extract domain distribution
+    # Extract domain distribution and domain-level success metrics
     domain_distribution = {}
-    domain_task_success = {}
-    
-    # Get domain stats from GCR
+    domain_task_success = {}   # TSR by domain (task success: intent + satisfaction)
+    goal_completion_by_domain = {}  # GCR by domain (constraints + requestables)
+
     gcr_domains = metrics.get("goal_completion_rate", {}).get("domain_gcr", {})
+    tsr_domains = metrics.get("task_success_rate", {}).get("domain_tsr", {})
+
     for domain, stats in gcr_domains.items():
         domain_distribution[domain] = stats.get("total", 0)
-        domain_task_success[domain] = stats.get("percentage", 0) / 100.0
-    
-    # If no domain data, try to get from TSR
-    if not domain_distribution:
-        tsr_domains = metrics.get("task_success_rate", {}).get("domain_tsr", {})
+        goal_completion_by_domain[domain] = stats.get("percentage", 0) / 100.0
+    if not domain_distribution and tsr_domains:
         for domain, stats in tsr_domains.items():
             domain_distribution[domain] = stats.get("total", 0)
-            domain_task_success[domain] = stats.get("percentage", 0) / 100.0
-    
-    # Calculate lexical diversity from repetition rate
-    repetition_rate = metrics.get("repetition_rate", {}).get("overall_repetition_rate", 0.1)
-    lexical_diversity = (1.0 - repetition_rate) * 100.0  # Convert to percentage
-    
+
+    for domain, stats in tsr_domains.items():
+        domain_task_success[domain] = stats.get("percentage", 0) / 100.0
+
+    # Lexical diversity: use Distinct-based combined (0-1) * 100 when available, else (1 - repetition_rate) * 100
+    lex_div = metrics.get("lexical_diversity", {})
+    if lex_div and "combined" in lex_div:
+        combined = float(lex_div.get("combined", 0))
+        lexical_diversity = round(combined * 100.0, 2)  # 0-100 scale for display
+    else:
+        repetition_rate = metrics.get("repetition_rate", {}).get("overall_repetition_rate", 0.1)
+        lexical_diversity = round((1.0 - repetition_rate) * 100.0, 2)  # Fallback: inverse repetition %
+
     # Build frontend format
     frontend_metrics = {
         "overall_score": overall_score,
@@ -245,13 +251,14 @@ def convert_evaluation_to_frontend_format(eval_results: Dict[str, Any]) -> Dict[
                 "std_dev": std_turns
             },
             "domain_distribution": domain_distribution,
-            "task_success_by_domain": domain_task_success
+            "task_success_by_domain": domain_task_success,
+            "goal_completion_by_domain": goal_completion_by_domain
         },
         # Add comprehensive metrics for detailed display
         "comprehensive_metrics": {
             "bertscore_similarity": metrics.get("bertscore_similarity", {}),
             "lexical_diversity": metrics.get("lexical_diversity", {}),
-            "response_time": metrics.get("response_time", {}),
+            "response_time": _normalize_response_time_for_frontend(metrics.get("response_time", {})),
             "goal_completion_rate": metrics.get("goal_completion_rate", {}),
             "task_success_rate": metrics.get("task_success_rate", {}),
             "bleu_score": metrics.get("bleu_score", {}),
@@ -262,6 +269,28 @@ def convert_evaluation_to_frontend_format(eval_results: Dict[str, Any]) -> Dict[
     }
     
     return frontend_metrics
+
+
+def _normalize_response_time_for_frontend(rt: dict) -> dict:
+    """Map response_time keys from evaluation script to frontend-expected names."""
+    if not rt:
+        return rt
+    out = dict(rt)
+    out.setdefault("avg_response_time", rt.get("overall_avg_seconds"))
+    out.setdefault("std_response_time", rt.get("overall_std_seconds"))
+    out.setdefault("min_response_time", rt.get("min_seconds"))
+    out.setdefault("max_response_time", rt.get("max_seconds"))
+    dm = rt.get("domain_metrics", {})
+    if dm and "domain_response_times" not in out:
+        out["domain_response_times"] = {
+            d: {"mean": v.get("avg_seconds"), "std": v.get("std_seconds"), "min": v.get("min_seconds"), "max": v.get("max_seconds"), "count": v.get("num_gaps", 0)}
+            for d, v in dm.items()
+        }
+    out.setdefault("total_dialogues", 1)
+    out.setdefault("dialogues_with_timing", 1)
+    out.setdefault("target_time", 2.0)
+    out.setdefault("avg_time_per_turn", out.get("avg_response_time") or 0)
+    return out
 
 
 # All individual pipeline endpoints removed - only /api/run-pipeline is used now
@@ -347,14 +376,21 @@ def run_pipeline():
                 if ComprehensiveDialogueEvaluator:
                     try:
                         logger.info("Running comprehensive evaluation...")
+                        emit_callback('step_start', {
+                            'step': 'evaluation',
+                            'step_name': 'Evaluation',
+                            'message': 'Running comprehensive evaluation...'
+                        })
                         emit_callback('log', {
                             'message': 'Running comprehensive evaluation...',
                             'step': 'evaluation'
                         })
                         
-                        # Load generated dialogues
-                        generated_dialogues = dataset_store.load_dialogues(limit=num_dialogues * 2)  # Get recent dialogues
-                        
+                        # Prefer this run's accepted dialogues so evaluation reflects this run (not stale load from disk)
+                        generated_dialogues = stats.get("accepted_dialogues")
+                        if generated_dialogues is None:
+                            generated_dialogues = dataset_store.load_dialogues(limit=num_dialogues * 2)
+
                         if generated_dialogues:
                             # Load reference dialogues for BERTScore/BLEU (same path as download_multiwoz.py)
                             multiwoz_file = Path(config.multiwoz_dir) / "processed_dialogues.json"
@@ -379,7 +415,8 @@ def run_pipeline():
                             eval_results = comprehensive_evaluator.evaluate_dialogues(
                                 generated_dialogues,
                                 reference_dialogues=reference_dialogues,
-                                use_llm_judge=use_llm_judge
+                                use_llm_judge=use_llm_judge,
+                                emit_callback=emit_callback
                             )
                             
                             # Convert to frontend format

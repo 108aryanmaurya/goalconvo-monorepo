@@ -105,16 +105,24 @@ class TestDialogueSimulator:
         assert result is False
     
     def test_check_completion_keywords(self):
-        """Test keyword-based goal completion check."""
+        """Test keyword-based goal completion check requires both user satisfaction and assistant-side concrete evidence."""
         goal = "Book a hotel room"
-        history = [
+        # User thanks alone is not enough; need assistant to have given concrete completion detail
+        history_no_evidence = [
             {"role": "User", "text": "I need a hotel room"},
             {"role": "SupportBot", "text": "I can help with that"},
             {"role": "User", "text": "Thank you, that's perfect!"}
         ]
-        
-        result = self.simulator._check_completion_keywords(goal, history)
-        
+        result = self.simulator._check_completion_keywords(goal, history_no_evidence)
+        assert result is False
+
+        # With assistant-side completion evidence (e.g. "confirmed", "booking"), returns True
+        history_with_evidence = [
+            {"role": "User", "text": "I need a hotel room"},
+            {"role": "SupportBot", "text": "Your booking at the Grand Hotel is confirmed for 2 nights."},
+            {"role": "User", "text": "Thank you, that's perfect!"}
+        ]
+        result = self.simulator._check_completion_keywords(goal, history_with_evidence)
         assert result is True
     
     def test_simulate_batch_dialogues(self):

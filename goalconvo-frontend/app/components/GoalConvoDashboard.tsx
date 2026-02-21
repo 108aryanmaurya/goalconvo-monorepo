@@ -121,6 +121,7 @@ interface EvaluationMetrics {
     };
     domain_distribution: Record<string, number>;
     task_success_by_domain: Record<string, number>;
+    goal_completion_by_domain?: Record<string, number>;
   };
 }
 
@@ -185,6 +186,9 @@ export default function GoalConvoDashboard() {
     total_dialogues?: number;
     goal?: string;
   } | null>(null);
+  
+  // Evaluation step: live sub-step messages (e.g. "Computing BERTScore...")
+  const [evaluationStepMessages, setEvaluationStepMessages] = useState<string[]>([]);
   
   // Backend connection status
   const [backendConnected, setBackendConnected] = useState<boolean>(false);
@@ -324,6 +328,7 @@ export default function GoalConvoDashboard() {
       });
       setIsRunning(true);
       setCurrentStep(0);
+      setEvaluationStepMessages([]);
     });
     
     socket.on('step_start', (data: any) => {
@@ -339,13 +344,14 @@ export default function GoalConvoDashboard() {
         message: stepData.message || `${stepName} started`
       });
       
-      // Update current step based on step name
+      // Update current step: backend has 5 steps (incl. saving); UI has 4 (Dataset Construction commented out).
+      // Map backend step to frontend index 0–3 so Evaluation (UI index 3) gets the circling border.
       const stepMap: Record<string, number> = {
         'experience_generation': 0,
         'dialogue_simulation': 1,
         'quality_filtering': 2,
         'saving': 3,
-        'evaluation': 4
+        'evaluation': 3
       };
       
       if (stepData.step && stepMap[stepData.step] !== undefined) {
@@ -507,13 +513,18 @@ export default function GoalConvoDashboard() {
     socket.on('log', (data: any) => {
       console.log('Log received:', data);
       const logData = data.data || {};
+      const step = logData.step || 'pipeline';
+      const message = logData.message || '';
       addRequestLog({
-        stepId: logData.step || 'pipeline',
-        stepName: logData.step || 'Pipeline',
+        stepId: step,
+        stepName: step,
         endpoint: '/api/run-pipeline',
         status: logData.level === 'error' ? 'error' : 'success',
-        message: logData.message || ''
+        message
       });
+      if (step === 'evaluation' && message) {
+        setEvaluationStepMessages((prev) => [...prev.slice(-14), message]);
+      }
     });
     
     socket.on('pipeline_complete', (data: any) => {
@@ -551,7 +562,7 @@ export default function GoalConvoDashboard() {
       
       setLiveDialogue(null);
       setIsRunning(false);
-      setCurrentStep(4); // Move to evaluation step
+      setCurrentStep(3); // Evaluation is at UI index 3 (Dataset Construction step commented out)
     });
     
     socket.on('pipeline_error', (data: any) => {
@@ -665,32 +676,32 @@ export default function GoalConvoDashboard() {
         />
       )
     },
-    {
-      id: 'dataset',
-      name: 'Dataset Construction',
-      description: 'Compile high-quality dialogues into structured dataset',
-      icon: <Database className="w-6 h-6" />,
-      status: 'pending',
-      progress: 0,
-      component: (
-        <DatasetConstructor
-          key={`dataset-${pipelineRunId}-${currentStep}`}
-          filteredConversations={pipelineData.filteredConversations}
-          dataset={pipelineData.dataset}
-          conversations={pipelineData.conversations}
-          autoStart={false}
-          onComplete={(data) => handleStepComplete(3, data)}
-          onLog={(log) =>
-            addRequestLog({
-              stepId: 'dataset',
-              stepName: 'Dataset Construction',
-              endpoint: '/api/run-pipeline',
-              ...log,
-            })
-          }
-        />
-      )
-    },
+    // {
+    //   id: 'dataset',
+    //   name: 'Dataset Construction',
+    //   description: 'Compile high-quality dialogues into structured dataset',
+    //   icon: <Database className="w-6 h-6" />,
+    //   status: 'pending',
+    //   progress: 0,
+    //   component: (
+    //     <DatasetConstructor
+    //       key={`dataset-${pipelineRunId}-${currentStep}`}
+    //       filteredConversations={pipelineData.filteredConversations}
+    //       dataset={pipelineData.dataset}
+    //       conversations={pipelineData.conversations}
+    //       autoStart={false}
+    //       onComplete={(data) => handleStepComplete(3, data)}
+    //       onLog={(log) =>
+    //         addRequestLog({
+    //           stepId: 'dataset',
+    //           stepName: 'Dataset Construction',
+    //           endpoint: '/api/run-pipeline',
+    //           ...log,
+    //         })
+    //       }
+    //     />
+    //   )
+    // },
     {
       id: 'evaluation',
       name: 'Evaluation',
@@ -702,7 +713,7 @@ export default function GoalConvoDashboard() {
         <Evaluator
           key={`evaluator-${pipelineRunId}-${currentStep}`}
           dataset={pipelineData.dataset}
-          autoStart={isRunning && currentStep === 4}
+          autoStart={isRunning && currentStep === 3}
           onComplete={(data) => handleStepComplete(4, data)}
           onLog={(log) =>
             addRequestLog({
@@ -824,9 +835,13 @@ export default function GoalConvoDashboard() {
     });
     
     try {
+      // Number of dialogues is per domain; total = perDomain × domain count
+      const domainCount = selectedDomains.length > 0 ? selectedDomains.length : availableDomains.length;
+      const totalDialogues = numDialogues * domainCount;
+
       // Build request body (ablation overrides)
       const pipelineBody: Record<string, unknown> = {
-        num_dialogues: numDialogues,
+        num_dialogues: totalDialogues,
         domains: selectedDomains.length > 0 ? selectedDomains : undefined,
         session_id: sessionIdRef.current,
       };
@@ -884,6 +899,7 @@ export default function GoalConvoDashboard() {
       });
       
       setIsRunning(true);
+      setEvaluationStepMessages([]);
     } catch (error) {
       console.error('Failed to start pipeline:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -928,7 +944,8 @@ export default function GoalConvoDashboard() {
           lexical_diversity: 0,
           conversation_length: { avg_turns: 0, std_dev: 0 },
           domain_distribution: {},
-          task_success_by_domain: {}
+          task_success_by_domain: {},
+          goal_completion_by_domain: {}
         }
       }
     });
@@ -983,30 +1000,44 @@ export default function GoalConvoDashboard() {
     URL.revokeObjectURL(url);
   };
 
+  const domainPillColors: Record<string, string> = {
+    hotel: 'bg-orange-500/30 border-orange-400/60 text-orange-200 hover:bg-orange-500/40',
+    restaurant: 'bg-fuchsia-500/30 border-fuchsia-400/60 text-fuchsia-200 hover:bg-fuchsia-500/40',
+    taxi: 'bg-sky-500/30 border-sky-400/60 text-sky-200 hover:bg-sky-500/40',
+    train: 'bg-lime-500/25 border-lime-400/60 text-lime-200 hover:bg-lime-500/35',
+    attraction: 'bg-indigo-500/30 border-indigo-400/60 text-indigo-200 hover:bg-indigo-500/40',
+  };
+
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="app-canvas max-w-7xl mx-auto px-4 py-6">
       {/* Top-level tabs */}
-      <div className="flex gap-2 mb-6 p-1 bg-white/5 rounded-xl border border-white/10 w-fit">
+      <div className="flex gap-1 mb-8 p-1.5 bg-white/5 rounded-2xl border border-white/10 w-fit shadow-lg shadow-black/20">
         <button
           onClick={() => setActiveTab('pipeline')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-            activeTab === 'pipeline' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+            activeTab === 'pipeline'
+              ? 'bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-fuchsia-500/30'
+              : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
           <Play className="w-4 h-4" /> Pipeline
         </button>
         <button
           onClick={() => setActiveTab('versions')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-            activeTab === 'versions' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+            activeTab === 'versions'
+              ? 'bg-gradient-to-r from-fuchsia-500 to-violet-600 text-white shadow-lg shadow-fuchsia-500/30'
+              : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
           <GitBranch className="w-4 h-4" /> Versions
         </button>
         <button
           onClick={() => setActiveTab('human-eval')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-            activeTab === 'human-eval' ? 'bg-cyan-500/30 text-white' : 'text-gray-400 hover:text-white hover:bg-white/10'
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+            activeTab === 'human-eval'
+              ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
+              : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
           <ClipboardList className="w-4 h-4" /> Human Evaluation
@@ -1031,19 +1062,21 @@ export default function GoalConvoDashboard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/20"
+        className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/20 shadow-xl shadow-black/20 overflow-hidden"
       >
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-fuchsia-500/5 to-sky-500/5 pointer-events-none" />
+        <div className="relative">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-2">Pipeline Control</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-300 via-fuchsia-300 to-sky-300 bg-clip-text text-transparent mb-2">Pipeline Control</h2>
             <p className="text-gray-300">Manage the entire GoalConvo generation pipeline</p>
             <div className="flex items-center gap-2 mt-2">
-              <div className={`w-2 h-2 rounded-full ${backendConnected ? 'bg-green-400' : 'bg-red-400'} ${backendCheckInProgress ? 'animate-pulse' : ''}`} />
+              <div className={`w-2.5 h-2.5 rounded-full ${backendConnected ? 'bg-lime-400 shadow-[0_0_8px_rgba(163,230,53,0.7)]' : 'bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.6)]'} ${backendCheckInProgress ? 'animate-pulse' : ''}`} />
               <span className="text-xs text-gray-400">
                 {backendCheckInProgress ? 'Checking...' : backendConnected ? 'Backend Connected' : 'Backend Disconnected'}
               </span>
               {!backendConnected && (
-                <span className="text-xs text-yellow-400 ml-2">
+                <span className="text-xs text-orange-300 ml-2">
                   ({API_CONFIG.baseUrl})
                 </span>
               )}
@@ -1051,11 +1084,11 @@ export default function GoalConvoDashboard() {
           </div>
           <div className="flex gap-3">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
               onClick={runPipeline}
               disabled={isRunning || !backendConnected}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-sky-500 text-white font-semibold rounded-xl shadow-lg shadow-fuchsia-500/35 hover:shadow-fuchsia-500/45 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               title={!backendConnected ? 'Backend server is not connected. Please start the backend server first.' : ''}
             >
               <Play className="w-5 h-5" />
@@ -1063,10 +1096,10 @@ export default function GoalConvoDashboard() {
             </motion.button>
             {pipelineData.conversations.length > 0 && (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={downloadDialoguesJSON}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-lime-500 to-green-500 text-white font-semibold rounded-xl shadow-lg shadow-lime-500/35 hover:shadow-lime-500/45 transition-all"
                 title={`Download ${pipelineData.conversations.length} dialogue(s) as JSON`}
               >
                 <Download className="w-5 h-5" />
@@ -1074,8 +1107,8 @@ export default function GoalConvoDashboard() {
               </motion.button>
             )}
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
               onClick={resetPipeline}
               className="flex items-center gap-2 px-6 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-all border border-white/20"
             >
@@ -1088,34 +1121,40 @@ export default function GoalConvoDashboard() {
         {/* Pipeline Configuration */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 '>
 
-        <div className="grid grid-cols-1  gap-4 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+        <div className="grid grid-cols-1 gap-4 mb-6 p-5 bg-white/5 rounded-xl border border-white/10 shadow-inner">
           <div>
-            <label className="block text-sm font-semibold text-white mb-2">
-              Number of Dialogues
+            <label className="block text-sm font-semibold text-sky-200 mb-2">
+              Dialogues per domain
             </label>
-            <input
-              type="number"
-              min="1"
-              max="100"
-              value={numDialogues}
-              onChange={(e) => setNumDialogues(Math.max(1, parseInt(e.target.value) || 1))}
-              disabled={isRunning}
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              placeholder="Enter number of dialogues"
-            />
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={numDialogues}
+                onChange={(e) => setNumDialogues(Math.max(1, parseInt(e.target.value) || 1))}
+                disabled={isRunning}
+                className="flex-1 px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-fuchsia-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="Per domain"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1.5">
+              {numDialogues} per domain → <span className="text-fuchsia-300 font-medium">{numDialogues * (selectedDomains.length || availableDomains.length)} total</span>
+              {(selectedDomains.length || availableDomains.length) > 0 && ` across ${selectedDomains.length || availableDomains.length} domain(s)`}
+            </p>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-white mb-2">
+            <label className="block text-sm font-semibold text-fuchsia-200 mb-2">
               Select Domains
             </label>
             <div className="flex flex-wrap gap-2">
               {availableDomains.map((domain) => (
                 <label
                   key={domain}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-all ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all ${
                     selectedDomains.includes(domain)
-                      ? 'bg-cyan-500/20 border-cyan-400 text-white'
-                      : 'bg-white/5 border-white/20 text-gray-300 hover:bg-white/10'
+                      ? domainPillColors[domain] ?? 'bg-fuchsia-500/25 border-fuchsia-400 text-white'
+                      : 'bg-white/5 border-white/20 text-gray-400 hover:bg-white/10 hover:text-gray-200'
                   } ${isRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <input
@@ -1130,14 +1169,14 @@ export default function GoalConvoDashboard() {
                       }
                     }}
                     disabled={isRunning}
-                    className="w-4 h-4 text-cyan-500 rounded focus:ring-cyan-500 focus:ring-2"
+                    className="w-4 h-4 rounded focus:ring-2 focus:ring-offset-0 focus:ring-fuchsia-400 accent-fuchsia-500"
                   />
                   <span className="text-sm font-medium capitalize">{domain}</span>
                 </label>
               ))}
             </div>
             {selectedDomains.length === 0 && (
-              <p className="text-xs text-yellow-400 mt-2">⚠️ Please select at least one domain</p>
+              <p className="text-xs text-orange-300 mt-2">⚠️ Please select at least one domain</p>
             )}
           </div>
            {/* Request Log Stack */}
@@ -1145,14 +1184,14 @@ export default function GoalConvoDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 rounded-xl border border-white/10  rounded-2xl p-4  flex flex-col max-h-[11.7rem]"
+          className="bg-white/5 rounded-2xl border border-white/10 p-4 flex flex-col max-h-[11.7rem] shadow-inner"
         >
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-lg font-semibold text-white">Request Log</h3>
               <p className="text-xs text-gray-400">Latest API calls across the pipeline</p>
             </div>
-            <span className="text-xs text-gray-300 bg-white/10 px-2 py-1 rounded-full">
+            <span className="text-xs text-gray-300 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
               {requestLogs.length} events
             </span>
           </div>
@@ -1166,10 +1205,10 @@ export default function GoalConvoDashboard() {
               requestLogs.map((log) => (
                 <div
                   key={log.id}
-                  className={`rounded-lg border px-3 py-2 text-xs flex flex-col gap-1 ${
+                  className={`rounded-xl border px-3 py-2 text-xs flex flex-col gap-1 ${
                     log.status === 'success'
-                      ? 'border-green-400/40 bg-green-500/10'
-                      : 'border-red-400/40 bg-red-500/10'
+                      ? 'border-lime-400/50 bg-gradient-to-r from-lime-500/20 to-green-500/10'
+                      : 'border-rose-400/50 bg-gradient-to-r from-rose-500/20 to-pink-500/10'
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -1181,14 +1220,14 @@ export default function GoalConvoDashboard() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-[11px] text-cyan-200">
+                    <span className="text-[11px] text-sky-200">
                       {log.endpoint}
                     </span>
                     <span
                       className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                         log.status === 'success'
-                        ? 'bg-green-500/30 text-green-100'
-                        : 'bg-red-500/30 text-red-100'
+                        ? 'bg-lime-500/40 text-lime-100'
+                        : 'bg-rose-500/40 text-rose-100'
                       }`}
                       >
                       {log.status.toUpperCase()}
@@ -1257,39 +1296,79 @@ export default function GoalConvoDashboard() {
           </div>
         </div> */}
 
-        {/* Progress Overview */}
-        <div className="grid grid-cols-5 gap-4 mb-6">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              initial={{ opacity: 0.5 }}
-              animate={{
-                opacity: index <= currentStep ? 1 : 0.5,
-                scale: index === currentStep ? 1.05 : 1
-              }}
-              className={`p-3 rounded-xl border transition-all ${
-                index === currentStep
-                  ? 'border-cyan-400 bg-cyan-500/20'
-                  : index < currentStep
-                    ? 'border-green-400 bg-green-500/20'
-                    : 'border-white/20 bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                {step.icon}
-                <span className="text-sm font-semibold text-white">{step.name}</span>
-              </div>
-              <div className="w-full bg-white/20 rounded-full h-2">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${step.progress}%` }}
-                  className={`h-2 rounded-full transition-all ${
-                    index < currentStep ? 'bg-green-400' : 'bg-cyan-400'
-                  }`}
-                />
-              </div>
-            </motion.div>
-          ))}
+        {/* Progress Overview - step boxes with distinct colors per step */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          {steps.map((step, index) => {
+            const isActive = isRunning && index === currentStep;
+            const stepAccents = [
+              { border: 'orange', bg: 'orange-500/20', icon: 'text-orange-400' },
+              { border: 'fuchsia', bg: 'fuchsia-500/20', icon: 'text-fuchsia-400' },
+              { border: 'rose', bg: 'rose-500/20', icon: 'text-rose-400' },
+              { border: 'lime', bg: 'lime-500/20', icon: 'text-lime-400' },
+            ];
+            const accent = stepAccents[index % stepAccents.length];
+            const gradient = index === 0
+              ? 'conic-gradient(from 0deg, #fb923c, #d946ef, #38bdf8, #fb923c)'
+              : index === 1
+              ? 'conic-gradient(from 0deg, #d946ef, #818cf8, #a3e635, #d946ef)'
+              : index === 2
+              ? 'conic-gradient(from 0deg, #fb7185, #818cf8, #facc15, #fb7185)'
+              : 'conic-gradient(from 0deg, #a3e635, #38bdf8, #d946ef, #a3e635)';
+            const boxContent = (
+              <>
+                <div className={`flex items-center gap-2 mb-2 text-xl ${!isActive ? accent.icon : ''}`}>
+                  {step.icon}
+                  <span className="text-lg font-semibold text-white">{step.name}</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${step.progress}%` }}
+                    className="h-2 rounded-full transition-all"
+                    style={{
+                      backgroundColor: index < currentStep
+                        ? 'rgb(163 230 53)'
+                        : index === 0 ? 'rgb(251 146 60 / 0.9)' : index === 1 ? 'rgb(217 70 239 / 0.9)' : index === 2 ? 'rgb(251 113 133 / 0.9)' : 'rgb(163 230 53 / 0.9)'
+                    }}
+                  />
+                </div>
+              </>
+            );
+            return (
+              <motion.div
+                key={step.id}
+                initial={{ opacity: 0.5 }}
+                animate={{
+                  opacity: index <= currentStep ? 1 : 0.6,
+                  scale: isActive ? 1.03 : 1
+                }}
+                className={
+                  isActive
+                    ? 'relative rounded-xl p-[3px] overflow-hidden min-h-[80px]'
+                    : `p-3 rounded-xl border transition-all ${
+                        index < currentStep
+                          ? 'border-lime-400 bg-lime-500/20'
+                          : 'border-white/20 bg-white/5 hover:border-white/30'
+                      }`
+                }
+              >
+                {isActive ? (
+                  <>
+                    <div
+                      className="absolute inset-0 rounded-xl animate-spin"
+                      style={{ background: gradient }}
+                    />
+                    <div className="relative m-[3px] rounded-[10px] bg-slate-900/95 p-3 min-h-[80px] flex flex-col">
+                      {boxContent}
+                    </div>
+                  </>
+                ) : (
+                  boxContent
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
         </div>
       </motion.div>
 
@@ -1298,10 +1377,10 @@ export default function GoalConvoDashboard() {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
-          className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-cyan-500/30"
+          className="bg-gradient-to-br from-fuchsia-500/10 to-sky-500/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-fuchsia-400/40 shadow-lg shadow-fuchsia-500/20"
         >
           <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-fuchsia-400 animate-pulse shadow-[0_0_8px_rgba(217,70,239,0.8)]" />
             Live dialogue
             {liveDialogue.dialogue_index != null && liveDialogue.total_dialogues != null && (
               <span className="text-gray-400 font-normal">
@@ -1309,16 +1388,18 @@ export default function GoalConvoDashboard() {
               </span>
             )}
           </h3>
-          <p className="text-sm text-cyan-300 mb-4">{liveDialogue.step_message}</p>
+          <p className="text-sm text-fuchsia-200 mb-4">{liveDialogue.step_message}</p>
           {liveDialogue.goal && (
             <p className="text-xs text-gray-400 mb-3 truncate" title={liveDialogue.goal}>Goal: {liveDialogue.goal}</p>
           )}
-          <div className="space-y-2 max-h-64 overflow-y-auto rounded-lg bg-black/20 p-3">
+          <div className="space-y-2 max-h-64 overflow-y-auto rounded-xl bg-black/25 p-3 border border-white/5">
             {liveDialogue.current_turns.map((turn: { role: string; text: string }, idx: number) => (
               <div
                 key={idx}
-                className={`text-sm p-2 rounded-lg ${
-                  turn.role === 'User' ? 'bg-cyan-500/20 text-left' : 'bg-purple-500/20 text-left ml-4'
+                className={`text-sm p-3 rounded-xl ${
+                  turn.role === 'User'
+                    ? 'bg-gradient-to-r from-sky-500/25 to-indigo-500/20 text-left border-l-2 border-sky-400'
+                    : 'bg-gradient-to-r from-fuchsia-500/25 to-violet-500/20 text-left ml-4 border-l-2 border-fuchsia-400'
                 }`}
               >
                 <span className="font-medium text-gray-300">{turn.role}: </span>
@@ -1329,66 +1410,106 @@ export default function GoalConvoDashboard() {
         </motion.div>
       )}
 
-      {/* Evaluation Display (when complete) or Current Step Display + Request Log Panel */}
-      <div className="grid grid-cols-1  gap-6">
-      <AnimatePresence mode="wait">
-        {!isRunning && pipelineData.evaluations ? (
-          // Show Evaluation Display when pipeline is complete
-          <motion.div
-            key="evaluation"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 lg:col-span-2"
-          >
-            <Evaluator
-              key={`evaluator-${pipelineRunId}`}
-              dataset={pipelineData.dataset}
-              metrics={pipelineData.evaluations}
-              autoStart={false}
-              onComplete={(metrics) => {
-                console.log('Evaluation complete:', metrics);
-              }}
-              onLog={(log) =>
-                addRequestLog({
-                  stepId: 'evaluation',
-                  stepName: 'Evaluation',
-                  endpoint: '/api/run-pipeline',
-                  status: log.status,
-                  message: log.message
-                })
-              }
-            />
-          </motion.div>
-        ) : (
-          // Show Current Step Display when pipeline is running
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 lg:col-span-2"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl">
-                {steps[currentStep].icon}
+      {/* Evaluation Display when idle; current step only when pipeline is running */}
+      <div className="grid grid-cols-1 gap-6">
+        <AnimatePresence mode="wait">
+          {!isRunning ? (
+            <motion.div
+              key="evaluation-panel"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-xl lg:col-span-2"
+            >
+              {pipelineData.evaluations != null && typeof pipelineData.evaluations === 'object' ? (
+                <Evaluator
+                  key={`evaluator-${pipelineRunId}`}
+                  dataset={pipelineData.dataset}
+                  metrics={pipelineData.evaluations}
+                  autoStart={false}
+                  onComplete={(metrics) => {
+                    console.log('Evaluation complete:', metrics);
+                  }}
+                  onLog={(log) =>
+                    addRequestLog({
+                      stepId: 'evaluation',
+                      stepName: 'Evaluation',
+                      endpoint: '/api/run-pipeline',
+                      status: log.status,
+                      message: log.message
+                    })
+                  }
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-14 text-center">
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-fuchsia-500/30 via-indigo-500/20 to-lime-500/20 mb-5 shadow-lg border border-white/10">
+                    <TrendingUp className="w-14 h-14 text-fuchsia-300" />
+                  </div>
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-fuchsia-200 via-indigo-200 to-lime-200 bg-clip-text text-transparent mb-2">Evaluation</h3>
+                  <p className="text-gray-400 max-w-md">
+                    {pipelineData.dataset.length > 0
+                      ? 'Run the pipeline to see evaluation results here. Results will appear after the run completes.'
+                      : 'Run the pipeline to generate dialogues and see evaluation results here.'}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-xl lg:col-span-2"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-gradient-to-br from-fuchsia-500 via-indigo-500 to-sky-500 rounded-xl shadow-lg">
+                  {steps[Math.min(currentStep, steps.length - 1)]?.icon}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">
+                    {steps[Math.min(currentStep, steps.length - 1)]?.name}
+                  </h3>
+                  <p className="text-gray-300">{steps[Math.min(currentStep, steps.length - 1)]?.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-1">
-                  {steps[currentStep].name}
-                </h3>
-                <p className="text-gray-300">{steps[currentStep].description}</p>
-              </div>
-            </div>
 
-            {steps[currentStep].component}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-       
+              {currentStep === 3 ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-fuchsia-300">
+                    <span className="inline-block w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
+                    <span className="font-medium">Evaluation in progress</span>
+                  </div>
+                  <div className="rounded-xl bg-black/20 border border-white/10 overflow-hidden">
+                    <div className="px-4 py-2 text-xs font-medium text-gray-400 border-b border-white/10 bg-white/5">
+                      Current step
+                    </div>
+                    <ul className="max-h-64 overflow-y-auto py-2 divide-y divide-white/5">
+                      {evaluationStepMessages.length === 0 ? (
+                        <li className="px-4 py-2 text-gray-500 text-sm">Waiting for evaluation steps…</li>
+                      ) : (
+                        evaluationStepMessages.map((msg, i) => (
+                          <li key={i} className="px-4 py-2 text-sm text-gray-300 flex items-center gap-2">
+                            {i === evaluationStepMessages.length - 1 ? (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+                            ) : (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500/60" />
+                            )}
+                            {msg}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                steps[Math.min(currentStep, steps.length - 1)]?.component ?? null
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Pipeline Data Summary */}
@@ -1398,21 +1519,21 @@ export default function GoalConvoDashboard() {
         transition={{ delay: 0.8 }}
         className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
       >
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-          <div className="text-cyan-400 font-semibold mb-1">Experiences</div>
-          <div className="text-2xl font-bold text-white">{pipelineData.experiences.length}</div>
+        <div className="bg-gradient-to-br from-amber-500/15 to-orange-500/10 backdrop-blur-md rounded-xl p-5 border border-amber-400/20 card-hover">
+          <div className="text-amber-300 font-semibold mb-1">Experiences</div>
+          <div className="text-3xl font-bold text-white">{pipelineData.experiences.length}</div>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-          <div className="text-purple-400 font-semibold mb-1">Conversations</div>
-          <div className="text-2xl font-bold text-white">{pipelineData.conversations.length}</div>
+        <div className="bg-gradient-to-br from-orange-500/15 to-sky-500/10 backdrop-blur-md rounded-xl p-5 border border-orange-400/20 card-hover">
+          <div className="text-sky-300 font-semibold mb-1">Conversations</div>
+          <div className="text-3xl font-bold text-white">{pipelineData.conversations.length}</div>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-          <div className="text-pink-400 font-semibold mb-1">Filtered</div>
-          <div className="text-2xl font-bold text-white">{pipelineData.filteredConversations.length}</div>
+        <div className="bg-gradient-to-br from-rose-500/15 to-pink-500/10 backdrop-blur-md rounded-xl p-5 border border-rose-400/20 card-hover">
+          <div className="text-rose-300 font-semibold mb-1">Filtered</div>
+          <div className="text-3xl font-bold text-white">{pipelineData.filteredConversations.length}</div>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-          <div className="text-green-400 font-semibold mb-1">Dataset Size</div>
-          <div className="text-2xl font-bold text-white">{pipelineData.dataset.length}</div>
+        <div className="bg-gradient-to-br from-lime-500/15 to-green-500/10 backdrop-blur-md rounded-xl p-5 border border-lime-400/20 card-hover">
+          <div className="text-lime-300 font-semibold mb-1">Dataset Size</div>
+          <div className="text-3xl font-bold text-white">{pipelineData.dataset.length}</div>
         </div>
       </motion.div>
 
@@ -1426,11 +1547,11 @@ export default function GoalConvoDashboard() {
         >
           {/* Generated Experiences Section */}
           {pipelineData.experiences.length > 0 && (
-            <div className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-md rounded-2xl p-6 border border-cyan-400/30">
+            <div className="bg-gradient-to-br from-orange-500/15 via-fuchsia-500/10 to-sky-500/15 backdrop-blur-md rounded-2xl p-6 border border-orange-400/30 shadow-xl">
               <div className="flex items-center gap-3 mb-4">
-                <Brain className="w-6 h-6 text-cyan-400" />
-                <h2 className="text-2xl font-bold text-white">Generated Experiences</h2>
-                <span className="ml-auto px-3 py-1 bg-cyan-500/30 text-cyan-100 rounded-full text-sm font-semibold">
+                <Brain className="w-6 h-6 text-orange-400" />
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-200 via-fuchsia-200 to-sky-200 bg-clip-text text-transparent">Generated Experiences</h2>
+                <span className="ml-auto px-3 py-1.5 bg-orange-500/30 text-orange-100 rounded-full text-sm font-semibold border border-orange-400/30">
                   {pipelineData.experiences.length} {pipelineData.experiences.length === 1 ? 'Experience' : 'Experiences'}
                 </span>
               </div>
@@ -1442,11 +1563,11 @@ export default function GoalConvoDashboard() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:border-cyan-400/50 transition-all"
+                    className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:border-amber-400/50 transition-all card-hover"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <div className="text-sm font-semibold text-cyan-400 mb-1">
+                        <div className="text-sm font-semibold text-fuchsia-400 mb-1">
                           {experience.domain.toUpperCase()}
                         </div>
                         <h3 className="text-lg font-bold text-white mb-2">
@@ -1469,7 +1590,7 @@ export default function GoalConvoDashboard() {
                       </div>
                       <div>
                         <span className="text-gray-400">Starter:</span>
-                        <p className="text-cyan-200 mt-1 italic">"{experience.conversation_starter}"</p>
+                        <p className="text-sky-200 mt-1 italic">"{experience.conversation_starter}"</p>
                       </div>
                     </div>
                   </motion.div>
@@ -1480,11 +1601,11 @@ export default function GoalConvoDashboard() {
 
           {/* Generated Dialogues Section */}
           {pipelineData.conversations.length > 0 && (
-            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md rounded-2xl p-6 border border-purple-400/30">
+            <div className="bg-gradient-to-br from-fuchsia-500/15 via-indigo-500/10 to-rose-500/15 backdrop-blur-md rounded-2xl p-6 border border-fuchsia-400/30 shadow-xl">
               <div className="flex items-center gap-3 mb-4">
-                <Users className="w-6 h-6 text-purple-400" />
-                <h2 className="text-2xl font-bold text-white">Generated Dialogues</h2>
-                <span className="ml-auto px-3 py-1 bg-purple-500/30 text-purple-100 rounded-full text-sm font-semibold">
+                <Users className="w-6 h-6 text-fuchsia-400" />
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-fuchsia-200 via-indigo-200 to-rose-200 bg-clip-text text-transparent">Generated Dialogues</h2>
+                <span className="ml-auto px-3 py-1.5 bg-fuchsia-500/30 text-fuchsia-100 rounded-full text-sm font-semibold border border-fuchsia-400/30">
                   {pipelineData.conversations.length} {pipelineData.conversations.length === 1 ? 'Dialogue' : 'Dialogues'}
                 </span>
               </div>
@@ -1496,12 +1617,12 @@ export default function GoalConvoDashboard() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:border-purple-400/50 transition-all"
+                    className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:border-fuchsia-400/50 transition-all card-hover"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-sm font-semibold text-purple-400 bg-purple-500/20 px-3 py-1 rounded-full">
+                          <span className="text-sm font-semibold text-fuchsia-400 bg-fuchsia-500/20 px-3 py-1 rounded-full">
                             {conversation.domain.toUpperCase()}
                           </span>
                           <span className="text-xs text-gray-400">
@@ -1521,7 +1642,7 @@ export default function GoalConvoDashboard() {
                             <span className="text-xs text-gray-400">Quality Score:</span>
                             <div className="flex-1 bg-white/20 rounded-full h-2 max-w-[200px]">
                               <div
-                                className="bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full"
+                                className="bg-gradient-to-r from-fuchsia-400 to-pink-400 h-2 rounded-full"
                                 style={{ width: `${(conversation.judge_score / 5) * 100}%` }}
                               />
                             </div>
@@ -1541,12 +1662,12 @@ export default function GoalConvoDashboard() {
                             key={turnIdx}
                             className={`flex gap-3 p-2 rounded-lg ${
                               turn.speaker === 'user'
-                                ? 'bg-cyan-500/10 border-l-2 border-cyan-400'
-                                : 'bg-purple-500/10 border-l-2 border-purple-400'
+                                ? 'bg-sky-500/10 border-l-2 border-sky-400'
+                                : 'bg-fuchsia-500/10 border-l-2 border-fuchsia-400'
                             }`}
                           >
                             <span className={`text-xs font-semibold min-w-[60px] ${
-                              turn.speaker === 'user' ? 'text-cyan-300' : 'text-purple-300'
+                              turn.speaker === 'user' ? 'text-sky-300' : 'text-fuchsia-300'
                             }`}>
                               {turn.speaker === 'user' ? '👤 User' : '🤖 Bot'}
                             </span>

@@ -78,7 +78,7 @@ export default function ExperienceGenerator({ experiences = [], autoStart = fals
       }
 
       // Call the Flask backend directly - only send num_experiences, backend handles domain selection
-      const response = await fetch(API_CONFIG.getUrl(API_CONFIG.endpoints.experienceGenerator), {
+      const response = await fetch(API_CONFIG.getUrl(API_CONFIG.endpoints.runPipeline), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ console.log(data);
             <Sparkles className="w-6 h-6 text-cyan-400" />
             <h3 className="text-xl font-semibold text-white">Experience Generation</h3>
           </div>
-          <motion.button
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={generateExperiences}
@@ -203,7 +203,7 @@ console.log(data);
                 Generate Experiences
               </>
             )}
-          </motion.button>
+          </motion.button> */}
         </div>
 
         {/* Progress Display */}

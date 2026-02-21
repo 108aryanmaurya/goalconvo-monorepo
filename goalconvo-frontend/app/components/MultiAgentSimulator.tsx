@@ -260,7 +260,7 @@ export default function MultiAgentSimulator({ experiences = [], conversations: p
             <Users className="w-6 h-6 text-purple-400" />
             <h3 className="text-xl font-semibold text-white">Multi-Agent Simulation</h3>
           </div>
-          <motion.button
+          {/* <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={startSimulation}
@@ -278,7 +278,7 @@ export default function MultiAgentSimulator({ experiences = [], conversations: p
                 Start Simulation
               </>
             )}
-          </motion.button>
+          </motion.button> */}
         </div>
 
         {/* Simulation Progress */}

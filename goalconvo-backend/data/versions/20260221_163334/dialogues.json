@@ -1,0 +1,646 @@
+[
+  {
+    "dialogue_id": "e5dc1afe-7176-421f-bbfc-eecff63e7410",
+    "goal": "Book a room at Arbury Lodge Guesthouse",
+    "domain": "hotel",
+    "context": "User is planning a weekend getaway with friends and needs to book a room at Arbury Lodge Guesthouse, a cozy accommodation known for its friendly service and convenient location near local attractions.",
+    "user_persona": "Friendly and casual",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hey there, I'm looking to book a room at Arbury Lodge Guesthouse for an upcoming weekend trip with my friends.",
+        "timestamp": "2026-02-21T16:31:55.511412"
+      },
+      {
+        "role": "SupportBot",
+        "text": "That sounds like a great choice for your weekend getaway with friends! Let me check the availability and room options at Arbury Lodge Guesthouse for you. Just a moment while I look into this for you.",
+        "timestamp": "2026-02-21T16:31:56.346685"
+      },
+      {
+        "role": "User",
+        "text": "Great, I appreciate you checking the availability and room options at Arbury Lodge Guesthouse for me. Thank you!",
+        "timestamp": "2026-02-21T16:31:57.164597"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability and room options at Arbury Lodge Guesthouse for your upcoming weekend trip with friends. I'll confirm the booking details shortly for you. Thank you for your patience!",
+        "timestamp": "2026-02-21T16:31:58.007563"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the room type and the total cost for the booking at Arbury Lodge Guesthouse for the weekend trip with my friends?",
+        "timestamp": "2026-02-21T16:31:58.811021"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The room type for your booking at Arbury Lodge Guesthouse for the weekend trip with your friends is a Deluxe Double Room. The total cost for the booking is $250 for the weekend. Let me finalize the details for you.",
+        "timestamp": "2026-02-21T16:31:59.724039"
+      },
+      {
+        "role": "User",
+        "text": "Could you please provide the booking confirmation number for the Deluxe Double Room at Arbury Lodge Guesthouse for the weekend trip with my friends?",
+        "timestamp": "2026-02-21T16:32:00.440922"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T16:32:00.441573",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 4.93,
+      "generation_start_time": "2026-02-21T16:31:55.511372",
+      "generation_end_time": "2026-02-21T16:32:00.441571",
+      "goal_complexity": 6,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "e5dc1afe-7176-421f-bbfc-eecff63e7410",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:11.231450"
+      }
+    }
+  },
+  {
+    "dialogue_id": "771383ef-2c66-4bb9-a439-7b9697e6bc7c",
+    "goal": "Book a room at Alpha-Milton guest house",
+    "domain": "hotel",
+    "context": "The user is planning a weekend getaway and wants to book a room at the Alpha-Milton guest house for a relaxing stay.",
+    "user_persona": "Friendly and enthusiastic",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking to book a room at the Alpha-Milton guest house for my upcoming weekend getaway.",
+        "timestamp": "2026-02-21T16:32:02.352513"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great choice! Let me check the availability for the upcoming weekend at the Alpha-Milton guest house. I'll get back to you with the room options shortly.",
+        "timestamp": "2026-02-21T16:32:03.130491"
+      },
+      {
+        "role": "User",
+        "text": "Can you please let me know the room options available for the upcoming weekend at Alpha-Milton guest house?",
+        "timestamp": "2026-02-21T16:32:03.843177"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'm currently checking the room options available for the upcoming weekend at Alpha-Milton guest house. I'll provide you with the details shortly! Thank you for your patience.",
+        "timestamp": "2026-02-21T16:32:04.844473"
+      },
+      {
+        "role": "User",
+        "text": "Can you please provide me with the room options available for the upcoming weekend at Alpha-Milton guest house?",
+        "timestamp": "2026-02-21T16:32:05.513554"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'm still finalizing the room options for the upcoming weekend at Alpha-Milton guest house. I appreciate your patience, and I'll provide you with the details shortly! Thank you for understanding.",
+        "timestamp": "2026-02-21T16:32:06.380099"
+      },
+      {
+        "role": "User",
+        "text": "Could you please provide me with the room options available for the upcoming weekend at Alpha-Milton guest house?",
+        "timestamp": "2026-02-21T16:32:07.172467"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've found the room options available for the upcoming weekend at Alpha-Milton guest house. I'll provide you with the details shortly. Thank you for your patience!",
+        "timestamp": "2026-02-21T16:32:08.615064"
+      },
+      {
+        "role": "User",
+        "text": "Could you please share the room options available for the upcoming weekend at Alpha-Milton guest house?",
+        "timestamp": "2026-02-21T16:32:09.363202"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Your booking at Alpha-Milton Guest House is confirmed for 2 nights. Is there anything else?",
+        "timestamp": "2026-02-21T16:32:09.363560"
+      },
+      {
+        "role": "User",
+        "text": "That's all, thanks!",
+        "timestamp": "2026-02-21T16:32:09.363565"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-02-21T16:32:09.363688",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 7.011,
+      "generation_start_time": "2026-02-21T16:32:02.352457",
+      "generation_end_time": "2026-02-21T16:32:09.363688",
+      "goal_complexity": 6,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "771383ef-2c66-4bb9-a439-7b9697e6bc7c",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": false,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:13.702090"
+      }
+    }
+  },
+  {
+    "dialogue_id": "078ead80-66d5-4ee5-9d9c-1c3c9be8cdef",
+    "goal": "Find information about Curry Prince",
+    "domain": "restaurant",
+    "context": "I'm meeting a group of friends for dinner and one of them suggested Curry Prince. I want to learn more about the restaurant before confirming the reservation.",
+    "user_persona": "casual and inquisitive",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi there, I'm interested in getting more information about Curry Prince. Can you tell me about the type of cuisine they offer and any special dishes they are known for?",
+        "timestamp": "2026-02-21T16:32:16.008183"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Curry Prince specializes in authentic Indian cuisine, offering a variety of traditional dishes like butter chicken, biryani, and flavorful curries. Their signature dishes are the Chicken Tikka Masala and the Tandoori Naan. Would you like me to check availability for your group reservation?",
+        "timestamp": "2026-02-21T16:32:17.132352"
+      },
+      {
+        "role": "User",
+        "text": "Could you provide more information about the pricing and ambiance at Curry Prince?",
+        "timestamp": "2026-02-21T16:32:17.800462"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The pricing at Curry Prince is reasonable for the quality of food they offer, and the ambiance is cozy and inviting, with a touch of traditional Indian decor. Would you like me to proceed with checking availability for your group reservation?",
+        "timestamp": "2026-02-21T16:32:18.790470"
+      },
+      {
+        "role": "User",
+        "text": "Could you please check the availability for a group reservation at Curry Prince?",
+        "timestamp": "2026-02-21T16:32:19.541057"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I will check the availability for a group reservation at Curry Prince for you. Just a moment while I confirm the details for you.",
+        "timestamp": "2026-02-21T16:32:20.236901"
+      },
+      {
+        "role": "User",
+        "text": "Could you let me know the reservation details once you've confirmed the availability at Curry Prince?",
+        "timestamp": "2026-02-21T16:32:21.126395"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T16:32:21.615039",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.607,
+      "generation_start_time": "2026-02-21T16:32:16.008136",
+      "generation_end_time": "2026-02-21T16:32:21.615036",
+      "goal_complexity": 1,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "078ead80-66d5-4ee5-9d9c-1c3c9be8cdef",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": false,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:23.415187"
+      }
+    }
+  },
+  {
+    "dialogue_id": "517fe8f6-f3da-4a6b-b61e-71efe12ba41e",
+    "goal": "Book a taxi from Jesus Green Outdoor Pool",
+    "domain": "taxi",
+    "context": "I will be finishing a swimming session at Jesus Green Outdoor Pool and need transportation to my next destination. It's important for me to have a reliable and punctual taxi service.",
+    "user_persona": "casual and straightforward",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I need to arrange for a taxi pickup from Jesus Green Outdoor Pool after my swim. Can you help me with that?",
+        "timestamp": "2026-02-21T16:32:25.224456"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Of course! What time would you like the taxi to pick you up from Jesus Green Outdoor Pool after your swim? Let's make sure we get the timing right for you.",
+        "timestamp": "2026-02-21T16:32:26.553189"
+      },
+      {
+        "role": "User",
+        "text": "I'd like the taxi to pick me up from Jesus Green Outdoor Pool at 4:30 pm, please.",
+        "timestamp": "2026-02-21T16:32:27.264689"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Got it! I've scheduled your taxi pickup from Jesus Green Outdoor Pool at 4:30 pm. Your ride will be waiting for you at the specified time.",
+        "timestamp": "2026-02-21T16:32:28.089064"
+      },
+      {
+        "role": "User",
+        "text": "Could you confirm the taxi company that will pick me up from Jesus Green Outdoor Pool at 4:30 pm?",
+        "timestamp": "2026-02-21T16:32:28.820879"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The taxi company that will pick you up from Jesus Green Outdoor Pool at 4:30 pm is Cambridge Taxis. They have been informed of your scheduled pickup time.",
+        "timestamp": "2026-02-21T16:32:30.247426"
+      },
+      {
+        "role": "User",
+        "text": "Great, thanks for confirming the taxi company. Will there be a specific pickup point at Jesus Green Outdoor Pool for Cambridge Taxis?",
+        "timestamp": "2026-02-21T16:32:30.959406"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T16:32:30.959680",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.735,
+      "generation_start_time": "2026-02-21T16:32:25.224420",
+      "generation_end_time": "2026-02-21T16:32:30.959680",
+      "goal_complexity": 1,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "517fe8f6-f3da-4a6b-b61e-71efe12ba41e",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:32.475193"
+      }
+    }
+  },
+  {
+    "dialogue_id": "239e2764-2670-4dfa-815e-3bf5052b0c27",
+    "goal": "Book a train ticket for a round trip from New York to Boston for this weekend",
+    "domain": "train",
+    "context": "I have a weekend trip planned with friends to Boston from New York. We need to book train tickets for a round trip to ensure we have transportation sorted out.",
+    "user_persona": "friendly and detailed",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking to book train tickets for a round trip from New York to Boston for this weekend.",
+        "timestamp": "2026-02-21T16:32:35.054432"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great! I can help you with that. Let's check the availability for train tickets from New York to Boston for this weekend. Could you please confirm the dates and times you prefer for the trip?",
+        "timestamp": "2026-02-21T16:32:35.939454"
+      },
+      {
+        "role": "User",
+        "text": "I prefer morning departure and evening return times for this weekend's trip.",
+        "timestamp": "2026-02-21T16:32:36.566921"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Got it! I'll check the availability for morning departure and evening return times for this weekend's round trip from New York to Boston. I'll get back to you shortly with the options.",
+        "timestamp": "2026-02-21T16:32:37.511638"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for checking. Could you please let me know the available options for morning departure and evening return times for the weekend trip from New York to Boston?",
+        "timestamp": "2026-02-21T16:32:38.272033"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I found several options for your weekend trip from New York to Boston. For morning departures, there are trains leaving at 8:00 am and 9:30 am. For the evening return, there are trains at 5:00 pm and 7:30 pm. Would you like me to proceed with booking one of these options for you?",
+        "timestamp": "2026-02-21T16:32:39.459738"
+      },
+      {
+        "role": "User",
+        "text": "Could you please proceed with booking the train tickets for the weekend trip from New York to Boston with the morning departure at 9:30 am and the evening return at 7:30 pm?",
+        "timestamp": "2026-02-21T16:32:40.377034"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T16:32:40.377398",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.323,
+      "generation_start_time": "2026-02-21T16:32:35.054386",
+      "generation_end_time": "2026-02-21T16:32:40.377397",
+      "goal_complexity": 7,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "239e2764-2670-4dfa-815e-3bf5052b0c27",
+        "domain": "train",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:41.950666"
+      }
+    }
+  },
+  {
+    "dialogue_id": "7deba32b-9b28-45df-856c-b4c17e29b961",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "I'm planning a weekend getaway with friends and want to explore different activities or attractions in the area. We're open to various options like museums, parks, or unique experiences.",
+    "user_persona": "Curious and open-minded",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking for some information about attractions or things to do in the area. We're planning a weekend trip and want to explore different activities. Do you have any recommendations?",
+        "timestamp": "2026-02-21T16:32:44.694728"
+      },
+      {
+        "role": "SupportBot",
+        "text": "There are several great attractions in the area that you and your friends might enjoy! I can help you find information on museums, parks, and unique experiences. Let's explore some options together.",
+        "timestamp": "2026-02-21T16:32:45.516035"
+      },
+      {
+        "role": "User",
+        "text": "Can you provide more information about the unique experiences in the area?",
+        "timestamp": "2026-02-21T16:32:46.241929"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Certainly! Some unique experiences in the area include a guided walking tour of the historic district, a hot air balloon ride at sunrise, and a visit to a local vineyard for wine tasting. Would you like more details on any of these options?",
+        "timestamp": "2026-02-21T16:32:47.265186"
+      },
+      {
+        "role": "User",
+        "text": "Could you provide more details about the hot air balloon ride at sunrise?",
+        "timestamp": "2026-02-21T16:32:47.977788"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The hot air balloon ride at sunrise is a breathtaking experience that offers stunning views of the area from above. You'll have the opportunity to see the landscape in a whole new light. Would you like me to check availability for this unique adventure?",
+        "timestamp": "2026-02-21T16:32:48.929276"
+      },
+      {
+        "role": "User",
+        "text": "Can you please check the availability for the hot air balloon ride at sunrise?",
+        "timestamp": "2026-02-21T16:32:49.696280"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T16:32:50.191636",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.497,
+      "generation_start_time": "2026-02-21T16:32:44.694689",
+      "generation_end_time": "2026-02-21T16:32:50.191633",
+      "goal_complexity": 3,
+      "quality_score": 1.0,
+      "quality_assessment": {
+        "dialogue_id": "7deba32b-9b28-45df-856c-b4c17e29b961",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 5.0,
+          "goal_relevance": true,
+          "overall_score": 5.0
+        },
+        "overall_score": 1.0,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T16:32:51.744660"
+      }
+    }
+  }
+]

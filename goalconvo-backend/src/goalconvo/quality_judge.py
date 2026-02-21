@@ -13,8 +13,8 @@ from datetime import datetime
 from .config import Config
 from .llm_client import LLMClient
 from .utils import (
-    detect_repeated_utterances, calculate_similarity, 
-    clean_text, is_profane, truncate_text
+    detect_repeated_utterances, calculate_similarity,
+    clean_text, is_profane, truncate_text, validate_dialogue_format,
 )
 
 logger = logging.getLogger(__name__)
@@ -77,6 +77,7 @@ Respond "YES" if:
 
 Respond "NO" if:
 - The goal was only partially addressed
+- The assistant claimed the task was done but did not provide any concrete detail (e.g. time, place, reference number, venue name)
 - Information is incomplete or pending
 - The user hasn't expressed satisfaction
 - The conversation is still ongoing
@@ -94,17 +95,51 @@ Rate overall quality (1-5) considering:
 2. **Coherence**: Logical flow and context awareness
 3. **Diversity**: Varied language and phrasing (not repetitive)
 4. **Fluency**: Natural grammar and language
-5. **Groundedness**: Responses based on domain knowledge (not fabricated)
+5. **Groundedness**: When the assistant confirms a booking or recommendation, they must give at least one concrete detail (time, venue, reference, etc.). Vague confirmations like "I've arranged it" with no specifics are low quality (score 2 or lower).
 6. **Appropriate length**: Not too short or too long
 
 Score guide:
-- 5: Excellent—high scores on all dimensions, natural and complete
+- 5: Excellent—high scores on all dimensions, natural and complete, concrete details when confirming
 - 4: Good—strong quality with minor issues
 - 3: Acceptable—meets basic quality standards
-- 2: Poor—significant quality issues
+- 2: Poor—significant quality issues (e.g. assistant claimed done with no concrete detail, or repetitive thank-you loops)
 - 1: Very poor—low quality across dimensions
 
-Respond with only a number from 1-5."""
+Respond with only a number from 1-5.""",
+
+            "improve_dialogue": """You are improving a task-oriented dialogue that failed quality checks.
+
+User Goal: {goal}
+Domain: {domain}
+
+Current dialogue (one turn per line):
+{history}
+
+Issues identified:
+{issues}
+
+Improve the dialogue by fixing these issues. Keep the same number of turns and alternating User/SupportBot order. Preserve the goal and make the conversation coherent, grounded (assistant gives concrete details when confirming e.g. time, place, reference), and free of repetition. Do not add new turns; only fix or rewrite existing ones.
+
+Output the improved dialogue in this exact format—one line per turn, no other text:
+User: <first user message>
+SupportBot: <first assistant reply>
+User: <next user message>
+SupportBot: <next assistant reply>
+... continue for all turns ...
+
+Output only the lines above, nothing else.""",
+
+            "rejection_reason": """This task-oriented dialogue FAILED quality verification.
+
+User Goal: {goal}
+Domain: {domain}
+
+Dialogue:
+{history}
+
+Assessment summary: coherence score {coherence_score}/5, goal_relevance={goal_relevant}, overall score {overall_score}/5. Heuristic checks: {heuristic_summary}.
+
+In 2-4 short, specific sentences explain WHY this dialogue was rejected and WHAT must be fixed (e.g. repetition, lack of concrete details from assistant, goal not achieved, incoherent flow, vague confirmations). Be concrete so someone can correct the dialogue. Output only the explanation, no preamble."""
         }
     
     def judge_dialogue(self, dialogue_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -179,7 +214,7 @@ Respond with only a number from 1-5."""
     
     def _check_repetition(self, turns: List[Dict[str, str]]) -> Dict[str, Any]:
         """Check for repeated utterances."""
-        has_repetition = detect_repeated_utterances(turns, threshold=0.7)
+        has_repetition = detect_repeated_utterances(turns, threshold=0.6)
         
         return {
             "passed": not has_repetition,
@@ -428,33 +463,174 @@ Respond with only a number from 1-5."""
             # If heuristic passed, accept it even if LLM failed
             return heuristic_passed
         
-        # More lenient thresholds for local models
-        coherence_ok = coherence_score >= 2.0  # Lowered from 3.0
-        overall_ok = overall_score >= 2.0  # Lowered from 3.0
+        strict = getattr(self.config, "strict_llm_verification", True)
+        if strict:
+            coherence_ok = coherence_score >= 3.0
+            overall_ok = overall_score >= 3.0
+            llm_passed = coherence_ok and overall_ok and goal_relevant
+        else:
+            coherence_ok = coherence_score >= 2.0
+            overall_ok = overall_score >= 2.0
+            llm_passed = (coherence_ok and overall_ok) or (goal_relevant and overall_ok)
         
-        # Accept if either heuristic passes OR (coherence and overall are OK, even if goal relevance is unclear)
-        llm_passed = (coherence_ok and overall_ok) or (goal_relevant and overall_ok)
-        
-        # More lenient: accept if heuristic passes OR LLM evaluation passes
-        # This helps when local models have evaluation issues
         return heuristic_passed or llm_passed
-    
+
+    def _heuristic_summary_one_line(self, assessment: Dict[str, Any]) -> str:
+        """One-line summary of heuristic results for rejection reason prompt."""
+        heur = assessment.get("heuristic_filters", {})
+        parts = []
+        for key in ("length_check", "repetition_check", "coherence_check", "goal_mention_check"):
+            r = heur.get(key, {})
+            if r.get("passed") is False:
+                parts.append(key.replace("_", " ") + " failed")
+        return "; ".join(parts) if parts else "some checks failed"
+
+    def _get_rejection_reason(self, dialogue: Dict[str, Any], assessment: Dict[str, Any]) -> Optional[str]:
+        """Ask the LLM why this dialogue was rejected; return 2-4 sentences for use by the improvement step."""
+        turns = dialogue.get("turns", [])
+        goal = dialogue.get("goal", "")
+        domain = dialogue.get("domain", "unknown")
+        if not turns:
+            return None
+        history = self._format_history_for_llm(turns)
+        llm = assessment.get("llm_evaluation", {})
+        coherence_score = llm.get("coherence_score", 0)
+        goal_relevant = llm.get("goal_relevance", False)
+        overall_score = llm.get("overall_score", 0)
+        heuristic_summary = self._heuristic_summary_one_line(assessment)
+        prompt = self.quality_prompts["rejection_reason"].format(
+            goal=goal,
+            domain=domain,
+            history=history,
+            coherence_score=coherence_score,
+            goal_relevant=goal_relevant,
+            overall_score=overall_score,
+            heuristic_summary=heuristic_summary,
+        )
+        try:
+            response = self.llm_client.generate_completion(
+                prompt,
+                temperature=0.2,
+                max_tokens=getattr(self.config, "max_tokens_rejection_reason", 150),
+            )
+            reason = (response or "").strip()
+            if len(reason) < 20:
+                return None
+            return reason
+        except Exception as e:
+            logger.warning(f"Rejection reason LLM call failed: {e}")
+            return None
+
+    def _assessment_issues_summary(self, assessment: Dict[str, Any]) -> str:
+        """Build a short summary of issues from the assessment for the improve prompt."""
+        parts = []
+        heur = assessment.get("heuristic_filters", {})
+        llm = assessment.get("llm_evaluation", {})
+        if heur.get("length_check", {}).get("passed") is False:
+            parts.append("Turn count out of required range.")
+        if heur.get("repetition_check", {}).get("passed") is False:
+            parts.append("Repeated or very similar utterances; reduce repetition.")
+        if heur.get("coherence_check", {}).get("passed") is False:
+            parts.append("Coherence problems; improve logical flow and context.")
+        if heur.get("goal_mention_check", {}).get("passed") is False:
+            parts.append("Goal not clearly addressed; ensure the goal is achieved.")
+        coh = llm.get("coherence_score", 0)
+        if coh < 3.0:
+            parts.append("Dialogue coherence is low; make turns follow naturally.")
+        if llm.get("goal_relevance") is False:
+            parts.append("Goal not fully achieved or not grounded; assistant should provide concrete details (time, place, reference) when confirming.")
+        ov = llm.get("overall_score", 0)
+        if ov < 3.0:
+            parts.append("Overall quality is low; improve task success, grounding, and naturalness.")
+        if not parts:
+            parts.append("Some quality checks failed; improve coherence, goal completion, and grounding.")
+        return " ".join(parts)
+
+    def improve_dialogue(
+        self,
+        dialogue: Dict[str, Any],
+        assessment: Dict[str, Any],
+        rejection_reason: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Use the LLM to improve a dialogue that failed quality checks. When rejection_reason
+        is provided (from _get_rejection_reason), it is used as the issues text for the
+        improvement prompt; otherwise a summary from the assessment is used.
+        Returns an improved dialogue dict or None if improvement fails.
+        """
+        turns = dialogue.get("turns", [])
+        goal = dialogue.get("goal", "")
+        domain = dialogue.get("domain", "unknown")
+        if not turns:
+            return None
+        history = self._format_history_for_llm(turns)
+        issues = rejection_reason if rejection_reason else self._assessment_issues_summary(assessment)
+        prompt = self.quality_prompts["improve_dialogue"].format(
+            goal=goal,
+            domain=domain,
+            history=history,
+            issues=issues,
+        )
+        try:
+            max_tokens_improve = getattr(self.config, "max_tokens_improve_dialogue", 800)
+            response = self.llm_client.generate_completion(
+                prompt,
+                temperature=0.3,
+                max_tokens=max_tokens_improve,
+            )
+        except Exception as e:
+            logger.warning(f"Dialogue improvement LLM call failed: {e}")
+            return None
+        # Parse "User: ..." / "SupportBot: ..." lines
+        new_turns: List[Dict[str, Any]] = []
+        for line in response.strip().split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            if line.lower().startswith("user:"):
+                text = line[5:].strip()
+                new_turns.append({"role": "User", "text": text})
+            elif line.lower().startswith("supportbot:"):
+                text = line[11:].strip()
+                new_turns.append({"role": "SupportBot", "text": text})
+        if len(new_turns) < 2:
+            logger.warning("Improve dialogue produced too few turns; skipping.")
+            return None
+        # Build improved dialogue preserving original metadata and ids
+        improved = dict(dialogue)
+        improved["turns"] = new_turns
+        if "metadata" not in improved:
+            improved["metadata"] = {}
+        improved["metadata"]["improved_by_quality_judge"] = True
+        improved["metadata"]["improvement_timestamp"] = datetime.now().isoformat()
+        if not validate_dialogue_format(improved):
+            logger.warning("Improved dialogue failed format validation; skipping.")
+            return None
+        return improved
+
     def filter_dialogues(
-        self, 
-        dialogues: List[Dict[str, Any]], 
-        target_discard_rate: Optional[float] = None
+        self,
+        dialogues: List[Dict[str, Any]],
+        target_discard_rate: Optional[float] = None,
+        improve_on_fail: Optional[bool] = None,
     ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
-        Filter dialogues based on quality assessment.
+        Filter dialogues based on quality assessment. When a dialogue fails and
+        improve_on_fail is True, the LLM is used to improve it; the improved
+        version is re-judged and accepted if it passes.
         
         Args:
             dialogues: List of dialogues to filter
             target_discard_rate: Target percentage to discard (overrides config)
+            improve_on_fail: If True, try to improve failed dialogues via LLM and re-judge (default: config.quality_improve_on_fail)
             
         Returns:
             Tuple of (accepted_dialogues, rejected_dialogues)
         """
         target_discard_rate = target_discard_rate or self.config.discard_rate
+        do_improve = improve_on_fail if improve_on_fail is not None else getattr(
+            self.config, "quality_improve_on_fail", True
+        )
         
         accepted = []
         rejected = []
@@ -463,13 +639,29 @@ Respond with only a number from 1-5."""
             assessment = self.judge_dialogue(dialogue)
             
             if assessment["passed_filters"]:
-                # Add quality score to metadata
                 if "metadata" not in dialogue:
                     dialogue["metadata"] = {}
                 dialogue["metadata"]["quality_score"] = assessment["overall_score"]
                 dialogue["metadata"]["quality_assessment"] = assessment
                 accepted.append(dialogue)
             else:
+                rejection_reason = self._get_rejection_reason(dialogue, assessment)
+                if "metadata" not in dialogue:
+                    dialogue["metadata"] = {}
+                dialogue["metadata"]["rejection_reason"] = rejection_reason
+                dialogue["metadata"]["quality_assessment"] = assessment
+                if do_improve:
+                    improved = self.improve_dialogue(dialogue, assessment, rejection_reason=rejection_reason)
+                    if improved is not None:
+                        re_assessment = self.judge_dialogue(improved)
+                        if re_assessment["passed_filters"]:
+                            if "metadata" not in improved:
+                                improved["metadata"] = {}
+                            improved["metadata"]["quality_score"] = re_assessment["overall_score"]
+                            improved["metadata"]["quality_assessment"] = re_assessment
+                            accepted.append(improved)
+                            logger.info(f"Dialogue {dialogue.get('dialogue_id', '?')} accepted after improvement")
+                            continue
                 rejected.append(dialogue)
         
         # If we need to discard more to meet target rate (only if we have dialogues)

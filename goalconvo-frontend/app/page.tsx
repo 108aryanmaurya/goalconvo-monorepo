@@ -5,11 +5,12 @@ import GoalConvoDashboard from './components/GoalConvoDashboard';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: `radial-gradient(circle at 25% 25%, #9C92AC 2px, transparent 2px),
-                         radial-gradient(circle at 75% 75%, #9C92AC 1px, transparent 1px)`,
-        backgroundSize: '60px 60px'
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950/40 to-slate-950">
+      <div className="absolute inset-0 opacity-25" style={{
+        backgroundImage: `radial-gradient(circle at 20% 30%, #fb923c 1.5px, transparent 1.5px),
+                         radial-gradient(circle at 80% 20%, #d946ef 1px, transparent 1px),
+                         radial-gradient(circle at 50% 70%, #38bdf8 1px, transparent 1px)`,
+        backgroundSize: '56px 56px'
       }}></div>
 
       <div className="relative z-10">
@@ -20,7 +21,7 @@ export default function Home() {
           className="text-center py-8 px-4"
         >
           <motion.h1
-            className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4"
+            className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-orange-400 via-fuchsia-400 via-indigo-400 to-sky-400 bg-clip-text text-transparent mb-4"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}

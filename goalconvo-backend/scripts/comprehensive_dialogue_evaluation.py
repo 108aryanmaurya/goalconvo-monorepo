@@ -16,7 +16,7 @@ import logging
 import argparse
 import re
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Callable
 from collections import Counter
 from datetime import datetime
 
@@ -135,7 +135,8 @@ class ComprehensiveDialogueEvaluator:
         self,
         dialogues: List[Dict[str, Any]],
         reference_dialogues: Optional[List[Dict[str, Any]]] = None,
-        use_llm_judge: bool = True
+        use_llm_judge: bool = True,
+        emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None
     ) -> Dict[str, Any]:
         """
         Evaluate a set of dialogues using all metrics.
@@ -149,11 +150,20 @@ class ComprehensiveDialogueEvaluator:
             dialogues: List of generated dialogues to evaluate
             reference_dialogues: Optional reference dialogues (e.g., MultiWOZ) for BERTScore and BLEU; skipped if None
             use_llm_judge: Whether to use LLM-as-a-Judge evaluation (set EVAL_SKIP_LLM_JUDGE=1 to disable)
+            emit_callback: Optional (event_type, data) callback to emit log messages for frontend progress
 
         Returns:
             Dictionary with all evaluation metrics
         """
-        logger.info(f"Evaluating {len(dialogues)} dialogues...")
+        def _log(msg: str) -> None:
+            logger.info(msg)
+            if emit_callback:
+                try:
+                    emit_callback('log', {'message': msg, 'step': 'evaluation', 'level': 'info'})
+                except Exception:
+                    pass
+
+        _log(f"Evaluating {len(dialogues)} dialogues...")
         
         results = {
             "evaluation_timestamp": datetime.now().isoformat(),
@@ -162,55 +172,55 @@ class ComprehensiveDialogueEvaluator:
         }
         
         # 1. Goal Completion Rate (GCR)
-        logger.info("Computing Goal Completion Rate...")
+        _log("Computing Goal Completion Rate...")
         gcr_results = self._compute_goal_completion_rate(dialogues)
         results["metrics"]["goal_completion_rate"] = gcr_results
         
         # 2. Task Success Rate (TSR)
-        logger.info("Computing Task Success Rate...")
+        _log("Computing Task Success Rate...")
         tsr_results = self._compute_task_success_rate(dialogues)
         results["metrics"]["task_success_rate"] = tsr_results
         
         # 3. Lexical Diversity (can compute without reference)
-        logger.info("Computing Lexical Diversity...")
+        _log("Computing Lexical Diversity...")
         lexical_diversity_results = self._compute_lexical_diversity(dialogues, reference_dialogues)
         results["metrics"]["lexical_diversity"] = lexical_diversity_results
         
         # 4. BERTScore Semantic Similarity (if reference dialogues provided)
         if reference_dialogues:
-            logger.info("Computing BERTScore semantic similarity...")
+            _log("Computing BERTScore semantic similarity...")
             bertscore_results = self._compute_bertscore_similarity(dialogues, reference_dialogues)
             results["metrics"]["bertscore_similarity"] = bertscore_results
         
         # 5. BLEU Score (if reference dialogues provided)
         if reference_dialogues:
-            logger.info("Computing BLEU Scores...")
+            _log("Computing BLEU Scores...")
             bleu_results = self._compute_bleu_scores(dialogues, reference_dialogues)
             results["metrics"]["bleu_score"] = bleu_results
         
         # 6. Dialogue Length / Turns
-        logger.info("Computing dialogue length and turns...")
+        _log("Computing dialogue length and turns...")
         length_results = self._compute_dialogue_length_metrics(dialogues)
         results["metrics"]["dialogue_length"] = length_results
         
         # 6. Repetition Rate
-        logger.info("Computing repetition rate...")
+        _log("Computing repetition rate...")
         repetition_results = self._compute_repetition_rate(dialogues)
         results["metrics"]["repetition_rate"] = repetition_results
         
         # 7. Response Time Tracking
-        logger.info("Computing response time metrics...")
+        _log("Computing response time metrics...")
         response_time_results = self._compute_response_time_metrics(dialogues)
         results["metrics"]["response_time"] = response_time_results
         
         # 8. LLM-as-a-Judge (if enabled)
         if use_llm_judge:
-            logger.info("Running LLM-as-a-Judge evaluation...")
+            _log("Running LLM-as-a-Judge evaluation...")
             llm_judge_results = self._compute_llm_judge_metrics(dialogues)
             results["metrics"]["llm_judge"] = llm_judge_results
 
         # 9. Advanced evaluation metrics (intent, slots, state tracking)
-        logger.info("Computing advanced evaluation metrics (intent, slots, state tracking)...")
+        _log("Computing advanced evaluation metrics (intent, slots, state tracking)...")
         advanced_metrics = self._compute_advanced_evaluation_metrics(dialogues)
         results["metrics"]["advanced_evaluation"] = advanced_metrics
         
@@ -1064,12 +1074,19 @@ class ComprehensiveDialogueEvaluator:
                 "note": "No valid timestamps found; response time metrics default to 0."
             }
 
+        # Cap min at 0.1s: sub-second gaps are artifacts (e.g. injected turns with same datetime.now())
+        GAP_FLOOR_SECONDS = 0.1
+        raw_min = float(min(all_gaps))
+        min_seconds = max(GAP_FLOOR_SECONDS, raw_min) if raw_min < GAP_FLOOR_SECONDS else raw_min
+
         domain_metrics = {}
         for domain, gaps in domain_gaps.items():
+            d_min = float(min(gaps)) if gaps else 0.0
+            d_min_capped = max(GAP_FLOOR_SECONDS, d_min) if d_min < GAP_FLOOR_SECONDS else d_min
             domain_metrics[domain] = {
                 "avg_seconds": float(np.mean(gaps)) if gaps else 0.0,
                 "std_seconds": float(np.std(gaps)) if gaps else 0.0,
-                "min_seconds": float(min(gaps)) if gaps else 0.0,
+                "min_seconds": d_min_capped,
                 "max_seconds": float(max(gaps)) if gaps else 0.0,
                 "num_gaps": len(gaps),
             }
@@ -1077,10 +1094,11 @@ class ComprehensiveDialogueEvaluator:
         return {
             "overall_avg_seconds": float(np.mean(all_gaps)),
             "overall_std_seconds": float(np.std(all_gaps)),
-            "min_seconds": float(min(all_gaps)),
+            "min_seconds": min_seconds,
             "max_seconds": float(max(all_gaps)),
             "num_gaps": len(all_gaps),
             "domain_metrics": domain_metrics,
+            "note": "Inter-turn gaps from generation timestamps (not wall-clock). Min is floored at 0.1s to ignore artifact gaps."
         }
     
     def _compute_llm_judge_metrics(self, dialogues: List[Dict[str, Any]]) -> Dict[str, Any]:

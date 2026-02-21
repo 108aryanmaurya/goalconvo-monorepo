@@ -1,0 +1,127 @@
+[
+  {
+    "dialogue_id": "ebf9350c-2a02-4a4e-9b13-fd3b118997de",
+    "goal": "Book a room at Limehouse for tonight",
+    "domain": "hotel",
+    "context": "I'm arriving in town late tonight for a business meeting tomorrow and I need a place to stay. I've heard Limehouse is a convenient area with good access to public transport. I'm looking for a room that's available for one night, preferably with a view of the river if possible.",
+    "user_persona": "General user (formal and concise)",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking for a hotel room in Limehouse for tonight. Can you help me with that?",
+        "timestamp": "2026-02-21T20:40:18.358239"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'd be happy to help you find a hotel room in Limehouse for tonight. Can you tell me a bit more about what you're looking for - are you open to any type of room or is there a specific one you have in mind, such as a room with a river view? I'll check the availability at Limehouse hotels and see what options are available within your preferred budget.",
+        "timestamp": "2026-02-21T20:40:18.787166"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for a room with a river view if possible, and my budget is moderate, so could you please check the availability of such rooms at Limehouse hotels for tonight and let me know the options and their prices?",
+        "timestamp": "2026-02-21T20:40:19.189276"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability at Limehouse hotels for tonight, and I found a few options that match your preferences, including a room with a river view at the Limehouse Hotel, which is priced at \u00a3120 for the night. This room is a double room with a stunning view of the River Thames, and it's available for check-in from 2 pm onwards. Would you like me to proceed with booking this room, or would you like me to explore other options within your moderate budget?",
+        "timestamp": "2026-02-21T20:40:19.771192"
+      },
+      {
+        "role": "User",
+        "text": "I'd like to proceed with booking the double room with a river view at the Limehouse Hotel, could you please confirm the booking and provide me with a reference number and the check-in time?",
+        "timestamp": "2026-02-21T20:40:20.123966"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've confirmed your booking for the double room with a river view at the Limehouse Hotel for tonight, and your check-in time is 2 pm onwards, with a latest check-in time of 10 pm. Your confirmation number is LH-1234, and you'll receive a confirmation email with all the details shortly. Please arrive at the hotel's reception, located at 469 Commercial Road, to collect your room key and begin your stay.",
+        "timestamp": "2026-02-21T20:40:20.737939"
+      },
+      {
+        "role": "User",
+        "text": "I've taken note of the confirmation number LH-1234 and the check-in details, and I'd like to confirm that the hotel's reception is easily accessible from the main entrance on Commercial Road; could you please let me know if there are any specific instructions or requirements for collecting my room key when",
+        "timestamp": "2026-02-21T20:40:21.181013"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The hotel's reception is indeed easily accessible from the main entrance on Commercial Road, and to collect your room key, you can simply approach the reception desk and provide your confirmation number, LH-1234, or your name, and the staff will assist you with the check-in process. You'll also need to provide a valid ID and a credit card for any incidental charges, but this will all be explained to you when you arrive. The reception is open 24 hours, so even if you're",
+        "timestamp": "2026-02-21T20:40:21.971571"
+      },
+      {
+        "role": "User",
+        "text": "I appreciate the clarification on the check-in process, and I'm glad to know that the reception is open 24 hours; could you please let me know if there are any luggage storage facilities available at the hotel in case I arrive before the check-in time?",
+        "timestamp": "2026-02-21T20:40:22.321130"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can confirm your booking for 2 nights at Limehouse For Tonight for \u00a3130. Would you like to proceed?",
+        "timestamp": "2026-02-21T20:40:22.431491"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T20:40:22.431518"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-02-21T20:40:22.431783",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 4.074,
+      "generation_start_time": "2026-02-21T20:40:18.358194",
+      "generation_end_time": "2026-02-21T20:40:22.431781",
+      "goal_complexity": 8,
+      "supportbot_style": "friendly and helpful",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "ebf9350c-2a02-4a4e-9b13-fd3b118997de",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T20:40:22.606284"
+      }
+    }
+  }
+]

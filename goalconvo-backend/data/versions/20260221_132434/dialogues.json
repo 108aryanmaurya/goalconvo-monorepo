@@ -1,0 +1,316 @@
+[
+  {
+    "dialogue_id": "bfb1d942-a3f1-4330-981e-e5a85f51246c",
+    "goal": "Book a taxi leaving at 12:45 to Ruskin Gallery",
+    "domain": "taxi",
+    "context": "I have an appointment at Ruskin Gallery at 1:30 pm and need to ensure I arrive on time. Public transportation is not reliable for this route, so I need a taxi service that can pick me up at 12:45 pm sharp.",
+    "user_persona": "Professional and punctual",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hello, I'm looking to book a taxi for tomorrow leaving at 12:45 pm. I have an appointment at Ruskin Gallery and need to be there by 1:30 pm.",
+        "timestamp": "2026-02-21T13:23:51.791932"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with that. I've scheduled a taxi to pick you up at 12:45 pm for your appointment at Ruskin Gallery. You should arrive on time for your 1:30 pm appointment.",
+        "timestamp": "2026-02-21T13:23:52.671668"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! I appreciate your help in booking the taxi for tomorrow.",
+        "timestamp": "2026-02-21T13:23:53.489902"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! I'm glad I could assist you in booking the taxi for tomorrow. If you have any other questions or need further help, feel free to let me know!",
+        "timestamp": "2026-02-21T13:23:54.286627"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! I appreciate your assistance in booking the taxi for tomorrow.",
+        "timestamp": "2026-02-21T13:23:54.980387"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'm glad I could assist you in booking the taxi for tomorrow. If you have any other questions or need further help, feel free to let me know!",
+        "timestamp": "2026-02-21T13:23:55.870237"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! I'm all set with the taxi booking for tomorrow.",
+        "timestamp": "2026-02-21T13:23:56.515201"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T13:23:56.515736",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 4.724,
+      "generation_start_time": "2026-02-21T13:23:51.791896",
+      "generation_end_time": "2026-02-21T13:23:56.515734",
+      "goal_complexity": 2,
+      "quality_score": 0.81,
+      "quality_assessment": {
+        "dialogue_id": "bfb1d942-a3f1-4330-981e-e5a85f51246c",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": false,
+            "profane_turns": [
+              0
+            ],
+            "message": "Found profanity in 1 turns"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 0.8333333333333334
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.81,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T13:23:59.769105"
+      }
+    }
+  },
+  {
+    "dialogue_id": "ef95b89f-cadf-4b65-9e17-b9c76884576a",
+    "goal": "Book a taxi leaving at 22:30 from Olds Schools to Acorn Guest House",
+    "domain": "taxi",
+    "context": "I have a late-night arrival at Olds Schools and need a reliable mode of transportation to get to Acorn Guest House. It's crucial that the taxi arrives on time and can take me directly to my destination.",
+    "user_persona": "Traveler with specific transportation needs",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I need to arrange a taxi for 10:30 pm leaving from Olds Schools to take me to Acorn Guest House. Can you help me with this booking?",
+        "timestamp": "2026-02-21T13:23:44.400655"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with that. I've arranged a taxi for you leaving at 10:30 pm from Olds Schools to Acorn Guest House. Your transportation is all set!",
+        "timestamp": "2026-02-21T13:23:45.167402"
+      },
+      {
+        "role": "User",
+        "text": "Great, I'm all set! Thank you for arranging the taxi for me leaving at 10:30 pm from Olds Schools to Acorn Guest House.",
+        "timestamp": "2026-02-21T13:23:45.993560"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! I'm glad I could help arrange the taxi for you. If you have any other questions or need further assistance, feel free to let me know.",
+        "timestamp": "2026-02-21T13:23:46.797240"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! I appreciate your help in arranging the taxi for me leaving at 10:30 pm from Olds Schools to Acorn Guest House.",
+        "timestamp": "2026-02-21T13:23:47.703516"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I understand. You're welcome! I'm glad I could help arrange the taxi for you. If you have any other questions or need further assistance, feel free to let me know.",
+        "timestamp": "2026-02-21T13:23:48.483006"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! I appreciate your help in arranging the taxi for me leaving at 10:30 pm from Olds Schools to Acorn Guest House. Can you help?",
+        "timestamp": "2026-02-21T13:23:49.440930"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T13:23:49.441153",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.041,
+      "generation_start_time": "2026-02-21T13:23:44.400604",
+      "generation_end_time": "2026-02-21T13:23:49.441152",
+      "goal_complexity": 3,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "ef95b89f-cadf-4b65-9e17-b9c76884576a",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T13:23:58.164438"
+      }
+    }
+  },
+  {
+    "dialogue_id": "08987265-6afd-4d08-832a-76b6e1f7cb0c",
+    "goal": "Find a Jamaican restaurant for dinner tonight with vegan options",
+    "domain": "restaurant",
+    "context": "I have a friend visiting from out of town who loves Jamaican food. They are vegan, so we need to find a restaurant that offers vegan options. We want to have dinner tonight.",
+    "user_persona": "casual and friendly",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hey there, I'm trying to find a Jamaican restaurant for dinner tonight. My friend is vegan, so it's important that they have vegan options on the menu.",
+        "timestamp": "2026-02-21T13:24:03.560793"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with that! Let me search for Jamaican restaurants nearby that offer vegan options. Give me a moment to check the menus and make a reservation for tonight.",
+        "timestamp": "2026-02-21T13:24:04.342570"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-21T13:24:04.882075"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! I found a Jamaican restaurant nearby that offers vegan options and made a reservation for tonight. Everything is all set for your dinner. Enjoy!",
+        "timestamp": "2026-02-21T13:24:05.935922"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! Looking forward to dinner tonight.",
+        "timestamp": "2026-02-21T13:24:06.730894"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! I'm glad everything is all set for your dinner tonight. Enjoy your meal at the Jamaican restaurant with your friend!",
+        "timestamp": "2026-02-21T13:24:07.517339"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect! Looking forward to a delicious dinner at the Jamaican restaurant tonight.",
+        "timestamp": "2026-02-21T13:24:08.195355"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T13:24:08.196222",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 4.635,
+      "generation_start_time": "2026-02-21T13:24:03.560753",
+      "generation_end_time": "2026-02-21T13:24:08.196219",
+      "goal_complexity": 6,
+      "quality_score": 0.9400000000000001,
+      "quality_assessment": {
+        "dialogue_id": "08987265-6afd-4d08-832a-76b6e1f7cb0c",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 5.0
+        },
+        "overall_score": 0.9400000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T13:24:09.691929"
+      }
+    }
+  }
+]

@@ -106,7 +106,8 @@ OPTIONAL but RECOMMENDED for better evaluation:
 - user_persona_traits: communication style (e.g. "formal and concise" or "friendly and detailed")
 - supportbot_style: desired assistant style (e.g. "formal and brief" or "friendly and detailed")
 
-IMPORTANT: Make goals specific enough that completion can be clearly detected (e.g., "book a hotel" → "book a budget hotel in the city center for tonight").""",
+IMPORTANT: Make goals specific enough that completion can be clearly detected (e.g., "book a hotel" → "book a budget hotel in the city center for tonight").
+When the goal involves a booking or reservation, include an explicit requestable where possible (e.g. "and give me the confirmation number" or "confirm the pickup time and place") so the dialogue requires the assistant to provide concrete information.""",
             
             "user": """Here are examples of well-structured goals that lead to high evaluation scores:
 

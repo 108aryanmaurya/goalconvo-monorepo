@@ -94,16 +94,16 @@ class GoalConvoGenerator:
         # Generate dialogues
         generated_count = 0
         accepted_count = 0
-        
+        run_accepted_dialogues = []  # This run's accepted dialogues (for evaluation)
+
         # Calculate dialogues per domain
         num_domains = len(target_domains)
         if num_domains == 0:
             logger.error("No domains specified for generation")
             return self.stats
         
-        # Distribute dialogues evenly across domains, ensuring at least 1 per domain if num_dialogues >= num_domains
-        dialogues_per_domain = max(1, num_dialogues // num_domains) if num_dialogues > 0 else 0
-        # Handle remainder: distribute extra dialogues to first few domains
+        # Distribute exactly num_dialogues across domains (no extra dialogues)
+        dialogues_per_domain = num_dialogues // num_domains if num_dialogues > 0 else 0
         remainder = num_dialogues % num_domains if num_dialogues > 0 else 0
         
         logger.info(f"Generating {num_dialogues} dialogues across {num_domains} domain(s)")
@@ -148,7 +148,10 @@ class GoalConvoGenerator:
             
             # Process dialogues through quality filter (or accept all if ablation)
             if use_quality_judge:
-                accepted, rejected = self.quality_judge.filter_dialogues(domain_dialogues)
+                improve_on_fail = (overrides or {}).get("quality_improve_on_fail")
+                accepted, rejected = self.quality_judge.filter_dialogues(
+                    domain_dialogues, improve_on_fail=improve_on_fail
+                )
             else:
                 accepted, rejected = list(domain_dialogues), []
             
@@ -198,6 +201,9 @@ class GoalConvoGenerator:
                     'message': f'Saving {len(accepted)} accepted dialogues...'
                 })
             
+            # Accumulate this run's accepted dialogues for evaluation (so backend evaluates this run, not arbitrary load from disk)
+            run_accepted_dialogues.extend(accepted)
+
             # Save accepted dialogues
             for dialogue in accepted:
                 dialogue_id = dialogue.get('dialogue_id', 'unknown')
@@ -253,35 +259,24 @@ class GoalConvoGenerator:
         logger.info("STEP 6: Saving Generation Progress")
         logger.info(f"{'='*80}")
         self._save_generation_progress()
-        
-        # Compute evaluation metrics from all accepted dialogues
+
+        # Attach this run's accepted dialogues to stats so backend evaluates this run (not re-load from disk)
+        self.stats["accepted_dialogues"] = run_accepted_dialogues
+
+        # Compute evaluation metrics from this run's accepted dialogues
         logger.info(f"\n{'='*80}")
         logger.info("STEP 7: Computing Evaluation Metrics")
         logger.info(f"{'='*80}")
-        
+
         if emit_callback:
             emit_callback('step_start', {
                 'step': 'evaluation',
                 'step_name': 'Evaluation',
                 'message': 'Computing evaluation metrics...'
             })
-        
-        # Collect all accepted dialogues for evaluation
-        all_accepted_dialogues = []
-        for domain in target_domains:
-            # Load saved dialogues from dataset store
-            domain_dir = Path(self.config.synthetic_dir) / domain
-            if domain_dir.exists():
-                for dialogue_file in domain_dir.glob("*.json"):
-                    try:
-                        with open(dialogue_file, 'r') as f:
-                            dialogue = json.load(f)
-                            all_accepted_dialogues.append(dialogue)
-                    except Exception as e:
-                        logger.warning(f"Failed to load dialogue {dialogue_file}: {e}")
-        
-        # Compute basic evaluation metrics
-        evaluation_metrics = self._compute_evaluation_metrics(all_accepted_dialogues)
+
+        # Compute basic evaluation metrics (for logging/summary only) from this run's dialogues
+        evaluation_metrics = self._compute_evaluation_metrics(run_accepted_dialogues)
         
         logger.info(f"\n{'='*80}")
         logger.info("GENERATION SUMMARY")
@@ -290,14 +285,9 @@ class GoalConvoGenerator:
         logger.info(f"Acceptance rate: {(accepted_count/generated_count*100) if generated_count > 0 else 0:.1f}%")
         logger.info(f"{'='*80}\n")
         
-        # Emit completion event with evaluation metrics
-        if emit_callback:
-            emit_callback('pipeline_complete', {
-                'message': 'Pipeline completed successfully',
-                'stats': self.stats,
-                'evaluation': evaluation_metrics,
-                'timestamp': datetime.now().isoformat()
-            })
+        # Do NOT emit pipeline_complete here. When run from backend_server, the server runs
+        # comprehensive evaluation and emits pipeline_complete once with full metrics, so the
+        # frontend only shows the detailed evaluation panel (no duplicate / less-detailed first).
         
         return self.stats
     

@@ -1,0 +1,107 @@
+[
+  {
+    "dialogue_id": "4b96e6fb-6c01-4a2e-ac15-e110b709f222",
+    "goal": "Book a room at guest houses",
+    "domain": "hotel",
+    "context": "I'm planning a weekend getaway with my friends and we want to stay at guest houses for a more cozy and intimate experience. We need assistance booking rooms at guest houses that can accommodate all of us.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help booking rooms at guest houses for a weekend getaway with my friends.",
+        "timestamp": "2026-02-21T13:21:31.533533"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Sure thing! How many friends will be joining you for the weekend getaway so I can find guest houses that can accommodate all of you?",
+        "timestamp": "2026-02-21T13:21:32.329026"
+      },
+      {
+        "role": "User",
+        "text": "We will have a group of 6 friends joining for the weekend getaway.",
+        "timestamp": "2026-02-21T13:21:33.074568"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great, I'll start looking for guest houses that can accommodate your group of 6 friends for the weekend getaway. I'll check the room availability and get back to you with some options soon.",
+        "timestamp": "2026-02-21T13:21:33.949459"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for looking into guest houses that can accommodate our group of 6 friends for the weekend getaway.",
+        "timestamp": "2026-02-21T13:21:34.657431"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! I'll make sure to find the best guest houses that can accommodate your group of 6 friends for the weekend getaway. I'll get back to you with some options shortly.",
+        "timestamp": "2026-02-21T13:21:35.624237"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for looking into guest houses that can accommodate our group of 6 friends for the weekend getaway. Can you help?",
+        "timestamp": "2026-02-21T13:21:36.582350"
+      }
+    ],
+    "metadata": {
+      "num_turns": 7,
+      "generated_at": "2026-02-21T13:21:36.582794",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 5.049,
+      "generation_start_time": "2026-02-21T13:21:31.533493",
+      "generation_end_time": "2026-02-21T13:21:36.582793",
+      "goal_complexity": 6,
+      "supportbot_style": "friendly and detailed",
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "4b96e6fb-6c01-4a2e-ac15-e110b709f222",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 7,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 7 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-21T13:21:38.199013"
+      }
+    }
+  }
+]

@@ -3,17 +3,12 @@
   "total_accepted": 1,
   "total_rejected": 0,
   "by_domain": {
-    "hotel": {
-      "generated": 1,
-      "accepted": 1,
-      "rejected": 0
-    },
-    "restaurant": {
+    "taxi": {
       "generated": 1,
       "accepted": 1,
       "rejected": 0
     }
   },
-  "start_time": "2026-02-20T19:48:13.865953",
-  "end_time": "2026-02-20T19:48:26.840369"
+  "start_time": "2026-02-21T20:51:05.284064",
+  "end_time": "2026-02-21T20:51:12.391653"
 }
