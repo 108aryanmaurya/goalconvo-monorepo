@@ -1,0 +1,125 @@
+[
+  {
+    "dialogue_id": "4fe5e64c-a8ed-4c86-9d89-f69c07ed952d",
+    "goal": "Book a room at Cityroomz",
+    "domain": "hotel",
+    "context": "User wants to book a room at cityroomz",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I need help with book a room at cityroomz",
+        "timestamp": "2026-02-22T17:38:25.702036"
+      },
+      {
+        "role": "SupportBot",
+        "text": "To book a room at Cityroomz, I just need to confirm a few details with you - what dates are you planning to stay and what type of room are you looking for, such as a single, double, or suite? We have various options available, including rooms with city views. Could you please let me know your preferred dates and room type so I can check availability?",
+        "timestamp": "2026-02-22T17:38:26.143911"
+      },
+      {
+        "role": "User",
+        "text": "I'm planning to stay from Friday to Sunday and I'd like to book a double room, preferably one with a city view if available. Could you please let me know the available options and their corresponding rates for those dates?",
+        "timestamp": "2026-02-22T17:38:26.620462"
+      },
+      {
+        "role": "SupportBot",
+        "text": "For a double room with a city view at Cityroomz from Friday to Sunday, we have two available options: a Deluxe Double Room with a city view for $250 per night, and a Premium Double Room with a city view and balcony for $300 per night. Both options include complimentary breakfast and access to our fitness center. I can also offer you a special weekend package that includes a discount on the total stay, would you like me to provide more details on this package?",
+        "timestamp": "2026-02-22T17:38:27.337887"
+      },
+      {
+        "role": "User",
+        "text": "I'm interested in the special weekend package you mentioned, could you please provide more details on the discount and what's included in the package for the Deluxe Double Room with a city view?",
+        "timestamp": "2026-02-22T17:38:27.615677"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The special weekend package for the Deluxe Double Room with a city view includes a 10% discount on the total stay, complimentary breakfast, access to our fitness center, and a late checkout on Sunday until 2 pm. With this package, the total cost for the Deluxe Double Room would be $675, which is a savings of $75 from the regular rate. Would you like me to proceed with booking this package for you, and I can provide you with a confirmation number and further details on the",
+        "timestamp": "2026-02-22T17:38:28.111365"
+      },
+      {
+        "role": "User",
+        "text": "You've outlined the special weekend package for the Deluxe Double Room with a city view, including a 10% discount and late checkout on Sunday; could you please confirm the total cost and provide a confirmation number if I proceed with booking this package?",
+        "timestamp": "2026-02-22T17:38:28.567095"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The total cost for the Deluxe Double Room with a city view, including the special weekend package, would indeed be $675, which is a savings of $75 from the regular rate. If you proceed with booking this package, I can confirm your reservation and provide you with a confirmation number, such as Reference: CITYROOM-012. Would you like me to finalize the booking and send you the confirmation details?",
+        "timestamp": "2026-02-22T17:38:29.180573"
+      },
+      {
+        "role": "User",
+        "text": "I'd like to finalize the booking, could you please confirm that the Reference: CITYROOM-012 will be the actual confirmation number for my Deluxe Double Room with a city view, and also send me the confirmation details as you mentioned?",
+        "timestamp": "2026-02-22T17:38:29.590525"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Your booking at Cityroomz is confirmed. Reference: CITYROOM-001. Is there anything else?",
+        "timestamp": "2026-02-22T17:38:29.684653"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-22T17:38:29.684666"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-02-22T17:38:29.684759",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 3.983,
+      "generation_start_time": "2026-02-22T17:38:25.702001",
+      "generation_end_time": "2026-02-22T17:38:29.684759",
+      "quality_score": 0.78,
+      "quality_assessment": {
+        "dialogue_id": "4fe5e64c-a8ed-4c86-9d89-f69c07ed952d",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.78,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:38:30.094598"
+      }
+    }
+  }
+]

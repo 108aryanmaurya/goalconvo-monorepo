@@ -17,15 +17,15 @@ load_dotenv()
 class Config:
     """Configuration class containing all hyperparameters and settings."""
 
-    groq_api_key: str = os.getenv("GROQ_API_KEY", "")
-    groq_api_base: str = os.getenv("GROQ_API_BASE", "https://api.groq.com/openai/v1")
-    groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     # OpenRouter.ai (unified API, OpenAI-compatible) - first priority
     openrouter_api_key: str = os.getenv("OPENROUTER_API_KEY", "")
     openrouter_api_base: str = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
     openrouter_model: str = os.getenv("OPENROUTER_MODEL", "openai/gpt-3.5-turbo")
 
     # Groq (OpenAI-compatible API)
+    groq_api_key: str = os.getenv("GROQ_API_KEY", "")
+    groq_api_base: str = os.getenv("GROQ_API_BASE", "https://api.groq.com/openai/v1")
+    groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
     # DeepSeek (OpenAI-compatible API)
     deepseek_api_key: str = os.getenv("DEEPSEEK_API_KEY", "")
@@ -53,8 +53,8 @@ class Config:
     # Keep local models responsive by default; can be increased via env
     ollama_timeout: int = int(os.getenv("OLLAMA_TIMEOUT", "240"))  # 60 seconds for local models (phi2:mini can be slow)
     
-    # Generation hyperparameters (from paper)
-    temperature: float = float(os.getenv("TEMPERATURE", "0.75"))  # Slightly higher for more diverse phrasing
+    # Generation hyperparameters (from paper; lower temp = more focused, on-goal dialogues)
+    temperature: float = float(os.getenv("TEMPERATURE", "0.65"))  # 0.65 for coherent, on-goal turns (was 0.75)
     top_p: float = float(os.getenv("TOP_P", "0.92"))
     # Use smaller defaults for faster responses; can be overridden via env
     max_tokens: int = int(os.getenv("MAX_TOKENS", "120"))
@@ -62,7 +62,7 @@ class Config:
     min_turns: int = int(os.getenv("MIN_TURNS", "6"))  # Minimum turns per dialogue (enforced)
     # Per-turn length limits for dialogue simulation (shorter = more concise turns)
     max_tokens_user_turn: int = int(os.getenv("MAX_TOKENS_USER_TURN", "60"))
-    max_tokens_supportbot_turn: int = int(os.getenv("MAX_TOKENS_SUPPORTBOT_TURN", "100"))
+    max_tokens_supportbot_turn: int = int(os.getenv("MAX_TOKENS_SUPPORTBOT_TURN", "120"))  # 120 for fuller confirmations
     
     # Few-shot settings (use 3-5 for better patterns; seed hub has strong examples)
     few_shot_examples: int = int(os.getenv("FEW_SHOT_EXAMPLES", "4"))
@@ -70,10 +70,8 @@ class Config:
     # Quality filtering
     quality_threshold: float = float(os.getenv("QUALITY_THRESHOLD", "0.7"))
     discard_rate: float = float(os.getenv("DISCARD_RATE", "0.1"))
-    quality_improve_on_fail: bool = os.getenv("QUALITY_IMPROVE_ON_FAIL", "1").lower() in ("1", "true", "yes")
-    max_tokens_improve_dialogue: int = int(os.getenv("MAX_TOKENS_IMPROVE_DIALOGUE", "800"))
-    strict_llm_verification: bool = os.getenv("STRICT_LLM_VERIFICATION", "1").lower() in ("1", "true", "yes")
-    max_tokens_rejection_reason: int = int(os.getenv("MAX_TOKENS_REJECTION_REASON", "150"))
+    # When True, rejected dialogues get one LLM improvement attempt and re-judged (improves acceptance quality)
+    quality_improve_on_fail: bool = os.getenv("QUALITY_IMPROVE_ON_FAIL", "true").lower() in ("true", "1", "yes")
     
     # Generation settings
     max_dialogues: int = int(os.getenv("MAX_DIALOGUES", "20000"))
@@ -145,14 +143,7 @@ class Config:
         6. OpenAI (ChatGPT) - if API key available
         7. Mistral - if API key available
         """
-        # Priority 1: OpenRouter.ai
-        if self.groq_api_key:
-            return {
-                "api_key": self.groq_api_key,
-                "api_base": self.groq_api_base,
-                "model": self.groq_model,
-                "provider": "groq"
-            }
+        # Priority 2: Groq
         if self.openrouter_api_key:
             return {
                 "api_key": self.openrouter_api_key,
@@ -160,8 +151,6 @@ class Config:
                 "model": self.openrouter_model,
                 "provider": "openrouter"
             }
-        # Priority 2: Groq
-        # Priority 3: DeepSeek
         if self.deepseek_api_key:
             return {
                 "api_key": self.deepseek_api_key,
@@ -169,6 +158,15 @@ class Config:
                 "model": self.deepseek_model,
                 "provider": "deepseek"
             }
+        if self.groq_api_key:
+            return {
+                "api_key": self.groq_api_key,
+                "api_base": self.groq_api_base,
+                "model": self.groq_model,
+                "provider": "groq"
+            }
+        # Priority 1: OpenRouter.ai
+        # Priority 3: DeepSeek
         # Priority 3: Ollama (local, if enabled)
         if self.ollama_enabled:
             return {

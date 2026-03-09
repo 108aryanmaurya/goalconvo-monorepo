@@ -1,0 +1,133 @@
+{
+  "annotations": [
+    {
+      "annotation_id": "ann_92e042b4-fc4d-4de4-8c8c-e84f9a1d4031_ 20260224_105124_20260226_172420",
+      "dialogue_id": "92e042b4-fc4d-4de4-8c8c-e84f9a1d4031",
+      "annotator_id": " 20260224_105124",
+      "timestamp": "2026-02-26T17:24:20.847115",
+      "dimensions": {
+        "coherence": 3,
+        "naturalness": 3,
+        "task_success": 3,
+        "fluency": 3,
+        "relevance": 3,
+        "overall_quality": 3
+      },
+      "comments": null,
+      "task_completed": true,
+      "issues": []
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "task_92e042b4-fc4d-4de4-8c8c-e84f9a1d4031_20260226_172412",
+      "dialogue_id": "92e042b4-fc4d-4de4-8c8c-e84f9a1d4031",
+      "dialogue_data": {
+        "goal": "Book a room at Acorn for tonight with a budget of $100",
+        "domain": "hotel",
+        "turns": [
+          {
+            "role": "User",
+            "text": "Hi, I'm looking for a room at Acorn for tonight. Can you help me with that? I'm on a bit of a budget, so I'd like to keep it under $100 if possible.",
+            "timestamp": "2026-02-22T11:13:18.595135"
+          },
+          {
+            "role": "SupportBot",
+            "text": "I'd be happy to help you find a room at Acorn for tonight within your budget of $100. Let me just check the availability of their rooms for tonight - they have a few different types, including a single room for $80 and a double room for $90, both of which are in the city center. I can also look into any potential discounts or promotions they might be offering to see if we can get you the best deal possible.",
+            "timestamp": "2026-02-22T11:13:19.026684"
+          },
+          {
+            "role": "User",
+            "text": "I appreciate you looking into the availability of rooms at Acorn for tonight, and I'm interested in the single room for $80, could you please confirm if this room is still available and what the check-in time would be?",
+            "timestamp": "2026-02-22T11:13:19.399605"
+          },
+          {
+            "role": "SupportBot",
+            "text": "The single room for $80 is still available for tonight, and the check-in time is 3:00 pm, but you can also check in later if that doesn't suit your schedule. I've also checked on any additional fees, and it looks like there's a small tax charge of $5, which would bring the total to $85. Would you like me to go ahead and book this room for you, and I can provide you with a confirmation number?",
+            "timestamp": "2026-02-22T11:13:19.944786"
+          },
+          {
+            "role": "User",
+            "text": "I'd like to confirm the booking of the single room for $85, including the tax charge, so could you please provide me with a confirmation number once it's booked, and also let me know if there are any other details I need to be aware of upon check-in at 3:00",
+            "timestamp": "2026-02-22T11:13:20.314594"
+          },
+          {
+            "role": "SupportBot",
+            "text": "I've gone ahead and booked the single room for $85, including the tax charge, and your confirmation number is ACORN-123. You can check in at 3:00 pm, and if you need to arrive later, just let the front desk know in advance so they can make the necessary arrangements. Please have your confirmation number handy when you arrive, and if you have any other questions or need further assistance, feel free to ask.",
+            "timestamp": "2026-02-22T11:13:20.792818"
+          },
+          {
+            "role": "User",
+            "text": "I've taken note of the confirmation number ACORN-123 and the check-in time of 3:00 pm, could you please let me know what I should expect in terms of parking arrangements at the hotel, and are there any specific documents I need to bring with me when I arrive?",
+            "timestamp": "2026-02-22T11:13:21.149914"
+          },
+          {
+            "role": "SupportBot",
+            "text": "In terms of parking arrangements, Acorn hotel has a small on-site car park that's available on a first-come, first-served basis, and they also offer a discounted rate at a nearby parking garage for guests who can't find a spot on site. When you arrive, you'll just need to bring a valid photo ID and the credit card you used to book the room, and they'll take care of the rest. Your confirmation number, ACORN-123, will also be helpful",
+            "timestamp": "2026-02-22T11:13:21.859468"
+          }
+        ]
+      },
+      "assigned_to": " 20260224_105124",
+      "created_at": "2026-02-26T17:24:12.725326",
+      "completed_at": "2026-02-26T17:24:20.847147",
+      "status": "completed"
+    }
+  ],
+  "statistics": {
+    "coherence": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "naturalness": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "task_success": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "fluency": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "relevance": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "overall_quality": {
+      "mean": 3.0,
+      "std": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "count": 1
+    },
+    "task_completion": {
+      "completed": 1,
+      "total": 1,
+      "rate": 1.0
+    },
+    "annotators": {
+      "total": 1,
+      "annotations_per_annotator": {
+        " 20260224_105124": 1
+      }
+    }
+  },
+  "exported_at": "2026-02-26T18:52:59.223237"
+}

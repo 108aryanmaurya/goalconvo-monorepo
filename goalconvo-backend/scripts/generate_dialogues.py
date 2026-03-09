@@ -315,7 +315,17 @@ class GoalConvoGenerator:
                         'step': 'experience_generation'
                     })
                 
-                experience_data = self.experience_generator.generate_experience(goal, domain, few_shot_override=few_shot_override)
+                def _on_experience_error(msg: str) -> None:
+                    if emit_callback:
+                        emit_callback('log', {
+                            'level': 'error',
+                            'message': f'Experience generation failed (dialogue {i+1}/{num_dialogues}, domain {domain}): {msg}',
+                            'step': 'experience_generation',
+                        })
+
+                experience_data = self.experience_generator.generate_experience(
+                    goal, domain, few_shot_override=few_shot_override, on_error=_on_experience_error
+                )
                 
                 if emit_callback:
                     emit_callback('step_data', {
@@ -358,9 +368,19 @@ class GoalConvoGenerator:
                             'total_dialogues': num_dialogues,
                             'goal': experience_data.get('goal', '')[:80],
                         })
-                
+
+                def _on_simulate_error(msg: str) -> None:
+                    if emit_callback:
+                        emit_callback('log', {
+                            'level': 'error',
+                            'message': f'Dialogue simulation error (dialogue {i+1}/{num_dialogues}, domain {domain}): {msg}',
+                            'step': 'dialogue_simulation',
+                        })
+
                 # Simulate dialogue (uses last-K-turns context, domain schema, progress hint, stricter goal-check, config truncation)
-                dialogue = self.dialogue_simulator.simulate_dialogue(experience_data, progress_callback=on_live_progress)
+                dialogue = self.dialogue_simulator.simulate_dialogue(
+                    experience_data, progress_callback=on_live_progress, on_error=_on_simulate_error
+                )
                 dialogue_id = dialogue.get('dialogue_id', 'unknown')
                 num_turns = len(dialogue.get('turns', []))
                 
@@ -396,6 +416,12 @@ class GoalConvoGenerator:
                 logger.error(f"\n✗ Error generating dialogue {i+1} for domain {domain}: {e}")
                 import traceback
                 logger.error(traceback.format_exc())
+                if emit_callback:
+                    emit_callback('log', {
+                        'level': 'error',
+                        'message': f'Error generating dialogue {i+1}/{num_dialogues} for domain {domain}: {str(e)}',
+                        'step': 'dialogue_simulation',
+                    })
                 continue
         
         logger.info(f"\n{'='*80}")

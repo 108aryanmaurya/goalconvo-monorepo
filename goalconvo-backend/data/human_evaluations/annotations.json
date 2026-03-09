@@ -1,0 +1,19 @@
+{
+  "ann_92e042b4-fc4d-4de4-8c8c-e84f9a1d4031_ 20260224_105124_20260226_172420": {
+    "annotation_id": "ann_92e042b4-fc4d-4de4-8c8c-e84f9a1d4031_ 20260224_105124_20260226_172420",
+    "dialogue_id": "92e042b4-fc4d-4de4-8c8c-e84f9a1d4031",
+    "annotator_id": " 20260224_105124",
+    "timestamp": "2026-02-26T17:24:20.847115",
+    "dimensions": {
+      "coherence": 3,
+      "naturalness": 3,
+      "task_success": 3,
+      "fluency": 3,
+      "relevance": 3,
+      "overall_quality": 3
+    },
+    "comments": null,
+    "task_completed": true,
+    "issues": []
+  }
+}

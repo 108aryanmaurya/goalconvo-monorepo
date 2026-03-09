@@ -1,0 +1,509 @@
+[
+  {
+    "dialogue_id": "2ad73a35-7bdc-41d5-8618-657bd924c266",
+    "goal": "Book a room at Finches for tonight with a budget price range",
+    "domain": "hotel",
+    "context": "I'm traveling to the area for a conference and I need a comfortable place to stay for the night. I've heard good things about Finches and I'd like to book a room there. It's important that it's within my budget, as I'm trying to keep expenses low for the trip.",
+    "user_persona": "General user (friendly and concise)",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking for a place to stay tonight and I'm interested in Finches. Can you help me book a room there at a reasonable price?",
+        "timestamp": "2026-02-22T18:18:09.103872"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I'd be happy to help you book a room at Finches for tonight. Before I check availability, can you tell me a bit more about what you're looking for in terms of budget - are you thinking of something under $100, or is there a bit more flexibility in your price range? This will help me narrow down some options for you at Finches.",
+        "timestamp": "2026-02-22T18:18:09.545577"
+      },
+      {
+        "role": "User",
+        "text": "I'm aiming for a budget-friendly option, so something under $100 would be ideal, could you check the availability of rooms at Finches within that price range for tonight?",
+        "timestamp": "2026-02-22T18:18:09.855046"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability of rooms at Finches for tonight, and I found a few options that fit your budget of under $100. They have a single room available for $80, which includes free Wi-Fi and a continental breakfast, and a double room for $90, which also comes with a flat-screen TV and a desk area. Would you like me to proceed with booking one of these rooms for you, or would you like to compare more options?",
+        "timestamp": "2026-02-22T18:18:10.258557"
+      },
+      {
+        "role": "User",
+        "text": "I'd like to proceed with booking the single room for $80, could you please confirm the booking and provide me with a reference number or confirmation details for my stay at Finches tonight?",
+        "timestamp": "2026-02-22T18:18:10.577363"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've confirmed your booking for the single room at Finches for tonight at $80, and your confirmation number is FIN-1234. This room includes free Wi-Fi and a continental breakfast, and you can check-in anytime after 3 pm today. Your room will be ready for you when you arrive, and if you need any further assistance, please don't hesitate to ask.",
+        "timestamp": "2026-02-22T18:18:11.006121"
+      },
+      {
+        "role": "User",
+        "text": "I've taken note of the confirmation number FIN-1234 and the check-in time after 3 pm, so I'm all set for my stay at Finches tonight; could you just let me know what I should expect in terms of parking options when I arrive?",
+        "timestamp": "2026-02-22T18:18:11.423144"
+      },
+      {
+        "role": "SupportBot",
+        "text": "For parking options at Finches, you can expect to find a small on-site car park that's available on a first-come, first-served basis, and there are also several public parking lots within a short walking distance from the hotel, including one just across the street with a flat rate of $10 per night. If you'd like, I can provide you with more information on the nearby parking options or offer directions to the on-site car park. Your confirmation number FIN-1234 is",
+        "timestamp": "2026-02-22T18:18:12.016932"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-22T18:18:12.016947"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-22T18:18:12.017071",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 2.913,
+      "generation_start_time": "2026-02-22T18:18:09.103855",
+      "generation_end_time": "2026-02-22T18:18:12.017071",
+      "goal_complexity": 6,
+      "supportbot_style": "friendly and helpful",
+      "quality_score": 1.0,
+      "quality_assessment": {
+        "dialogue_id": "2ad73a35-7bdc-41d5-8618-657bd924c266",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 5.0,
+          "goal_relevance": true,
+          "overall_score": 5.0
+        },
+        "overall_score": 1.0,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T18:18:12.492864"
+      }
+    }
+  },
+  {
+    "dialogue_id": "9394f3bf-27bc-4991-a879-114265e136dc",
+    "goal": "Find information about thanh binh",
+    "domain": "restaurant",
+    "context": "User needs assistance with find information about thanh binh",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with find information about thanh binh",
+        "timestamp": "2026-02-22T18:18:13.204800"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with Thanh Binh. What time are you looking to dine and how many people?",
+        "timestamp": "2026-02-22T18:18:13.244359"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Find information about thanh binh.",
+        "timestamp": "2026-02-22T18:18:13.292460"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with Thanh Binh. What time are you looking to dine and how many people?",
+        "timestamp": "2026-02-22T18:18:13.334302"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Find information about thanh binh.",
+        "timestamp": "2026-02-22T18:18:13.373683"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you with Thanh Binh. What time are you looking to dine and how many people?",
+        "timestamp": "2026-02-22T18:18:13.414767"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T18:18:13.458694",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.254,
+      "generation_start_time": "2026-02-22T18:18:13.204773",
+      "generation_end_time": "2026-02-22T18:18:13.458693",
+      "quality_score": 0.6,
+      "quality_assessment": {
+        "dialogue_id": "9394f3bf-27bc-4991-a879-114265e136dc",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 1.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T18:18:13.666024"
+      }
+    }
+  },
+  {
+    "dialogue_id": "2ff077b3-08c6-4fba-aec5-520c8edf24cf",
+    "goal": "Book a taxi leaving at 12:15 from Charlie Chan",
+    "domain": "taxi",
+    "context": "User needs assistance with book a taxi leaving at 12:15 from charlie chan",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with book a taxi leaving at 12:15 from charlie chan",
+        "timestamp": "2026-02-22T18:18:13.885642"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T18:18:13.935782"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book a taxi leaving at 12:15 from Charlie Chan.",
+        "timestamp": "2026-02-22T18:18:13.974879"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T18:18:14.018012"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book a taxi leaving at 12:15 from Charlie Chan.",
+        "timestamp": "2026-02-22T18:18:14.074289"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T18:18:14.117931"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T18:18:14.169067",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.283,
+      "generation_start_time": "2026-02-22T18:18:13.885621",
+      "generation_end_time": "2026-02-22T18:18:14.169066",
+      "quality_score": 0.6,
+      "quality_assessment": {
+        "dialogue_id": "2ff077b3-08c6-4fba-aec5-520c8edf24cf",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 1.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T18:18:14.397279"
+      }
+    }
+  },
+  {
+    "dialogue_id": "dba41c6d-5bf7-4d17-b586-75b810dfff20",
+    "goal": "Book or find information about a train journey",
+    "domain": "train",
+    "context": "User needs assistance with book or find information about a train journey",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with book or find information about a train journey",
+        "timestamp": "2026-02-22T18:18:14.594366"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T18:18:14.648351"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book or find information about a train journey.",
+        "timestamp": "2026-02-22T18:18:14.698347"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T18:18:14.744073"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book or find information about a train journey.",
+        "timestamp": "2026-02-22T18:18:14.796665"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T18:18:14.845127"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T18:18:14.901066",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.307,
+      "generation_start_time": "2026-02-22T18:18:14.594347",
+      "generation_end_time": "2026-02-22T18:18:14.901066",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "dba41c6d-5bf7-4d17-b586-75b810dfff20",
+        "domain": "train",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T18:18:15.045921"
+      }
+    }
+  },
+  {
+    "dialogue_id": "981651d3-7485-419f-b133-9a60bdcfc19f",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "User needs assistance with find information about attractions or things to do",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with find information about attractions or things to do",
+        "timestamp": "2026-02-22T18:18:15.263163"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with attractions. Are you interested in museums, tours, or outdoor activities?",
+        "timestamp": "2026-02-22T18:18:15.297430"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-22T18:18:15.354177"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-22T18:18:15.393913"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-22T18:18:15.442089"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-22T18:18:15.478038"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T18:18:15.529987",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.267,
+      "generation_start_time": "2026-02-22T18:18:15.263146",
+      "generation_end_time": "2026-02-22T18:18:15.529987",
+      "quality_score": 0.6,
+      "quality_assessment": {
+        "dialogue_id": "981651d3-7485-419f-b133-9a60bdcfc19f",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 1.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T18:18:15.637100"
+      }
+    }
+  }
+]

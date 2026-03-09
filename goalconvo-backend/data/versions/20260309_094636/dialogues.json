@@ -1,0 +1,116 @@
+[
+  {
+    "dialogue_id": "c36c91ed-d732-4d69-9261-0dacf3951497",
+    "goal": "Book a room at Acorn Guest House",
+    "domain": "hotel",
+    "context": "User is planning a weekend getaway and needs to book a room at Acorn Guest House for a relaxing stay.",
+    "user_persona": "friendly and detailed",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking to book a room at Acorn Guest House for an upcoming weekend getaway.",
+        "timestamp": "2026-03-09T09:43:08.252423"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with that! Let me check the availability for the upcoming weekend at Acorn Guest House. Just a moment.",
+        "timestamp": "2026-03-09T09:43:09.005756"
+      },
+      {
+        "role": "User",
+        "text": "Could you confirm the availability for a double room at Acorn Guest House for the upcoming weekend?",
+        "timestamp": "2026-03-09T09:43:09.734537"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I have confirmed the availability of a double room at Acorn Guest House for the upcoming weekend. Would you like to proceed with the booking?",
+        "timestamp": "2026-03-09T09:43:10.443234"
+      },
+      {
+        "role": "User",
+        "text": "Yes, I would like to proceed with booking the double room at Acorn Guest House for the upcoming weekend.",
+        "timestamp": "2026-03-09T09:43:11.400155"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great choice! I have successfully booked the double room for you at Acorn Guest House for the upcoming weekend. Your confirmation number is ACORN-007. Enjoy your relaxing getaway!",
+        "timestamp": "2026-03-09T09:43:12.328879"
+      },
+      {
+        "role": "User",
+        "text": "Could you please provide me with the address of Acorn Guest House for my upcoming weekend stay?",
+        "timestamp": "2026-03-09T09:43:13.045021"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Acorn Guest House is located at 123 Oak Street, Cityville. Enjoy your upcoming weekend stay!",
+        "timestamp": "2026-03-09T09:43:15.112176"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T09:43:15.112206"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T09:43:15.112448",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.86,
+      "generation_start_time": "2026-03-09T09:43:08.252384",
+      "generation_end_time": "2026-03-09T09:43:15.112445",
+      "goal_complexity": 6,
+      "quality_score": 0.81,
+      "quality_assessment": {
+        "dialogue_id": "c36c91ed-d732-4d69-9261-0dacf3951497",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": false,
+            "has_repetition": true,
+            "message": "Repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 0.8333333333333334
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.81,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T09:43:16.521872"
+      }
+    }
+  }
+]

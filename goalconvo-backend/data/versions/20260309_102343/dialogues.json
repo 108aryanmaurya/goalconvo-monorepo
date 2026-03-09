@@ -1,0 +1,118 @@
+[
+  {
+    "dialogue_id": "a08adadd-f38e-444e-bc08-76ea65ff8c4a",
+    "goal": "Book a room at El Shaddai",
+    "domain": "hotel",
+    "context": "The user is planning a weekend getaway with their family to a beach destination. They have heard great reviews about El Shaddai resort and want to secure a room for their stay.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help booking a room at El Shaddai for our upcoming weekend trip with my family.",
+        "timestamp": "2026-03-09T10:23:31.080699"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can definitely help with that! Let me check the room availability at El Shaddai for your weekend getaway with your family. Just a moment while I confirm the details for you.",
+        "timestamp": "2026-03-09T10:23:31.977953"
+      },
+      {
+        "role": "User",
+        "text": "Can you confirm the room availability for the weekend at El Shaddai for my family getaway?",
+        "timestamp": "2026-03-09T10:23:32.744218"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've confirmed the room availability for your family getaway at El Shaddai for the weekend. You're all set with a beach view room. Enjoy your stay! Your confirmation number is ELSD-2022.",
+        "timestamp": "2026-03-09T10:23:33.868467"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for confirming the beach view room at El Shaddai for our family getaway. Could you please provide the check-in and check-out times for the reservation?",
+        "timestamp": "2026-03-09T10:23:35.747213"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The check-in time for your reservation at El Shaddai is at 3:00 pm, and the check-out time is at 11:00 am. Enjoy your family getaway at the beach view room!",
+        "timestamp": "2026-03-09T10:23:37.371624"
+      },
+      {
+        "role": "User",
+        "text": "What amenities are included in the beach view room at El Shaddai for our family getaway?",
+        "timestamp": "2026-03-09T10:23:38.183800"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The beach view room at El Shaddai for your family getaway includes amenities like complimentary breakfast, beach access, and a private balcony. Enjoy your stay!",
+        "timestamp": "2026-03-09T10:23:39.217126"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T10:23:39.217156"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T10:23:39.217394",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 8.137,
+      "generation_start_time": "2026-03-09T10:23:31.080641",
+      "generation_end_time": "2026-03-09T10:23:39.217392",
+      "goal_complexity": 7,
+      "user_persona_traits": "friendly and detailed",
+      "supportbot_style": "friendly and detailed",
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "a08adadd-f38e-444e-bc08-76ea65ff8c4a",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T10:23:40.797292"
+      }
+    }
+  }
+]

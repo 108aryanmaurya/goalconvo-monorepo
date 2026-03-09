@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Users, Filter, Database, TrendingUp, Play, RotateCcw, Download, ClipboardList, GitBranch } from 'lucide-react';
+import { Brain, Users, Filter, Database, TrendingUp, Play, RotateCcw, Download, ClipboardList, GitBranch, Sun, Moon } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { API_CONFIG } from '@/lib/api-config';
@@ -177,7 +177,19 @@ export default function GoalConvoDashboard() {
 
   // Top-level tabs: Pipeline | Versions | Human Evaluation
   const [activeTab, setActiveTab] = useState<'pipeline' | 'versions' | 'human-eval'>('pipeline');
-  
+
+  // Light / Dark mode (persisted in localStorage)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'dark';
+    return (localStorage.getItem('goalconvo-theme') as 'light' | 'dark') || 'dark';
+  });
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('goalconvo-theme', theme);
+    } catch (_) {}
+  }, [theme]);
+
   // Live dialogue viewer (during pipeline run)
   const [liveDialogue, setLiveDialogue] = useState<{
     current_turns: Array<{ role: string; text: string }>;
@@ -189,13 +201,19 @@ export default function GoalConvoDashboard() {
   
   // Evaluation step: live sub-step messages (e.g. "Computing BERTScore...")
   const [evaluationStepMessages, setEvaluationStepMessages] = useState<string[]>([]);
-  
+  // Separate evaluation run (after dialogue generation is done)
+  const [isEvaluationRunning, setIsEvaluationRunning] = useState(false);
+
   // Backend connection status
   const [backendConnected, setBackendConnected] = useState<boolean>(false);
   const [backendCheckInProgress, setBackendCheckInProgress] = useState<boolean>(false);
   
   // Available domains
   const availableDomains = ['hotel', 'restaurant', 'taxi', 'train', 'attraction'];
+
+  // Evaluation configuration (separate from generation)
+  const [evaluationDomains, setEvaluationDomains] = useState<string[]>([]);
+  const [evaluationLimit, setEvaluationLimit] = useState<number>(10);
 
   // Check backend health on mount and periodically
   useEffect(() => {
@@ -512,15 +530,26 @@ export default function GoalConvoDashboard() {
     
     socket.on('log', (data: any) => {
       console.log('Log received:', data);
-      const logData = data.data || {};
+      const logData = data?.data ?? data ?? {};
       const step = logData.step || 'pipeline';
-      const message = logData.message || '';
+      const message = logData.message ?? '';
+      const isError =
+        logData.level === 'error' ||
+        /error|failed|exception/i.test(String(message));
+      const stepNames: Record<string, string> = {
+        evaluation: 'Evaluation',
+        experience_generation: 'Experience Generation',
+        dialogue_simulation: 'Dialogue Simulation',
+        quality_filtering: 'Quality Filtering',
+        saving: 'Saving',
+        pipeline: 'Pipeline',
+      };
       addRequestLog({
         stepId: step,
-        stepName: step,
-        endpoint: '/api/run-pipeline',
-        status: logData.level === 'error' ? 'error' : 'success',
-        message
+        stepName: stepNames[step] || step,
+        endpoint: step === 'evaluation' ? '/api/run-evaluation' : '/api/run-pipeline',
+        status: isError ? 'error' : 'success',
+        message: message || (isError ? 'Error' : 'OK')
       });
       if (step === 'evaluation' && message) {
         setEvaluationStepMessages((prev) => [...prev.slice(-14), message]);
@@ -562,18 +591,57 @@ export default function GoalConvoDashboard() {
       
       setLiveDialogue(null);
       setIsRunning(false);
-      setCurrentStep(3); // Evaluation is at UI index 3 (Dataset Construction step commented out)
+      setCurrentStep(2); // Dialogue generation done; Evaluation is separate (run via Run Evaluation button)
     });
-    
+
+    socket.on('evaluation_complete', (data: any) => {
+      const eventSessionId = data.session_id;
+      if (eventSessionId && eventSessionId !== sessionIdRef.current) return;
+      const payload = data.data || {};
+      if (payload.evaluation) {
+        setPipelineData(prev => ({ ...prev, evaluations: payload.evaluation }));
+      }
+      addRequestLog({
+        stepId: 'evaluation',
+        stepName: 'Evaluation Complete',
+        endpoint: '/api/run-evaluation',
+        status: 'success',
+        message: payload.message || 'Evaluation completed successfully'
+      });
+      setEvaluationStepMessages([]);
+      setIsEvaluationRunning(false);
+    });
+
+    socket.on('evaluation_error', (data: any) => {
+      const eventSessionId = data.session_id;
+      if (eventSessionId && eventSessionId !== sessionIdRef.current) return;
+      const payload = data.data || {};
+      const msg = payload.message || payload.error || 'Evaluation failed';
+      addRequestLog({
+        stepId: 'evaluation',
+        stepName: 'Evaluation Error',
+        endpoint: '/api/run-evaluation',
+        status: 'error',
+        message: msg
+      });
+      setIsEvaluationRunning(false);
+    });
+
     socket.on('pipeline_error', (data: any) => {
       console.error('Pipeline error:', data);
-      const errorData = data.data || {};
+      const errorData = data?.data ?? data ?? {};
+      const message =
+        errorData.message ??
+        errorData.error ??
+        (typeof data?.message === 'string' ? data.message : null) ??
+        (typeof data?.error === 'string' ? data.error : null) ??
+        'Pipeline failed';
       addRequestLog({
         stepId: 'pipeline',
         stepName: 'Pipeline Error',
         endpoint: '/api/run-pipeline',
         status: 'error',
-        message: errorData.message || 'Pipeline failed'
+        message: String(message)
       });
       setLiveDialogue(null);
       setIsRunning(false);
@@ -922,12 +990,65 @@ export default function GoalConvoDashboard() {
     }
   };
 
+  const runEvaluation = async () => {
+    if (!backendConnected) {
+      const isHealthy = await API_CONFIG.checkHealth();
+      if (!isHealthy) {
+        alert(`Backend not accessible at ${API_CONFIG.baseUrl}. Please start the backend first.`);
+        return;
+      }
+    }
+    setEvaluationStepMessages([]);
+    setIsEvaluationRunning(true);
+    try {
+      // Join session first so we're in the room when backend emits evaluation events
+      if (socketRef.current?.connected) {
+        socketRef.current.emit('join_session', { session_id: sessionIdRef.current });
+        await new Promise((r) => setTimeout(r, 300)); // let server process join before we start evaluation
+      }
+      const response = await fetch(API_CONFIG.getUrl(API_CONFIG.endpoints.runEvaluation), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionIdRef.current,
+          limit: evaluationLimit,
+          domains: evaluationDomains.length > 0 ? evaluationDomains : undefined
+        })
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || response.statusText);
+      }
+      addRequestLog({
+        stepId: 'evaluation',
+        stepName: 'Evaluation',
+        endpoint: '/api/run-evaluation',
+        status: 'success',
+        message: 'Evaluation started'
+      });
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      addRequestLog({
+        stepId: 'evaluation',
+        stepName: 'Evaluation',
+        endpoint: '/api/run-evaluation',
+        status: 'error',
+        message: msg
+      });
+      setIsEvaluationRunning(false);
+      alert(`Failed to start evaluation: ${msg}`);
+    }
+  };
+
   const resetPipeline = () => {
     console.log('Reset Pipeline clicked');
     setIsRunning(false);
+    setIsEvaluationRunning(false);
     setCurrentStep(0);
     setPipelineRunId(0);
     setRequestLogs([]);
+    setEvaluationDomains([]);
+    setEvaluationLimit(10);
     setPipelineData({
       experiences: [],
       conversations: [],
@@ -1010,37 +1131,48 @@ export default function GoalConvoDashboard() {
 
   return (
     <div className="app-canvas max-w-7xl mx-auto px-4 py-6">
-      {/* Top-level tabs */}
-      <div className="flex gap-1 mb-8 p-1.5 bg-white/5 rounded-2xl border border-white/10 w-fit shadow-lg shadow-black/20">
+      {/* Top-level tabs + Light/Dark toggle */}
+      <div className="flex items-center gap-4 mb-8 flex-wrap">
+        <div className="flex gap-1 p-1.5 bg-white/5 rounded-2xl border border-white/10 w-fit shadow-lg shadow-black/20 dashboard-tabs">
+          <button
+            onClick={() => setActiveTab('pipeline')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+              activeTab === 'pipeline'
+                ? 'bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-fuchsia-500/30'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Play className="w-4 h-4" /> Pipeline
+          </button>
+          <button
+            onClick={() => setActiveTab('versions')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+              activeTab === 'versions'
+                ? 'bg-gradient-to-r from-fuchsia-500 to-violet-600 text-white shadow-lg shadow-fuchsia-500/30'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <GitBranch className="w-4 h-4" /> Versions
+          </button>
+          <button
+            onClick={() => setActiveTab('human-eval')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
+              activeTab === 'human-eval'
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <ClipboardList className="w-4 h-4" /> Human Evaluation
+          </button>
+        </div>
         <button
-          onClick={() => setActiveTab('pipeline')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
-            activeTab === 'pipeline'
-              ? 'bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-fuchsia-500/30'
-              : 'text-gray-400 hover:text-white hover:bg-white/10'
-          }`}
+          type="button"
+          onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors dashboard-tabs"
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          <Play className="w-4 h-4" /> Pipeline
-        </button>
-        <button
-          onClick={() => setActiveTab('versions')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
-            activeTab === 'versions'
-              ? 'bg-gradient-to-r from-fuchsia-500 to-violet-600 text-white shadow-lg shadow-fuchsia-500/30'
-              : 'text-gray-400 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <GitBranch className="w-4 h-4" /> Versions
-        </button>
-        <button
-          onClick={() => setActiveTab('human-eval')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
-            activeTab === 'human-eval'
-              ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30'
-              : 'text-gray-400 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <ClipboardList className="w-4 h-4" /> Human Evaluation
+          {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
         </button>
       </div>
 
@@ -1062,7 +1194,7 @@ export default function GoalConvoDashboard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/20 shadow-xl shadow-black/20 overflow-hidden"
+        className="dashboard-control relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/20 shadow-xl shadow-black/20 overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-fuchsia-500/5 to-sky-500/5 pointer-events-none" />
         <div className="relative">
@@ -1121,7 +1253,7 @@ export default function GoalConvoDashboard() {
         {/* Pipeline Configuration */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 '>
 
-        <div className="grid grid-cols-1 gap-4 mb-6 p-5 bg-white/5 rounded-xl border border-white/10 shadow-inner">
+        <div className="dashboard-input-wrap grid grid-cols-1 gap-4 mb-6 p-5 bg-white/5 rounded-xl border border-white/10 shadow-inner">
           <div>
             <label className="block text-sm font-semibold text-sky-200 mb-2">
               Dialogues per domain
@@ -1184,7 +1316,7 @@ export default function GoalConvoDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 rounded-2xl border border-white/10 p-4 flex flex-col max-h-[11.7rem] shadow-inner"
+          className="dashboard-request-log bg-white/5 rounded-2xl border border-white/10 p-4 flex flex-col max-h-[13.8rem] shadow-inner"
         >
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -1308,12 +1440,14 @@ export default function GoalConvoDashboard() {
             ];
             const accent = stepAccents[index % stepAccents.length];
             const gradient = index === 0
-              ? 'conic-gradient(from 0deg, #fb923c, #d946ef, #38bdf8, #fb923c)'
+              ? 'conic-gradient(from 0deg, #fb923c, #d946ef, #38bdf8, #a3e635, #fb923c)'
               : index === 1
-              ? 'conic-gradient(from 0deg, #d946ef, #818cf8, #a3e635, #d946ef)'
+              ? 'conic-gradient(from 0deg, #d946ef, #818cf8, #a3e635, #38bdf8, #d946ef)'
               : index === 2
-              ? 'conic-gradient(from 0deg, #fb7185, #818cf8, #facc15, #fb7185)'
-              : 'conic-gradient(from 0deg, #a3e635, #38bdf8, #d946ef, #a3e635)';
+              ? 'conic-gradient(from 0deg, #fb7185, #818cf8, #facc15, #a3e635, #fb7185)'
+              : 'conic-gradient(from 0deg, #a3e635, #38bdf8, #d946ef, #fb923c, #a3e635)';
+            const glowColor = index === 0 ? 'rgba(251, 146, 60, 0.45)' : index === 1 ? 'rgba(217, 70, 239, 0.45)' : index === 2 ? 'rgba(251, 113, 133, 0.45)' : 'rgba(163, 230, 53, 0.45)';
+            const glowColorSoft = index === 0 ? 'rgba(251, 146, 60, 0.15)' : index === 1 ? 'rgba(217, 70, 239, 0.15)' : index === 2 ? 'rgba(251, 113, 133, 0.15)' : 'rgba(163, 230, 53, 0.15)';
             const boxContent = (
               <>
                 <div className={`flex items-center gap-2 mb-2 text-xl ${!isActive ? accent.icon : ''}`}>
@@ -1344,7 +1478,7 @@ export default function GoalConvoDashboard() {
                 }}
                 className={
                   isActive
-                    ? 'relative rounded-xl p-[3px] overflow-hidden min-h-[80px]'
+                    ? 'relative rounded-xl p-[4px] overflow-hidden min-h-[80px]'
                     : `p-3 rounded-xl border transition-all ${
                         index < currentStep
                           ? 'border-lime-400 bg-lime-500/20'
@@ -1355,10 +1489,13 @@ export default function GoalConvoDashboard() {
                 {isActive ? (
                   <>
                     <div
-                      className="absolute inset-0 rounded-xl animate-spin"
-                      style={{ background: gradient }}
+                      className="step-border-loader absolute inset-0 rounded-xl"
+                      style={{
+                        background: gradient,
+                        boxShadow: `0 0 20px ${glowColor}, 0 0 40px ${glowColorSoft}`,
+                      }}
                     />
-                    <div className="relative m-[3px] rounded-[10px] bg-slate-900/95 p-3 min-h-[80px] flex flex-col">
+                    <div className="relative m-[4px] rounded-[10px] bg-slate-900/95 p-3 min-h-[80px] flex flex-col backdrop-blur-sm">
                       {boxContent}
                     </div>
                   </>
@@ -1410,7 +1547,7 @@ export default function GoalConvoDashboard() {
         </motion.div>
       )}
 
-      {/* Evaluation Display when idle; current step only when pipeline is running */}
+      {/* Evaluation: separate step after dialogue generation; show Run Evaluation button when dialogues exist */}
       <div className="grid grid-cols-1 gap-6">
         <AnimatePresence mode="wait">
           {!isRunning ? (
@@ -1422,7 +1559,35 @@ export default function GoalConvoDashboard() {
               transition={{ duration: 0.5 }}
               className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-xl lg:col-span-2"
             >
-              {pipelineData.evaluations != null && typeof pipelineData.evaluations === 'object' ? (
+              {isEvaluationRunning ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-fuchsia-300">
+                    <span className="inline-block w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
+                    <span className="font-medium">Evaluation in progress</span>
+                  </div>
+                  <div className="rounded-xl bg-black/20 border border-white/10 overflow-hidden">
+                    <div className="px-4 py-2 text-xs font-medium text-gray-400 border-b border-white/10 bg-white/5">
+                      Current step
+                    </div>
+                    <ul className="max-h-64 overflow-y-auto py-2 divide-y divide-white/5">
+                      {evaluationStepMessages.length === 0 ? (
+                        <li className="px-4 py-2 text-gray-500 text-sm">Starting evaluation…</li>
+                      ) : (
+                        evaluationStepMessages.map((msg, i) => (
+                          <li key={i} className="px-4 py-2 text-sm text-gray-300 flex items-center gap-2">
+                            {i === evaluationStepMessages.length - 1 ? (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+                            ) : (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500/60" />
+                            )}
+                            {msg}
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              ) : pipelineData.evaluations != null && typeof pipelineData.evaluations === 'object' ? (
                 <Evaluator
                   key={`evaluator-${pipelineRunId}`}
                   dataset={pipelineData.dataset}
@@ -1435,23 +1600,149 @@ export default function GoalConvoDashboard() {
                     addRequestLog({
                       stepId: 'evaluation',
                       stepName: 'Evaluation',
-                      endpoint: '/api/run-pipeline',
+                      endpoint: '/api/run-evaluation',
                       status: log.status,
                       message: log.message
                     })
                   }
                 />
+              ) : pipelineData.conversations.length > 0 ? (
+                <div className="flex flex-col items-center justify-center py-14 text-center">
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-fuchsia-500/30 via-indigo-500/20 to-lime-500/20 mb-5 shadow-lg border border-white/10">
+                    <TrendingUp className="w-14 h-14 text-fuchsia-300" />
+                  </div>
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-fuchsia-200 via-indigo-200 to-lime-200 bg-clip-text text-transparent mb-2">Evaluation</h3>
+                  <p className="text-gray-400 max-w-md mb-6">
+                    Dialogue generation is done. Run evaluation to see quality and diversity metrics.
+                  </p>
+                  <div className="w-full max-w-xl mb-6 space-y-4">
+                    <div className="text-left">
+                      <div className="text-xs font-semibold text-gray-400 mb-2">Domains (optional)</div>
+                      <div className="flex flex-wrap gap-2">
+                        {availableDomains.map((d) => {
+                          const active = evaluationDomains.includes(d);
+                          return (
+                            <button
+                              key={d}
+                              type="button"
+                              onClick={() =>
+                                setEvaluationDomains((prev) =>
+                                  prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+                                )
+                              }
+                              className={`px-3 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                                active
+                                  ? 'bg-white/15 border-white/40 text-white'
+                                  : 'bg-white/5 border-white/15 text-gray-300 hover:bg-white/10'
+                              }`}
+                            >
+                              {d}
+                            </button>
+                          );
+                        })}
+                        {evaluationDomains.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setEvaluationDomains([])}
+                            className="px-3 py-1.5 rounded-full text-sm font-semibold border bg-white/5 border-white/15 text-gray-300 hover:bg-white/10"
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        If none selected, evaluation uses latest dialogues across all domains.
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <div className="text-xs font-semibold text-gray-400 mb-2">Number of dialogues</div>
+                      <input
+                        type="number"
+                        min={1}
+                        max={500}
+                        value={evaluationLimit}
+                        onChange={(e) => setEvaluationLimit(Math.max(1, Math.min(500, Number(e.target.value) || 1)))}
+                        className="w-40 px-3 py-2 rounded-xl bg-black/20 border border-white/15 text-white focus:outline-none focus:border-white/30"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={runEvaluation}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-sky-500 text-white shadow-lg shadow-fuchsia-500/30 hover:shadow-fuchsia-500/50 transition-all duration-200 disabled:opacity-50"
+                  >
+                    <Play className="w-5 h-5" />
+                    Run Evaluation
+                  </button>
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-14 text-center">
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-fuchsia-500/30 via-indigo-500/20 to-lime-500/20 mb-5 shadow-lg border border-white/10">
                     <TrendingUp className="w-14 h-14 text-fuchsia-300" />
                   </div>
                   <h3 className="text-xl font-bold bg-gradient-to-r from-fuchsia-200 via-indigo-200 to-lime-200 bg-clip-text text-transparent mb-2">Evaluation</h3>
-                  <p className="text-gray-400 max-w-md">
-                    {pipelineData.dataset.length > 0
-                      ? 'Run the pipeline to see evaluation results here. Results will appear after the run completes.'
-                      : 'Run the pipeline to generate dialogues and see evaluation results here.'}
+                  <p className="text-gray-400 max-w-md mb-6">
+                    Run evaluation on the latest dialogues from the dataset. Generate dialogues first if none exist yet.
                   </p>
+                  <div className="w-full max-w-xl mb-6 space-y-4">
+                    <div className="text-left">
+                      <div className="text-xs font-semibold text-gray-400 mb-2">Domains (optional)</div>
+                      <div className="flex flex-wrap gap-2">
+                        {availableDomains.map((d) => {
+                          const active = evaluationDomains.includes(d);
+                          return (
+                            <button
+                              key={d}
+                              type="button"
+                              onClick={() =>
+                                setEvaluationDomains((prev) =>
+                                  prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+                                )
+                              }
+                              className={`px-3 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                                active
+                                  ? 'bg-white/15 border-white/40 text-white'
+                                  : 'bg-white/5 border-white/15 text-gray-300 hover:bg-white/10'
+                              }`}
+                            >
+                              {d}
+                            </button>
+                          );
+                        })}
+                        {evaluationDomains.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setEvaluationDomains([])}
+                            className="px-3 py-1.5 rounded-full text-sm font-semibold border bg-white/5 border-white/15 text-gray-300 hover:bg-white/10"
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        If none selected, evaluation uses latest dialogues across all domains.
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <div className="text-xs font-semibold text-gray-400 mb-2">Number of dialogues</div>
+                      <input
+                        type="number"
+                        min={1}
+                        max={500}
+                        value={evaluationLimit}
+                        onChange={(e) => setEvaluationLimit(Math.max(1, Math.min(500, Number(e.target.value) || 1)))}
+                        className="w-40 px-3 py-2 rounded-xl bg-black/20 border border-white/15 text-white focus:outline-none focus:border-white/30"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={runEvaluation}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-sky-500 text-white shadow-lg shadow-fuchsia-500/30 hover:shadow-fuchsia-500/50 transition-all duration-200 disabled:opacity-50"
+                  >
+                    <Play className="w-5 h-5" />
+                    Run Evaluation
+                  </button>
                 </div>
               )}
             </motion.div>

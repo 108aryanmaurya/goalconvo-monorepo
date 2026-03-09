@@ -1,0 +1,116 @@
+[
+  {
+    "dialogue_id": "555b5a00-a487-410b-98e8-b73ace2d1a04",
+    "goal": "Book a room at Ashley Hotel",
+    "domain": "hotel",
+    "context": "The user is planning a weekend getaway with their partner and wants to book a room at Ashley Hotel for a romantic staycation.",
+    "user_persona": "Friendly and excited",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking to book a room at Ashley Hotel for a romantic weekend getaway with my partner.",
+        "timestamp": "2026-03-07T12:58:40.032199"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Great choice for a romantic weekend getaway! Let me check the availability for your desired dates at Ashley Hotel. I'll get back to you with the room options shortly.",
+        "timestamp": "2026-03-07T12:58:41.836494"
+      },
+      {
+        "role": "User",
+        "text": "Can you please let me know the room options available for the weekend dates at Ashley Hotel?",
+        "timestamp": "2026-03-07T12:58:42.668181"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I have checked the room options available for your weekend dates at Ashley Hotel. We have a lovely double room with a bathtub available for your romantic staycation.",
+        "timestamp": "2026-03-07T12:58:43.622198"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the rate for the double room with a bathtub at Ashley Hotel for the weekend dates?",
+        "timestamp": "2026-03-07T12:58:44.354945"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The rate for the double room with a bathtub at Ashley Hotel for the weekend dates is $200 per night.",
+        "timestamp": "2026-03-07T12:58:45.137292"
+      },
+      {
+        "role": "User",
+        "text": "Great, could you please confirm the booking details for the double room with a bathtub at Ashley Hotel for the weekend dates?",
+        "timestamp": "2026-03-07T12:58:46.016120"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Your booking for the double room with a bathtub at Ashley Hotel for the weekend dates is confirmed. Your confirmation number is ASHLEY-123. Enjoy your romantic staycation!",
+        "timestamp": "2026-03-07T12:58:46.970598"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-07T12:58:46.970630"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-07T12:58:46.970926",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.939,
+      "generation_start_time": "2026-03-07T12:58:40.032149",
+      "generation_end_time": "2026-03-07T12:58:46.970925",
+      "goal_complexity": 6,
+      "quality_score": 0.9400000000000001,
+      "quality_assessment": {
+        "dialogue_id": "555b5a00-a487-410b-98e8-b73ace2d1a04",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 5.0
+        },
+        "overall_score": 0.9400000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-07T12:58:49.711321"
+      }
+    }
+  }
+]

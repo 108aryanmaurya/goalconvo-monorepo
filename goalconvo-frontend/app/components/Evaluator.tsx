@@ -12,6 +12,8 @@ interface EvaluationMetrics {
   task_success_rate: number;
   fluency_score: number;
   groundedness_score: number;
+  total_dialogues_evaluated?: number;
+  sample_size_note?: string | null;
   categories: {
     lexical_diversity: number;
     conversation_length: {
@@ -286,6 +288,19 @@ export default function Evaluator({ dataset = [], metrics: propMetrics, autoStar
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
+          {/* Small-sample caveat when targets are from paper (large runs) */}
+          {metrics.sample_size_note && (
+            <div className="bg-amber-500/15 border border-amber-400/40 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-amber-200 font-medium">About &quot;Below Target&quot; metrics</p>
+                <p className="text-sm text-gray-300 mt-1">{metrics.sample_size_note}</p>
+                {metrics.total_dialogues_evaluated != null && (
+                  <p className="text-xs text-gray-400 mt-2">This run: {metrics.total_dialogues_evaluated} dialogue{metrics.total_dialogues_evaluated !== 1 ? 's' : ''} evaluated.</p>
+                )}
+              </div>
+            </div>
+          )}
           {/* BERTScore Semantic Similarity - Prominent Display */}
           {metrics.comprehensive_metrics?.bertscore_similarity && (
             <div className="bg-gradient-to-r from-sky-500/20 to-fuchsia-500/20 rounded-xl p-6 border-2 border-sky-400/50 mb-6">

@@ -136,7 +136,8 @@ class ComprehensiveDialogueEvaluator:
         dialogues: List[Dict[str, Any]],
         reference_dialogues: Optional[List[Dict[str, Any]]] = None,
         use_llm_judge: bool = True,
-        emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None
+        emit_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+        yield_callback: Optional[Callable[[], None]] = None
     ) -> Dict[str, Any]:
         """
         Evaluate a set of dialogues using all metrics.
@@ -151,10 +152,18 @@ class ComprehensiveDialogueEvaluator:
             reference_dialogues: Optional reference dialogues (e.g., MultiWOZ) for BERTScore and BLEU; skipped if None
             use_llm_judge: Whether to use LLM-as-a-Judge evaluation (set EVAL_SKIP_LLM_JUDGE=1 to disable)
             emit_callback: Optional (event_type, data) callback to emit log messages for frontend progress
+            yield_callback: Optional no-arg callback to yield to the event loop (e.g. eventlet.sleep(0)) to keep WebSocket alive
 
         Returns:
             Dictionary with all evaluation metrics
         """
+        def _yield() -> None:
+            if yield_callback:
+                try:
+                    yield_callback()
+                except Exception:
+                    pass
+
         def _log(msg: str) -> None:
             logger.info(msg)
             if emit_callback:
@@ -162,6 +171,7 @@ class ComprehensiveDialogueEvaluator:
                     emit_callback('log', {'message': msg, 'step': 'evaluation', 'level': 'info'})
                 except Exception:
                     pass
+            _yield()
 
         _log(f"Evaluating {len(dialogues)} dialogues...")
         
@@ -189,7 +199,7 @@ class ComprehensiveDialogueEvaluator:
         # 4. BERTScore Semantic Similarity (if reference dialogues provided)
         if reference_dialogues:
             _log("Computing BERTScore semantic similarity...")
-            bertscore_results = self._compute_bertscore_similarity(dialogues, reference_dialogues)
+            bertscore_results = self._compute_bertscore_similarity(dialogues, reference_dialogues, yield_callback=yield_callback)
             results["metrics"]["bertscore_similarity"] = bertscore_results
         
         # 5. BLEU Score (if reference dialogues provided)
@@ -216,7 +226,7 @@ class ComprehensiveDialogueEvaluator:
         # 8. LLM-as-a-Judge (if enabled)
         if use_llm_judge:
             _log("Running LLM-as-a-Judge evaluation...")
-            llm_judge_results = self._compute_llm_judge_metrics(dialogues)
+            llm_judge_results = self._compute_llm_judge_metrics(dialogues, yield_callback=yield_callback)
             results["metrics"]["llm_judge"] = llm_judge_results
 
         # 9. Advanced evaluation metrics (intent, slots, state tracking)
@@ -608,9 +618,15 @@ class ComprehensiveDialogueEvaluator:
     def _compute_bertscore_similarity(
         self,
         dialogues: List[Dict[str, Any]],
-        reference_dialogues: List[Dict[str, Any]]
+        reference_dialogues: List[Dict[str, Any]],
+        yield_callback: Optional[Callable[[], None]] = None
     ) -> Dict[str, Any]:
         """Compute BERTScore in one batched call so the model loads once (not per-pair)."""
+        if yield_callback:
+            try:
+                yield_callback()
+            except Exception:
+                pass
         if not BERTSCORE_AVAILABLE:
             logger.warning("BERTScore not available. Skipping semantic similarity computation.")
             return {
@@ -670,6 +686,11 @@ class ComprehensiveDialogueEvaluator:
             return F1
         
         f1_tensor = None
+        if yield_callback:
+            try:
+                yield_callback()
+            except Exception:
+                pass
         try:
             f1_tensor = run_batch(cands, refs_list, model_type)
         except (OverflowError, ValueError, Exception) as e:
@@ -1101,10 +1122,14 @@ class ComprehensiveDialogueEvaluator:
             "note": "Inter-turn gaps from generation timestamps (not wall-clock). Min is floored at 0.1s to ignore artifact gaps."
         }
     
-    def _compute_llm_judge_metrics(self, dialogues: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _compute_llm_judge_metrics(
+        self,
+        dialogues: List[Dict[str, Any]],
+        yield_callback: Optional[Callable[[], None]] = None
+    ) -> Dict[str, Any]:
         """
         Compute LLM-as-a-Judge metrics.
-        
+
         Uses LLM to evaluate:
         - Task Success
         - Coherence
@@ -1123,6 +1148,11 @@ class ComprehensiveDialogueEvaluator:
         domain_scores = {}
         
         for i, dialogue in enumerate(dialogues):
+            if yield_callback:
+                try:
+                    yield_callback()
+                except Exception:
+                    pass
             domain = dialogue.get("domain", "unknown")
             goal = dialogue.get("goal", "")
             turns = dialogue.get("turns", [])

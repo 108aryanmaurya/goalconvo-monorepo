@@ -5,7 +5,7 @@ import GoalConvoDashboard from './components/GoalConvoDashboard';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950/40 to-slate-950">
+    <div className="min-h-screen ">
       <div className="absolute inset-0 opacity-25" style={{
         backgroundImage: `radial-gradient(circle at 20% 30%, #fb923c 1.5px, transparent 1.5px),
                          radial-gradient(circle at 80% 20%, #d946ef 1px, transparent 1px),

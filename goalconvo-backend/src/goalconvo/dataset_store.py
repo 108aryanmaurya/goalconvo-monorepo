@@ -96,26 +96,31 @@ class DatasetStore:
         return load_json(str(file_path))
     
     def load_dialogues(
-        self, 
-        domain: Optional[str] = None, 
+        self,
+        domain: Optional[str] = None,
         limit: Optional[int] = None,
-        quality_threshold: Optional[float] = None
+        quality_threshold: Optional[float] = None,
+        domains_override: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
         """
         Load dialogues from the dataset store.
-        
+
         Args:
             domain: Filter by domain (None for all domains)
             limit: Maximum number of dialogues to return
             quality_threshold: Minimum quality score threshold
-            
+            domains_override: If set and domain is None, use these domain names instead of config.domains
+                             (e.g. for evaluation so all domains are included regardless of config)
+
         Returns:
             List of dialogue data
         """
         dialogues = []
-        
+
         if domain:
             domains_to_search = [domain]
+        elif domains_override:
+            domains_to_search = list(domains_override)
         else:
             domains_to_search = self.config.domains
         

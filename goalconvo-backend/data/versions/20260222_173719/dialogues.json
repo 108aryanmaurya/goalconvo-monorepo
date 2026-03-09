@@ -1,0 +1,509 @@
+[
+  {
+    "dialogue_id": "e3a435b2-9676-407a-8501-a2db63e41807",
+    "goal": "Book a room at Lensfield Hotel",
+    "domain": "hotel",
+    "context": "User wants to book a room at lensfield hotel",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I need help with book a room at lensfield hotel",
+        "timestamp": "2026-02-22T17:36:48.366059"
+      },
+      {
+        "role": "SupportBot",
+        "text": "To book a room at Lensfield Hotel, I just need to confirm a few details with you - what dates are you looking to stay and what type of room are you interested in, such as single, double, or suite? This will help me check availability and provide you with the best options. Are you looking for any specific amenities or services during your stay, like breakfast or parking?",
+        "timestamp": "2026-02-22T17:36:48.775609"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking to stay from Friday to Sunday, and I'd prefer a double room with breakfast included, could you please check the availability and provide me with the room rates for those dates?",
+        "timestamp": "2026-02-22T17:36:49.163637"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability for Lensfield Hotel, and I can offer you a double room with breakfast included from Friday to Sunday at a rate of \u00a3120 per night. The room features an en-suite bathroom, flat-screen TV, and complimentary Wi-Fi, and your stay would include a full English breakfast each morning. Would you like me to proceed with booking this room for you, and if so, I can provide you with a confirmation number and further details?",
+        "timestamp": "2026-02-22T17:36:49.704168"
+      },
+      {
+        "role": "User",
+        "text": "You've offered a double room with breakfast at \u00a3120 per night, which sounds good, but before proceeding, could you please confirm the total cost for the entire stay from Friday to Sunday and provide a confirmation number if you do book it?",
+        "timestamp": "2026-02-22T17:36:50.109027"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The total cost for the double room with breakfast from Friday to Sunday would be \u00a3360, and if you'd like to proceed with the booking, I can confirm it for you with a reference number. To confirm, I'll just need to finalize the booking, and I can offer you a confirmation number, such as REF-LEN-123, once it's complete. Would you like me to go ahead with the booking, and I'll provide you with all the details, including the confirmation number and",
+        "timestamp": "2026-02-22T17:36:50.725292"
+      },
+      {
+        "role": "User",
+        "text": "You mentioned a reference number, such as REF-LEN-123, if I proceed with the booking, could you please confirm that this will be the actual confirmation number for my stay from Friday to Sunday at Lensfield Hotel?",
+        "timestamp": "2026-02-22T17:36:51.108832"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The reference number REF-LEN-123 I mentioned earlier is indeed the actual confirmation number that will be assigned to your booking, and once I finalize the booking, you can expect to receive a confirmation email with this reference number and all the details of your stay. To confirm, I just need to complete the booking process, and then I'll provide you with the final confirmation. Your double room with breakfast at Lensfield Hotel from Friday to Sunday will be booked with the reference number REF-LEN-123",
+        "timestamp": "2026-02-22T17:36:51.589838"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-22T17:36:51.589866"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-22T17:36:51.590149",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 3.224,
+      "generation_start_time": "2026-02-22T17:36:48.366011",
+      "generation_end_time": "2026-02-22T17:36:51.590148",
+      "quality_score": 1.0,
+      "quality_assessment": {
+        "dialogue_id": "e3a435b2-9676-407a-8501-a2db63e41807",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 5.0,
+          "goal_relevance": true,
+          "overall_score": 5.0
+        },
+        "overall_score": 1.0,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:36:52.206798"
+      }
+    }
+  },
+  {
+    "dialogue_id": "ef1d955b-e924-4e73-9fb7-77e5b9cfef9c",
+    "goal": "Find information about Dojo Noodle Bar, including their menu, prices, and opening hours",
+    "domain": "restaurant",
+    "context": "I'm a food blogger looking for new restaurants to review in the city. I've heard great things about Dojo Noodle Bar and want to learn more about their offerings. I'm particularly interested in their noodle dishes and whether they have any vegetarian options.",
+    "user_persona": "Foodie Fran (curious and enthusiastic)",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking for a new restaurant to try out. Can you tell me more about Dojo Noodle Bar? What kind of food do they serve and what are their prices like?",
+        "timestamp": "2026-02-22T17:36:53.299274"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Dojo Noodle Bar, Including Their Menu, Prices, And Opening Hours typically ranges from \u00a325-50 per person. Would you like me to check availability in your price range?",
+        "timestamp": "2026-02-22T17:36:53.346665"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Find information about Dojo Noodle Bar, including their menu, prices, and opening hours.",
+        "timestamp": "2026-02-22T17:36:53.394529"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Dojo Noodle Bar, Including Their Menu, Prices, And Opening Hours has a varied menu with starters, mains, and desserts. I can highlight price ranges or vegetarian options if you tell me what you're interested in.",
+        "timestamp": "2026-02-22T17:36:53.439714"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Find information about Dojo Noodle Bar, including their menu, prices, and opening hours.",
+        "timestamp": "2026-02-22T17:36:53.487811"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Dojo Noodle Bar, Including Their Menu, Prices, And Opening Hours has a varied menu with starters, mains, and desserts. I can highlight price ranges or vegetarian options if you tell me what you're interested in.",
+        "timestamp": "2026-02-22T17:36:53.536658"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T17:36:53.583696",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.284,
+      "generation_start_time": "2026-02-22T17:36:53.299232",
+      "generation_end_time": "2026-02-22T17:36:53.583695",
+      "goal_complexity": 6,
+      "supportbot_style": "friendly and informative",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "ef1d955b-e924-4e73-9fb7-77e5b9cfef9c",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:36:53.734175"
+      }
+    }
+  },
+  {
+    "dialogue_id": "671bf613-e031-4ea9-92bb-fbb6d39effb4",
+    "goal": "Book a taxi leaving at 17:30 from Club Salsa to bridge guest house",
+    "domain": "taxi",
+    "context": "User needs assistance with book a taxi leaving at 17:30 from club salsa to bridge guest house",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with book a taxi leaving at 17:30 from club salsa to bridge guest house",
+        "timestamp": "2026-02-22T17:36:53.951857"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T17:36:53.990044"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book a taxi leaving at 17:30 from Club Salsa to bridge guest house.",
+        "timestamp": "2026-02-22T17:36:54.029168"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T17:36:54.079236"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book a taxi leaving at 17:30 from Club Salsa to bridge guest house.",
+        "timestamp": "2026-02-22T17:36:54.130145"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can arrange a taxi for you. What's your destination and preferred pickup time?",
+        "timestamp": "2026-02-22T17:36:54.168212"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T17:36:54.220300",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.268,
+      "generation_start_time": "2026-02-22T17:36:53.951840",
+      "generation_end_time": "2026-02-22T17:36:54.220299",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "671bf613-e031-4ea9-92bb-fbb6d39effb4",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:36:54.486414"
+      }
+    }
+  },
+  {
+    "dialogue_id": "ee45fd3a-1346-4d4a-be3c-f85bed7c1c9d",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "User needs assistance with find information about attractions or things to do",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with find information about attractions or things to do",
+        "timestamp": "2026-02-22T17:36:54.732273"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with attractions. Are you interested in museums, tours, or outdoor activities?",
+        "timestamp": "2026-02-22T17:36:54.779404"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-22T17:36:54.823715"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-22T17:36:54.868221"
+      },
+      {
+        "role": "User",
+        "text": "I'm looking for things to do or attractions. Can you help?",
+        "timestamp": "2026-02-22T17:36:54.922611"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help you find attractions. What type of activities are you interested in?",
+        "timestamp": "2026-02-22T17:36:54.963606"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T17:36:55.003946",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.272,
+      "generation_start_time": "2026-02-22T17:36:54.732256",
+      "generation_end_time": "2026-02-22T17:36:55.003946",
+      "quality_score": 0.6,
+      "quality_assessment": {
+        "dialogue_id": "ee45fd3a-1346-4d4a-be3c-f85bed7c1c9d",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 1.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.6,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:36:55.204122"
+      }
+    }
+  },
+  {
+    "dialogue_id": "5ebee312-0e44-4c60-b2b4-b337ddb799fd",
+    "goal": "Book or find information about a train journey",
+    "domain": "train",
+    "context": "User needs assistance with book or find information about a train journey",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I need help with book or find information about a train journey",
+        "timestamp": "2026-02-22T17:36:55.367214"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T17:36:55.429666"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book or find information about a train journey.",
+        "timestamp": "2026-02-22T17:36:55.487436"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T17:36:55.533770"
+      },
+      {
+        "role": "User",
+        "text": "I still need help with Book or find information about a train journey.",
+        "timestamp": "2026-02-22T17:36:55.586575"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can help with train bookings. Where are you traveling to and when?",
+        "timestamp": "2026-02-22T17:36:55.625702"
+      }
+    ],
+    "metadata": {
+      "num_turns": 6,
+      "generated_at": "2026-02-22T17:36:55.665678",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 0.299,
+      "generation_start_time": "2026-02-22T17:36:55.367172",
+      "generation_end_time": "2026-02-22T17:36:55.665678",
+      "quality_score": 0.72,
+      "quality_assessment": {
+        "dialogue_id": "5ebee312-0e44-4c60-b2b4-b337ddb799fd",
+        "domain": "train",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 6,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 6 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 3.0,
+          "goal_relevance": false,
+          "overall_score": 3.0
+        },
+        "overall_score": 0.72,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-22T17:36:55.805835"
+      }
+    }
+  }
+]

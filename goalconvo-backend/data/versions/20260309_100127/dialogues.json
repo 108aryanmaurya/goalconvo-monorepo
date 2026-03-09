@@ -1,0 +1,120 @@
+[
+  {
+    "dialogue_id": "e1ebee4f-a687-4f11-bea6-804d6852d722",
+    "goal": "Book a room at Huntingdon Marriott Hotel",
+    "domain": "hotel",
+    "context": "I have a business trip to Huntingdon tomorrow and need a comfortable place to stay. The Huntingdon Marriott Hotel is conveniently located near my meeting venue, so I want to book a room there for the night.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hello, I need assistance with booking a room at Huntingdon Marriott Hotel for tomorrow night.",
+        "timestamp": "2026-03-09T10:01:00.173856"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I can definitely help you with that. Let me check the availability of rooms at the Huntingdon Marriott Hotel for tomorrow night. I'll get back to you with the details shortly.",
+        "timestamp": "2026-03-09T10:01:01.976695"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for checking the room availability. I look forward to hearing back with the details.",
+        "timestamp": "2026-03-09T10:01:04.896964"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I have confirmed the availability of a room for you at the Huntingdon Marriott Hotel for tomorrow night. Your reservation reference number is HMH-789.",
+        "timestamp": "2026-03-09T10:01:06.925710"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the room rate for tomorrow night at the Huntingdon Marriott Hotel?",
+        "timestamp": "2026-03-09T10:01:08.700085"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The room rate for tomorrow night at the Huntingdon Marriott Hotel is \u00a3120. Would you like me to proceed with booking the room for you?",
+        "timestamp": "2026-03-09T10:01:09.735670"
+      },
+      {
+        "role": "User",
+        "text": "Please go ahead and book the room for me at the Huntingdon Marriott Hotel for tomorrow night at the rate of \u00a3120. Thank you.",
+        "timestamp": "2026-03-09T10:01:10.622510"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Your room at the Huntingdon Marriott Hotel for tomorrow night at the rate of \u00a3120 has been successfully booked. Your reservation reference number is HMH-789. Thank you for choosing to stay with us!",
+        "timestamp": "2026-03-09T10:01:11.946157"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T10:01:11.946196"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T10:01:11.946473",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 11.773,
+      "generation_start_time": "2026-03-09T10:01:00.173799",
+      "generation_end_time": "2026-03-09T10:01:11.946472",
+      "goal_complexity": 7,
+      "user_persona_traits": "formal and concise",
+      "supportbot_style": "friendly and detailed",
+      "quality_score": 0.81,
+      "quality_assessment": {
+        "dialogue_id": "e1ebee4f-a687-4f11-bea6-804d6852d722",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": false,
+            "profane_turns": [
+              0
+            ],
+            "message": "Found profanity in 1 turns"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 0.8333333333333334
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.81,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T10:01:14.556093"
+      }
+    }
+  }
+]

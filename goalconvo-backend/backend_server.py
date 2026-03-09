@@ -236,6 +236,14 @@ def convert_evaluation_to_frontend_format(eval_results: Dict[str, Any]) -> Dict[
         repetition_rate = metrics.get("repetition_rate", {}).get("overall_repetition_rate", 0.1)
         lexical_diversity = round((1.0 - repetition_rate) * 100.0, 2)  # Fallback: inverse repetition %
 
+    # Sample size context: paper targets (BERTScore 0.71, diversity 0.46) are for large runs (~20k dialogues)
+    total_dialogues = eval_results.get("total_dialogues", 0)
+    small_sample = total_dialogues < 15
+    sample_size_note = (
+        "Targets from the paper are for large runs (~20k dialogues). "
+        "Run more dialogues (e.g. 20+) for stable, comparable metrics."
+    ) if small_sample else None
+
     # Build frontend format
     frontend_metrics = {
         "overall_score": overall_score,
@@ -244,6 +252,8 @@ def convert_evaluation_to_frontend_format(eval_results: Dict[str, Any]) -> Dict[
         "task_success_rate": task_success,
         "fluency_score": fluency,
         "groundedness_score": groundedness,
+        "total_dialogues_evaluated": total_dialogues,
+        "sample_size_note": sample_size_note,
         "categories": {
             "lexical_diversity": lexical_diversity,
             "conversation_length": {
@@ -354,9 +364,8 @@ def run_pipeline():
                 logger.error(f"Error emitting {event_type}: {e}")
                 logger.error(traceback.format_exc())
         
-        # Run pipeline in background thread (generator uses: few-shot + seeded hub, last-K-turns + domain schema + progress hint + stricter goal-check)
-        import threading
-        
+        # Run pipeline in eventlet greenlet (not threading.Thread) so WebSocket stays alive during long evaluation.
+        # threading.Thread would hold the GIL during CPU-heavy evaluation and starve the eventlet hub.
         def run_pipeline_thread():
             old_temperature = None
             try:
@@ -370,104 +379,42 @@ def run_pipeline():
                     emit_callback=emit_callback,
                     overrides=overrides
                 )
-                
-                # Run comprehensive evaluation after pipeline completes
-                evaluation_results = None
-                if ComprehensiveDialogueEvaluator:
-                    try:
-                        logger.info("Running comprehensive evaluation...")
-                        emit_callback('step_start', {
-                            'step': 'evaluation',
-                            'step_name': 'Evaluation',
-                            'message': 'Running comprehensive evaluation...'
-                        })
-                        emit_callback('log', {
-                            'message': 'Running comprehensive evaluation...',
-                            'step': 'evaluation'
-                        })
-                        
-                        # Prefer this run's accepted dialogues so evaluation reflects this run (not stale load from disk)
-                        generated_dialogues = stats.get("accepted_dialogues")
-                        if generated_dialogues is None:
-                            generated_dialogues = dataset_store.load_dialogues(limit=num_dialogues * 2)
 
-                        if generated_dialogues:
-                            # Load reference dialogues for BERTScore/BLEU (same path as download_multiwoz.py)
-                            multiwoz_file = Path(config.multiwoz_dir) / "processed_dialogues.json"
-                            reference_dialogues = None
-                            if multiwoz_file.exists():
-                                from goalconvo.utils import load_json
-                                reference_dialogues = load_json(str(multiwoz_file))
-                                if reference_dialogues:
-                                    reference_dialogues = reference_dialogues[:min(100, len(reference_dialogues))]
-                                logger.info(
-                                    "Evaluation readiness: MultiWOZ reference loaded from %s (%d dialogues); BERTScore/BLEU will run.",
-                                    multiwoz_file, len(reference_dialogues) if reference_dialogues else 0
-                                )
-                            else:
-                                logger.info(
-                                    "Evaluation readiness: MultiWOZ not found at %s; BERTScore/BLEU skipped. GCR, TSR, diversity, length, repetition still run.",
-                                    multiwoz_file
-                                )
-                            use_llm_judge = os.getenv("EVAL_SKIP_LLM_JUDGE", "0") != "1"
-                            logger.info("Evaluation readiness: LLM-as-a-Judge %s", "enabled" if use_llm_judge else "disabled (EVAL_SKIP_LLM_JUDGE=1)")
-                            comprehensive_evaluator = ComprehensiveDialogueEvaluator(config)
-                            eval_results = comprehensive_evaluator.evaluate_dialogues(
-                                generated_dialogues,
-                                reference_dialogues=reference_dialogues,
-                                use_llm_judge=use_llm_judge,
-                                emit_callback=emit_callback
-                            )
-                            
-                            # Convert to frontend format
-                            evaluation_results = convert_evaluation_to_frontend_format(eval_results)
-                            
-                            # Create dataset version snapshot
-                            try:
-                                version_manager = DatasetVersionManager(config.data_dir)
-                                tags = ["pipeline", "auto-generated"]
-                                if experiment_tag and isinstance(experiment_tag, str) and experiment_tag.strip():
-                                    tags.append(experiment_tag.strip())
-                                version_id = version_manager.create_version(
-                                    dialogues=generated_dialogues,
-                                    description=f"Pipeline run: {num_dialogues} dialogues, domains: {domains or 'all'}",
-                                    generation_config={
-                                        "num_dialogues": num_dialogues,
-                                        "domains": domains or config.domains,
-                                        "temperature": config.temperature,
-                                        "max_turns": config.max_turns,
-                                        "min_turns": config.min_turns,
-                                        "few_shot_examples": config.few_shot_examples,
-                                        "model": config.get_api_config().get("model", config.mistral_model),
-                                        "overrides": overrides,
-                                        "experiment_tag": experiment_tag,
-                                    },
-                                    tags=tags
-                                )
-                                logger.info(f"Created dataset version {version_id}")
-                                if evaluation_results:
-                                    evaluation_results["version_id"] = version_id
-                            except Exception as version_error:
-                                logger.warning(f"Version creation failed: {version_error}")
-                            
-                            logger.info("Comprehensive evaluation completed")
-                            emit_callback('log', {
-                                'message': 'Comprehensive evaluation completed',
-                                'step': 'evaluation'
-                            })
-                    except Exception as eval_error:
-                        logger.error(f"Evaluation error: {eval_error}")
-                        logger.error(traceback.format_exc())
-                        emit_callback('log', {
-                            'message': f'Evaluation error: {str(eval_error)}',
-                            'step': 'evaluation'
-                        })
-                
-                # Send final response
+                # Create dataset version snapshot (evaluation is run separately via /api/run-evaluation)
+                generated_dialogues = stats.get("accepted_dialogues")
+                if generated_dialogues is None:
+                    generated_dialogues = dataset_store.load_dialogues(limit=num_dialogues * 2)
+                if generated_dialogues:
+                    try:
+                        version_manager = DatasetVersionManager(config.data_dir)
+                        tags = ["pipeline", "auto-generated"]
+                        if experiment_tag and isinstance(experiment_tag, str) and experiment_tag.strip():
+                            tags.append(experiment_tag.strip())
+                        version_manager.create_version(
+                            dialogues=generated_dialogues,
+                            description=f"Pipeline run: {num_dialogues} dialogues, domains: {domains or 'all'}",
+                            generation_config={
+                                "num_dialogues": num_dialogues,
+                                "domains": domains or config.domains,
+                                "temperature": config.temperature,
+                                "max_turns": config.max_turns,
+                                "min_turns": config.min_turns,
+                                "few_shot_examples": config.few_shot_examples,
+                                "model": config.get_api_config().get("model", config.mistral_model),
+                                "overrides": overrides,
+                                "experiment_tag": experiment_tag,
+                            },
+                            tags=tags
+                        )
+                        logger.info("Created dataset version after dialogue generation")
+                    except Exception as version_error:
+                        logger.warning(f"Version creation failed: {version_error}")
+
+                # Pipeline completes after dialogue generation only; evaluation is a separate step
                 emit_callback('pipeline_complete', {
-                    'message': 'Pipeline completed successfully',
+                    'message': 'Dialogue generation completed successfully',
                     'stats': stats,
-                    'evaluation': evaluation_results,  # Include evaluation results
+                    'evaluation': None,
                     'final_data': {
                         'total_generated': stats.get('total_generated', 0),
                         'total_accepted': stats.get('total_accepted', 0),
@@ -487,10 +434,8 @@ def run_pipeline():
                     config.temperature = old_temperature
                     logger.info(f"Restored config.temperature to {old_temperature}")
         
-        # Start pipeline in background
-        thread = threading.Thread(target=run_pipeline_thread)
-        thread.daemon = True
-        thread.start()
+        # Start pipeline in eventlet greenlet so it can yield and keep WebSocket alive
+        socketio.start_background_task(run_pipeline_thread)
         
         return jsonify({
             "success": True,
@@ -506,6 +451,137 @@ def run_pipeline():
         return jsonify({
             "error": f"Failed to start pipeline: {str(e)}"
         }), 500
+
+
+@app.route('/api/run-evaluation', methods=['POST'])
+def run_evaluation():
+    """Run comprehensive evaluation on the current dataset and stream updates via WebSocket."""
+    try:
+        data = request.json or {}
+        session_id = data.get('session_id', request.sid if hasattr(request, 'sid') else 'default')
+        limit = data.get('limit', 500)
+        domains = data.get('domains', None)
+        if domains is not None:
+            if not isinstance(domains, list) or len(domains) == 0:
+                return jsonify({"error": "domains must be a non-empty list when provided"}), 400
+            valid_domains = ["hotel", "restaurant", "taxi", "train", "attraction"]
+            invalid_domains = [d for d in domains if d not in valid_domains]
+            if invalid_domains:
+                return jsonify({
+                    "error": f"Invalid domains: {invalid_domains}. Valid domains are: {valid_domains}"
+                }), 400
+
+        def serialize_for_json(obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            elif isinstance(obj, dict):
+                return {key: serialize_for_json(value) for key, value in obj.items()}
+            elif isinstance(obj, list):
+                return [serialize_for_json(item) for item in obj]
+            elif isinstance(obj, tuple):
+                return tuple(serialize_for_json(item) for item in obj)
+            return obj
+
+        def emit_callback(event_type, payload):
+            try:
+                serialized = serialize_for_json(payload)
+                socketio.emit(event_type, {
+                    'session_id': session_id,
+                    'data': serialized,
+                    'timestamp': datetime.now().isoformat()
+                }, room=session_id)
+            except Exception as e:
+                logger.error(f"Error emitting {event_type}: {e}")
+
+        def run_evaluation_thread(eval_limit, eval_domains):
+            try:
+                # Emit immediately so the client sees progress (client must be in room before POST)
+                emit_callback('step_start', {
+                    'step': 'evaluation',
+                    'step_name': 'Evaluation',
+                    'message': 'Running comprehensive evaluation...'
+                })
+                emit_callback('log', {
+                    'message': 'Loading dialogues...',
+                    'step': 'evaluation'
+                })
+                # Decide which domains to load from:
+                # - if eval_domains provided: use those
+                # - else: load from all existing domain dirs under synthetic_dir
+                synthetic_dir = Path(config.synthetic_dir)
+                if eval_domains and isinstance(eval_domains, list) and len(eval_domains) > 0:
+                    all_domain_dirs = list(eval_domains)
+                else:
+                    all_domain_dirs = [p.name for p in synthetic_dir.iterdir() if p.is_dir()] if synthetic_dir.exists() else list(getattr(config, 'domains', ['hotel', 'restaurant', 'taxi', 'train', 'attraction']))
+                    if not all_domain_dirs:
+                        all_domain_dirs = getattr(config, 'domains', ['hotel', 'restaurant', 'taxi', 'train', 'attraction'])
+                pool_size = max(eval_limit * 20, 500)
+                all_dialogues = dataset_store.load_dialogues(limit=pool_size, domains_override=all_domain_dirs)
+                if not all_dialogues:
+                    emit_callback('evaluation_error', {
+                        'message': 'No dialogues found. Run dialogue generation first.'
+                    })
+                    return
+                # Sort by timestamp (always string for comparable sort) and take latest N
+                def _dialogue_timestamp(d):
+                    meta = d.get("metadata", {}) or {}
+                    prov = d.get("provenance", {}) or {}
+                    raw = meta.get("generated_at") or prov.get("timestamp") or ""
+                    return str(raw) if raw is not None else ""
+                all_dialogues.sort(key=_dialogue_timestamp)
+                generated_dialogues = all_dialogues[-eval_limit:]  # latest N
+                emit_callback('log', {
+                    'message': f'Evaluating latest {len(generated_dialogues)} dialogues...',
+                    'step': 'evaluation'
+                })
+                multiwoz_file = Path(config.multiwoz_dir) / "processed_dialogues.json"
+                reference_dialogues = None
+                if multiwoz_file.exists():
+                    from goalconvo.utils import load_json
+                    reference_dialogues = load_json(str(multiwoz_file))
+                    if reference_dialogues:
+                        reference_dialogues = reference_dialogues[:min(100, len(reference_dialogues))]
+                use_llm_judge = os.getenv("EVAL_SKIP_LLM_JUDGE", "0") != "1"
+                comprehensive_evaluator = ComprehensiveDialogueEvaluator(config)
+
+                def yield_to_hub():
+                    eventlet.sleep(0)
+
+                eval_results = comprehensive_evaluator.evaluate_dialogues(
+                    generated_dialogues,
+                    reference_dialogues=reference_dialogues,
+                    use_llm_judge=use_llm_judge,
+                    emit_callback=emit_callback,
+                    yield_callback=yield_to_hub
+                )
+                evaluation_results = convert_evaluation_to_frontend_format(eval_results)
+                emit_callback('log', {
+                    'message': 'Comprehensive evaluation completed',
+                    'step': 'evaluation'
+                })
+                emit_callback('evaluation_complete', {
+                    'message': 'Evaluation completed successfully',
+                    'evaluation': evaluation_results
+                })
+            except Exception as e:
+                logger.error(f"Evaluation error: {e}")
+                logger.error(traceback.format_exc())
+                emit_callback('evaluation_error', {
+                    'message': str(e),
+                    'error': str(e)
+                })
+
+        socketio.start_background_task(run_evaluation_thread, limit, domains)
+
+        return jsonify({
+            "success": True,
+            "message": "Evaluation started",
+            "session_id": session_id
+        })
+    except Exception as e:
+        logger.error(f"Error starting evaluation: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
 
 @socketio.on('connect')
@@ -906,7 +982,8 @@ def api_schema():
     try:
         schema = {
             "routes": {
-                "/api/run-pipeline": {"methods": ["POST"], "description": "Run full GoalConvo pipeline"},
+                "/api/run-pipeline": {"methods": ["POST"], "description": "Run dialogue generation pipeline (no evaluation)"},
+                "/api/run-evaluation": {"methods": ["POST"], "description": "Run comprehensive evaluation on current dataset"},
                 "/health": {"methods": ["GET"], "description": "Backend health check"},
                 "/api/versions": {"methods": ["GET"], "description": "List dataset versions"},
                 "/api/versions/<version_id>": {"methods": ["GET"], "description": "Get version metadata"},
@@ -1066,7 +1143,8 @@ if __name__ == '__main__':
     
     logger.info(f"Starting GoalConvo backend server on {host}:{port}")
     logger.info("API endpoints available at:")
-    logger.info("  POST /api/run-pipeline - Unified pipeline endpoint (uses WebSocket for real-time updates)")
+    logger.info("  POST /api/run-pipeline - Dialogue generation (WebSocket for real-time updates)")
+    logger.info("  POST /api/run-evaluation - Run evaluation separately (after generation)")
     logger.info("  GET  /health - Health check")
     logger.info("")
     logger.info("Using existing modules from src/goalconvo/:")
@@ -1078,7 +1156,8 @@ if __name__ == '__main__':
     logger.info("  - Evaluator")
     logger.info("")
     logger.info("WebSocket events:")
-    logger.info("  - pipeline_start, step_start, step_data, log, pipeline_complete, pipeline_error")
+    logger.info("  - pipeline: pipeline_start, step_start, step_data, log, pipeline_complete, pipeline_error")
+    logger.info("  - evaluation: step_start, log, evaluation_complete, evaluation_error")
     
     socketio.run(app, host=host, port=port, debug=True, allow_unsafe_werkzeug=True)
 

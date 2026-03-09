@@ -13,6 +13,7 @@ export const API_CONFIG = {
   // API endpoints
   endpoints: {
     runPipeline: '/api/run-pipeline',
+    runEvaluation: '/api/run-evaluation',
     health: '/health',
     versions: '/api/versions',
     versionDialogues: (id: string) => `/api/versions/${id}/dialogues`,

@@ -1,0 +1,345 @@
+[
+  {
+    "dialogue_id": "210bd7e4-4bf5-41c3-aed8-821547f1e003",
+    "goal": "Book a room at a and b guest house",
+    "domain": "hotel",
+    "context": "The user is planning a weekend getaway with their partner and wants to book a room at a cozy guest house for a romantic retreat. They are looking for a charming and comfortable accommodation option.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm interested in booking a room at a and b guest house for a weekend getaway with my partner. Can you help me with that?",
+        "timestamp": "2026-03-09T11:01:50.407038"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability at a and b guest house for your weekend getaway. They have a cozy room with charming amenities perfect for a romantic retreat. Let me confirm the reservation details for you.",
+        "timestamp": "2026-03-09T11:01:51.423895"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the room type and amenities included in the reservation at a and b guest house?",
+        "timestamp": "2026-03-09T11:01:52.185760"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The room type at a and b guest house is a cozy suite with a private balcony overlooking the garden. The amenities include a fireplace, a luxurious king-size bed, and a jacuzzi tub for a truly romantic retreat.",
+        "timestamp": "2026-03-09T11:01:53.130150"
+      },
+      {
+        "role": "User",
+        "text": "That sounds wonderful! Could you please confirm the reservation dates and total cost for the cozy suite at a and b guest house?",
+        "timestamp": "2026-03-09T11:01:55.038850"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The reservation at a and b guest house is confirmed for the weekend dates you requested. The total cost for the cozy suite is $XXX. Enjoy your romantic retreat!",
+        "timestamp": "2026-03-09T11:01:55.923907"
+      },
+      {
+        "role": "User",
+        "text": "The total cost for the cozy suite at a and b guest house is within my budget. How can I proceed with making the payment and finalizing the reservation?",
+        "timestamp": "2026-03-09T11:01:56.858786"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You can proceed with making the payment and finalizing the reservation for the cozy suite at a and b guest house by clicking on the payment link provided in your booking confirmation email. Enjoy your romantic retreat!",
+        "timestamp": "2026-03-09T11:01:58.591730"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T11:01:58.591759"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T11:01:58.592013",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 8.185,
+      "generation_start_time": "2026-03-09T11:01:50.407000",
+      "generation_end_time": "2026-03-09T11:01:58.592011",
+      "goal_complexity": 6,
+      "supportbot_style": "informative and detailed",
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "210bd7e4-4bf5-41c3-aed8-821547f1e003",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:02:00.179309"
+      }
+    }
+  },
+  {
+    "dialogue_id": "abf72277-f12e-4545-a286-0f249db69f82",
+    "goal": "Find a Thai restaurant for dinner tonight with vegetarian options",
+    "domain": "restaurant",
+    "context": "It's my friend's birthday, and we want to go out for dinner tonight. We're craving Thai food, but one of us is vegetarian, so we need a place with good vegetarian options.",
+    "user_persona": "casual and friendly",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hey there, I'm looking for a Thai restaurant for dinner tonight. We're in the mood for some Thai cuisine, and it's important that they have good vegetarian options.",
+        "timestamp": "2026-03-09T11:02:02.250330"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I found a great Thai restaurant for dinner tonight with excellent vegetarian options. I'll make a reservation for you; I'll confirm the details shortly.",
+        "timestamp": "2026-03-09T11:02:03.137556"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the name of the Thai restaurant you found with good vegetarian options for dinner tonight?",
+        "timestamp": "2026-03-09T11:02:04.120347"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The Thai restaurant with good vegetarian options for dinner tonight is called \"Thai Delight.\" I'll confirm the reservation details shortly for you.",
+        "timestamp": "2026-03-09T11:02:04.934180"
+      },
+      {
+        "role": "User",
+        "text": "Could you please let me know the address of the \"Thai Delight\" restaurant with good vegetarian options for dinner tonight?",
+        "timestamp": "2026-03-09T11:02:05.873138"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The address for \"Thai Delight\" with good vegetarian options for dinner tonight is 123 Main Street. I'll confirm the reservation details for you shortly.",
+        "timestamp": "2026-03-09T11:02:06.756211"
+      },
+      {
+        "role": "User",
+        "text": "Could you also confirm the reservation time for tonight at \"Thai Delight\" with good vegetarian options?",
+        "timestamp": "2026-03-09T11:02:07.605366"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The reservation time for tonight at \"Thai Delight\" with good vegetarian options is set for 7:30 pm. I'll confirm the details shortly for you.",
+        "timestamp": "2026-03-09T11:02:09.124314"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T11:02:09.124343"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T11:02:09.124569",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.874,
+      "generation_start_time": "2026-03-09T11:02:02.250293",
+      "generation_end_time": "2026-03-09T11:02:09.124568",
+      "goal_complexity": 6,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "abf72277-f12e-4545-a286-0f249db69f82",
+        "domain": "restaurant",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:02:11.572471"
+      }
+    }
+  },
+  {
+    "dialogue_id": "3b4b0695-12b4-4ea8-bb22-55de20315be4",
+    "goal": "Book a taxi leaving at 19:00 from Archyway House to All Saints Church",
+    "domain": "taxi",
+    "context": "Attending a special event at All Saints Church and need reliable transportation from Archyway House in the evening.",
+    "user_persona": "Friendly and detailed",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I'm looking to book a taxi for tonight, leaving at 19:00 from Archyway House to All Saints Church. I have an event there.",
+        "timestamp": "2026-03-09T11:02:14.086467"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've arranged for a taxi to pick you up at 19:00 from Archyway House to take you to All Saints Church. Your reference number for the booking is TAXI-789. Enjoy the event!",
+        "timestamp": "2026-03-09T11:02:15.171342"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the taxi reference number for the booking?",
+        "timestamp": "2026-03-09T11:02:15.838457"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Of course! Your taxi reference number for the booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:02:16.586464"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for confirming the taxi reference number. That's all, thanks!",
+        "timestamp": "2026-03-09T11:02:17.296286"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! If you need any more assistance in the future, feel free to reach out. Enjoy your event at All Saints Church!",
+        "timestamp": "2026-03-09T11:02:18.415501"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for the confirmation. Enjoy your day!",
+        "timestamp": "2026-03-09T11:02:19.177387"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! If you have any more questions or need assistance in the future, feel free to ask. Enjoy your day!",
+        "timestamp": "2026-03-09T11:02:20.200373"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T11:02:20.200397"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T11:02:20.200593",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.114,
+      "generation_start_time": "2026-03-09T11:02:14.086430",
+      "generation_end_time": "2026-03-09T11:02:20.200592",
+      "goal_complexity": 3,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "3b4b0695-12b4-4ea8-bb22-55de20315be4",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:02:21.806297"
+      }
+    }
+  }
+]

@@ -1,0 +1,354 @@
+[
+  {
+    "dialogue_id": "8ef17a8f-5bd9-496f-92b7-5fb3f9802151",
+    "goal": "Book a taxi to Addenbrookes Hospital",
+    "domain": "taxi",
+    "context": "I have a medical appointment at Addenbrookes Hospital and need reliable transportation to get there on time. Due to my health condition, I cannot use public transportation.",
+    "user_persona": "concerned and focused on timely arrival",
+    "turns": [
+      {
+        "role": "User",
+        "text": "I need to book a taxi to Addenbrookes Hospital for my medical appointment. It's crucial that the taxi arrives on time.",
+        "timestamp": "2026-03-09T11:29:33.970464"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've arranged for a taxi to pick you up for your medical appointment at Addenbrookes Hospital. Your taxi will arrive at your specified location at 10:00 am. The reference number for your booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:29:35.029595"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the pickup location for the taxi to Addenbrookes Hospital?",
+        "timestamp": "2026-03-09T11:29:35.817772"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The pickup location for your taxi to Addenbrookes Hospital is your specified address. Your taxi will be waiting for you there at 10:00 am. The reference number for your booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:29:36.847110"
+      },
+      {
+        "role": "User",
+        "text": "What type of vehicle will be picking me up for the taxi to Addenbrookes Hospital?",
+        "timestamp": "2026-03-09T11:29:37.633880"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The vehicle picking you up for the taxi to Addenbrookes Hospital will be a standard sedan. Your taxi will be waiting at your specified address at 10:00 am. The reference number for your booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:29:38.664254"
+      },
+      {
+        "role": "User",
+        "text": "What is the estimated duration for the taxi ride to Addenbrookes Hospital from my pickup location?",
+        "timestamp": "2026-03-09T11:29:39.474572"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The estimated duration for the taxi ride to Addenbrookes Hospital from your pickup location is approximately 20-25 minutes, depending on traffic conditions. Your taxi will be waiting at your specified address at 10:00 am. The reference number for your booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:29:41.289816"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the contact number for the taxi service to Addenbrookes Hospital?",
+        "timestamp": "2026-03-09T11:29:42.101526"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The contact number for the taxi service to Addenbrookes Hospital is +44 123 456 789. Your taxi will be waiting at your specified address at 10:00 am. The reference number for your booking is TAXI-789.",
+        "timestamp": "2026-03-09T11:29:43.294691"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for the contact number. That's all, thanks!",
+        "timestamp": "2026-03-09T11:29:45.131994"
+      }
+    ],
+    "metadata": {
+      "num_turns": 11,
+      "generated_at": "2026-03-09T11:29:45.132817",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 11.162,
+      "generation_start_time": "2026-03-09T11:29:33.970424",
+      "generation_end_time": "2026-03-09T11:29:45.132814",
+      "goal_complexity": 2,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "8ef17a8f-5bd9-496f-92b7-5fb3f9802151",
+        "domain": "taxi",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 11,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 11 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:29:46.882603"
+      }
+    }
+  },
+  {
+    "dialogue_id": "55d62b3f-f20f-4238-bccf-57bab27df401",
+    "goal": "Book a room at Acorn Guest House",
+    "domain": "train",
+    "context": "I'm visiting the town for a weekend getaway with my family. We need a comfortable place to stay that's family-friendly and close to local attractions.",
+    "user_persona": "friendly and detailed",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm looking to book a room at Acorn Guest House for this weekend. We need a family-friendly accommodation that's conveniently located.",
+        "timestamp": "2026-03-09T11:29:48.925225"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've successfully booked a family-friendly room for you at Acorn Guest House for this weekend. Your confirmation number is ACGH-123. Enjoy your getaway with your family!",
+        "timestamp": "2026-03-09T11:29:49.846655"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the room details for the booking at Acorn Guest House?",
+        "timestamp": "2026-03-09T11:29:50.564604"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Certainly! The room at Acorn Guest House is a spacious family-friendly accommodation with a lovely view of the garden. Enjoy your stay this weekend!",
+        "timestamp": "2026-03-09T11:29:51.369984"
+      },
+      {
+        "role": "User",
+        "text": "What amenities are included in the family-friendly room at Acorn Guest House?",
+        "timestamp": "2026-03-09T11:29:52.118755"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The family-friendly room at Acorn Guest House includes amenities such as a comfortable bedding, a spacious layout, and complimentary breakfast for your stay this weekend. Enjoy your getaway with your family!",
+        "timestamp": "2026-03-09T11:29:54.015532"
+      },
+      {
+        "role": "User",
+        "text": "What type of activities or attractions are nearby Acorn Guest House that my family can enjoy during our stay this weekend?",
+        "timestamp": "2026-03-09T11:29:55.093974"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Near Acorn Guest House, you'll find family-friendly activities like a local park with playgrounds, a museum, and a cozy caf\u00e9 perfect for a relaxing afternoon with your family during your stay this weekend. Enjoy exploring the area!",
+        "timestamp": "2026-03-09T11:29:57.746195"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T11:29:57.746226"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T11:29:57.746502",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 8.821,
+      "generation_start_time": "2026-03-09T11:29:48.925183",
+      "generation_end_time": "2026-03-09T11:29:57.746500",
+      "goal_complexity": 3,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "55d62b3f-f20f-4238-bccf-57bab27df401",
+        "domain": "train",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:29:59.754976"
+      }
+    }
+  },
+  {
+    "dialogue_id": "5a865d8d-7eb6-484f-b777-f9fc7dad2a28",
+    "goal": "Find information about attractions or things to do",
+    "domain": "attraction",
+    "context": "I'm planning a weekend trip with my family and want to explore different attractions or activities in the area. We're looking for a variety of options suitable for all ages.",
+    "user_persona": "Curious and thorough",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm researching things to do in the area for a weekend trip with my family. Can you provide information about popular attractions or activities that are family-friendly?",
+        "timestamp": "2026-03-09T11:30:03.105758"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Sure thing! I'll look into popular attractions and family-friendly activities in the area for your weekend trip with your family. Let me gather some options for you.",
+        "timestamp": "2026-03-09T11:30:04.450272"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for looking into the options. Could you provide details on some of the family-friendly activities you found?",
+        "timestamp": "2026-03-09T11:30:05.464701"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I found some great family-friendly activities for your weekend trip. One option is a visit to the local zoo, which offers interactive exhibits and animal encounters for all ages.",
+        "timestamp": "2026-03-09T11:30:06.499672"
+      },
+      {
+        "role": "User",
+        "text": "Can you provide more details about the local zoo, such as its opening hours and ticket prices?",
+        "timestamp": "2026-03-09T11:30:08.302111"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The local zoo is open from 9 am to 5 pm daily, and ticket prices are $20 for adults and $15 for children. It sounds like a fun and affordable option for your family trip!",
+        "timestamp": "2026-03-09T11:30:09.530434"
+      },
+      {
+        "role": "User",
+        "text": "What other family-friendly activities did you find for our weekend trip?",
+        "timestamp": "2026-03-09T11:30:10.327538"
+      },
+      {
+        "role": "SupportBot",
+        "text": "Another family-friendly activity I found for your weekend trip is a local amusement park with rides and games suitable for all ages. It's a great option for some thrilling fun with your family!",
+        "timestamp": "2026-03-09T11:30:11.410374"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-03-09T11:30:11.410404"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-03-09T11:30:11.410660",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 8.305,
+      "generation_start_time": "2026-03-09T11:30:03.105723",
+      "generation_end_time": "2026-03-09T11:30:11.410659",
+      "goal_complexity": 4,
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "5a865d8d-7eb6-484f-b777-f9fc7dad2a28",
+        "domain": "attraction",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-03-09T11:30:13.154617"
+      }
+    }
+  }
+]

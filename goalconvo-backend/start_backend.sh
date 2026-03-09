@@ -19,19 +19,19 @@ source venv/bin/activate
 
 # Upgrade pip
 echo "Upgrading pip..."
-python -m pip install --upgrade pip --quiet
+# python -m pip install --upgrade pip --quiet
 
 # Check if Flask is installed
-if ! python -c "import flask" 2>/dev/null; then
-    echo "Installing Flask dependencies..."
-    pip install flask flask-cors
-fi
+# if ! python -c "import flask" 2>/dev/null; then
+#     echo "Installing Flask dependencies..."
+#     pip install flask flask-cors
+# fi
 
 # Check if other requirements are installed
-if ! python -c "import goalconvo" 2>/dev/null; then
-    echo "Installing GoalConvo dependencies..."
-    pip install -r requirements.txt
-fi
+# if ! python -c "import goalconvo" 2>/dev/null; then
+#     echo "Installing GoalConvo dependencies..."
+#     pip install -r requirements.txt
+# fi
 
 # Set default port if not set
 export PORT=${PORT:-5000}

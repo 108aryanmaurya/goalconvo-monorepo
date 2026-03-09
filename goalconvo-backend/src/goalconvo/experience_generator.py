@@ -8,7 +8,7 @@ dynamic few-shot hub management.
 import json
 import logging
 import random
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Callable
 from pathlib import Path
 
 from .config import Config
@@ -201,7 +201,13 @@ Now expand this goal with explicit constraints and requestables: {goal}"""
         
         return goal.strip()
     
-    def generate_experience(self, goal: str, domain: Optional[str] = None, few_shot_override: Optional[int] = None) -> Dict[str, Any]:
+    def generate_experience(
+        self,
+        goal: str,
+        domain: Optional[str] = None,
+        few_shot_override: Optional[int] = None,
+        on_error: Optional[Callable[[str], None]] = None,
+    ) -> Dict[str, Any]:
         """
         Generate a rich experience setup for a given goal.
         
@@ -209,6 +215,7 @@ Now expand this goal with explicit constraints and requestables: {goal}"""
             goal: User goal to expand (may be in MultiWOZ format)
             domain: Optional domain hint
             few_shot_override: Optional override for number of few-shot examples (e.g. 0 for ablation)
+            on_error: Optional callback(message) called when LLM/API error occurs (before fallback is used)
             
         Returns:
             Dictionary with goal, domain, context, first_utterance, and user_persona
@@ -247,6 +254,11 @@ Now expand this goal with explicit constraints and requestables: {goal}"""
             
         except Exception as e:
             logger.error(f"Error generating experience for goal '{goal}': {e}")
+            if on_error:
+                try:
+                    on_error(str(e))
+                except Exception:
+                    pass
             # Return fallback experience (use normalized goal)
             return self._create_fallback_experience(normalized_goal, domain)
     

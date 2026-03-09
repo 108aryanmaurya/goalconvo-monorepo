@@ -1,0 +1,117 @@
+[
+  {
+    "dialogue_id": "ca88e8ee-b833-4b0c-ae00-ede74060bdf0",
+    "goal": "Book a room at Alpha-Milton guest house",
+    "domain": "hotel",
+    "context": "The user is planning a weekend getaway and wants to stay at the Alpha-Milton guest house, known for its cozy ambiance and excellent service. They are looking for a relaxing retreat and prefer a specific room at this guest house.",
+    "user_persona": "General user",
+    "turns": [
+      {
+        "role": "User",
+        "text": "Hi, I'm interested in booking a room at Alpha-Milton guest house for a weekend getaway.",
+        "timestamp": "2026-02-24T10:49:31.169398"
+      },
+      {
+        "role": "SupportBot",
+        "text": "I've checked the availability for the deluxe double room at Alpha-Milton guest house for your weekend getaway. There is availability for your desired dates from Friday to Sunday. Would you like me to proceed with booking this room for you?",
+        "timestamp": "2026-02-24T10:49:32.228371"
+      },
+      {
+        "role": "User",
+        "text": "Could you please confirm the booking details for the deluxe double room at Alpha-Milton guest house for this weekend?",
+        "timestamp": "2026-02-24T10:49:33.969127"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The booking details for the deluxe double room at Alpha-Milton guest house for this weekend are confirmed. Your reference number for this booking is ALPHAMILTON-2022. Enjoy your relaxing getaway!",
+        "timestamp": "2026-02-24T10:49:34.758410"
+      },
+      {
+        "role": "User",
+        "text": "Could you provide me with the address of Alpha-Milton guest house for my booking reference?",
+        "timestamp": "2026-02-24T10:49:35.585075"
+      },
+      {
+        "role": "SupportBot",
+        "text": "The address for Alpha-Milton guest house is 123 Main Street, Milton. Enjoy your stay!",
+        "timestamp": "2026-02-24T10:49:36.382190"
+      },
+      {
+        "role": "User",
+        "text": "Thank you for confirming the address of Alpha-Milton guest house. That's all, thanks!",
+        "timestamp": "2026-02-24T10:49:37.101469"
+      },
+      {
+        "role": "SupportBot",
+        "text": "You're welcome! If you need any more assistance or information, feel free to reach out. Enjoy your stay at Alpha-Milton guest house!",
+        "timestamp": "2026-02-24T10:49:37.864778"
+      },
+      {
+        "role": "User",
+        "text": "Thank you, that's perfect!",
+        "timestamp": "2026-02-24T10:49:37.864811"
+      }
+    ],
+    "metadata": {
+      "num_turns": 9,
+      "generated_at": "2026-02-24T10:49:37.865114",
+      "model_version": "mistralai/Mistral-7B-Instruct-v0.1",
+      "max_turns_reached": false,
+      "min_turns_met": true,
+      "generation_time_seconds": 6.696,
+      "generation_start_time": "2026-02-24T10:49:31.169359",
+      "generation_end_time": "2026-02-24T10:49:37.865111",
+      "goal_complexity": 5,
+      "supportbot_style": "friendly and detailed",
+      "quality_score": 0.8600000000000001,
+      "quality_assessment": {
+        "dialogue_id": "ca88e8ee-b833-4b0c-ae00-ede74060bdf0",
+        "domain": "hotel",
+        "heuristic_filters": {
+          "length_check": {
+            "passed": true,
+            "num_turns": 9,
+            "min_required": 6,
+            "max_allowed": 15,
+            "message": "Dialogue has 9 turns (required: 6-15)"
+          },
+          "repetition_check": {
+            "passed": true,
+            "has_repetition": false,
+            "message": "No repeated utterances detected"
+          },
+          "profanity_check": {
+            "passed": true,
+            "profane_turns": [],
+            "message": "No profanity detected"
+          },
+          "coherence_check": {
+            "passed": true,
+            "role_coherence": true,
+            "has_empty_responses": false,
+            "message": "Dialogue structure is coherent"
+          },
+          "goal_mention_check": {
+            "passed": true,
+            "goal_mentioned": true,
+            "message": "Goal mentioned in dialogue"
+          },
+          "empty_response_check": {
+            "passed": true,
+            "empty_turns": [],
+            "message": "All responses have sufficient content"
+          },
+          "heuristic_score": 1.0
+        },
+        "llm_evaluation": {
+          "coherence_score": 4.0,
+          "goal_relevance": true,
+          "overall_score": 4.0
+        },
+        "overall_score": 0.8600000000000001,
+        "passed_filters": true,
+        "assessment_timestamp": "2026-02-24T10:49:39.498570"
+      }
+    }
+  }
+]

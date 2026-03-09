@@ -44,6 +44,8 @@ CRITICAL FOR EVALUATION METRICS:
 
 4. **Coherence**: Stay focused on your goal. Reference what the assistant just said. Build on previous turns naturally.
 
+5. **Do not repeat or paraphrase** your previous message or the assistant's last message. Say something new each turn.
+
 Your role:
 - Clearly communicate needs and requirements
 - Ask relevant questions to get information
@@ -104,12 +106,15 @@ Consider the user's context and persona when responding (e.g. if they need to be
 
 CRITICAL: Never reply with only a promise to "check" or "get back shortly" when the user has asked for specific information or confirmation—either provide the information or a concrete confirmation in this same turn. If you already said you would "check" or "get back to them" in a previous turn, you MUST provide the actual information or confirmation in this turn; do not defer again.
 
+Do not repeat or paraphrase your previous message or the user's last message. Say something new.
+
 Use natural, fluent language. Do not include role labels like \"User:\" or \"Assistant:\"—only your reply.""",
             
             "supportbot": """Domain: {domain}
 User Goal: {goal}
 Context: {context}
 {structured_goal}
+{domain_grounding}
 {supportbot_style}
 
 Conversation History:
@@ -169,10 +174,11 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
         }
     
     def simulate_dialogue(
-        self, 
-        experience_data: Dict[str, Any], 
+        self,
+        experience_data: Dict[str, Any],
         max_turns: Optional[int] = None,
-        progress_callback: Optional[Callable[..., None]] = None
+        progress_callback: Optional[Callable[..., None]] = None,
+        on_error: Optional[Callable[[str], None]] = None,
     ) -> Dict[str, Any]:
         """
         Simulate a complete dialogue following Algorithm 1.
@@ -337,6 +343,11 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
                 
             except Exception as e:
                 logger.error(f"Error in turn {turn_num} for dialogue {dialogue_id}: {e}")
+                if on_error:
+                    try:
+                        on_error(str(e))
+                    except Exception:
+                        pass
                 # CRITICAL: Don't break if we haven't reached min_turns yet
                 # Add only the missing turn (avoid double SupportBot or double User)
                 if len(turns) < min_turns_required:
@@ -520,6 +531,20 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
             "Do not repeat the same thanking phrase twice; if you already said thanks/perfect, give a single brief closing or one follow-up."
         )
 
+    def _get_domain_grounding(self, domain: str) -> str:
+        """Per-domain slot/schema hint so SupportBot stays grounded; avoids inventing specific prices/addresses."""
+        hints = {
+            "hotel": "Relevant slots: area, price_range, stars, parking, room type. Do not invent specific prices or addresses; use placeholders like 'a mid-range option', 'one of our central hotels', or 'reference number X' when not given.",
+            "restaurant": "Relevant slots: area, food type, price range, party size, time. Do not invent specific addresses or phone numbers; use placeholders like 'a restaurant in the centre', 'table for four' when not given.",
+            "taxi": "Relevant: pickup location, dropoff, time, car type. When confirming, use placeholders for company name if needed (e.g. 'your taxi at 10:30 from X to Y, reference TAXI-123').",
+            "train": "Relevant: destination, leave/arrive time, day. When confirming, include a reference or booking code; use placeholders for specific train IDs if needed.",
+            "attraction": "Relevant: type, area. Do not invent specific addresses; use 'in the centre', 'one of our popular attractions' when not given.",
+        }
+        text = hints.get(domain.lower(), "").strip()
+        if not text:
+            return ""
+        return f"Domain grounding: {text}"
+
     def _generate_user_turn(
         self, 
         goal: str, 
@@ -596,6 +621,7 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
         supportbot_style = (experience_data or {}).get("supportbot_style", "") or ""
         if supportbot_style:
             supportbot_style = f"Style: {supportbot_style}"
+        domain_grounding = self._get_domain_grounding(domain)
 
         # Build prompt
         prompt = self.supportbot_prompts["supportbot"].format(
@@ -603,6 +629,7 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
             goal=goal,
             context=context,
             structured_goal=structured_goal,
+            domain_grounding=domain_grounding,
             supportbot_style=supportbot_style,
             history=history_text
         )
@@ -612,7 +639,7 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
         max_words = getattr(self.config, "prompt_max_words", 1000)
         truncated_prompt = self._truncate_prompt(full_prompt, max_length=max_words)
 
-        max_tokens_supportbot = getattr(self.config, "max_tokens_supportbot_turn", 100)
+        max_tokens_supportbot = getattr(self.config, "max_tokens_supportbot_turn", 120)
         response = self.llm_client.generate_completion(
             truncated_prompt,
             temperature=self.config.temperature,
@@ -621,6 +648,26 @@ Respond with only "YES" if the goal is COMPLETELY achieved with clear evidence; 
         )
         cleaned_response = self._clean_response(response, role="SupportBot")
         cleaned_response = cleaned_response.strip()
+
+        # Retry once if response is too short or generic (improves quality)
+        word_count = len(cleaned_response.split()) if cleaned_response else 0
+        generic_phrases = ("i'm sorry", "i cannot", "i can't help", "let me check", "i'll get back", "i don't have")
+        is_generic = cleaned_response and any(cleaned_response.lower().strip().startswith(p) for p in generic_phrases)
+        if (word_count < 5 or is_generic) and word_count > 0:
+            retry_prompt = truncated_prompt + "\n\nProvide a concrete, helpful response with at least one specific detail (e.g. option, time, reference). Avoid generic apologies or deferrals."
+            try:
+                retry_response = self.llm_client.generate_completion(
+                    retry_prompt,
+                    temperature=self.config.temperature,
+                    top_p=self.config.top_p,
+                    max_tokens=max_tokens_supportbot,
+                )
+                retry_cleaned = self._clean_response(retry_response, role="SupportBot").strip()
+                if len(retry_cleaned.split()) >= 5 and retry_cleaned:
+                    cleaned_response = retry_cleaned
+                    logger.info("SupportBot turn improved after retry (was too short or generic)")
+            except Exception as e:
+                logger.warning("SupportBot retry failed, using first response: %s", e)
 
         # Minimal anti-repetition: avoid exact same SupportBot text twice
         if history:

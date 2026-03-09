@@ -33,88 +33,339 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  min-height: 100vh;
 }
 
-/* Ambient gradient background - chained orbs */
-.app-canvas {
-  position: relative;
-  min-height: 100vh;
-}
-
-.app-canvas::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(ellipse 70% 45% at 15% 15%, rgba(251, 146, 60, 0.14) 0%, transparent 48%),
-    radial-gradient(ellipse 55% 35% at 85% 15%, rgba(217, 70, 239, 0.16) 0%, transparent 48%),
-    radial-gradient(ellipse 50% 40% at 50% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 45% 35% at 8% 75%, rgba(163, 230, 53, 0.1) 0%, transparent 48%),
-    radial-gradient(ellipse 40% 30% at 92% 80%, rgba(250, 204, 21, 0.08) 0%, transparent 45%);
-  pointer-events: none;
-}
-
-.app-canvas::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-/* Pipeline step box: creative conic gradient */
-.pipeline-step-active-border {
-  position: relative;
-  padding: 3px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-.pipeline-step-active-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 3px;
-  background: conic-gradient(from 0deg, #fb923c, #d946ef, #818cf8, #38bdf8, #a3e635, #facc15, #fb923c);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: pipeline-step-rotate 2.5s linear infinite;
-}
-
-.pipeline-step-active-border > .pipeline-step-inner {
-  position: relative;
-  border-radius: calc(0.75rem - 2px);
-  z-index: 1;
-}
-
-@keyframes pipeline-step-rotate {
+/* Step active border loader: smooth spin */
+@keyframes step-border-spin {
+  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
-.btn-glow-fuchsia {
-  box-shadow: 0 0 24px var(--glow-fuchsia);
+.app-canvas .step-border-loader {
+  animation: step-border-spin 2s linear infinite;
 }
 
-.btn-glow-lime {
-  box-shadow: 0 0 20px var(--glow-lime);
+/* -------- Light theme: refined, high-contrast -------- */
+[data-theme="light"] {
+  --background: #fcf8f8;
+  --foreground: #111827;
+  --surface: #ffffff;
+  --surface-muted: #f1f3f6;
+  --border: #7c3aed;
+  --border-strong: #6d28d9;
+  --muted: #4b5563;
+  --card-bg: #f1f3f6;
+  /* Light mode borders: red, green, yellow, blue, orange, pink, violet, teal, amber */
+  --border-red: #dc2626;
+  --border-green: #16a34a;
+  --border-yellow: #eab308;
+  --border-blue: #2563eb;
+  --border-orange: #ea580c;
+  --border-pink: #db2777;
+  --border-violet: #7c3aed;
+  --border-teal: #0d9488;
+  --border-amber: #d97706;
+  --border-indigo: #4f46e5;
+  --border-rose: #e11d48;
+  --border-emerald: #059669;
+  --border-cyan: #0891b2;
+  --border: var(--border-indigo);
+  --border-strong: #4338ca;
+  /* Softer card gradients with clear tint, good contrast */
+  --card-coral: linear-gradient(160deg, #fff6f0 0%, #ffebe0 50%, #fff0e8 100%);
+  --card-fuchsia: linear-gradient(160deg, #fdf4ff 0%, #fae8ff 50%, #fce7ff 100%);
+  --card-sky: linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 50%, #ecf9ff 100%);
+  --card-lavender: linear-gradient(160deg, #faf5ff 0%, #f3e8ff 50%, #f5f0ff 100%);
+  --card-mint: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #ecfdf0 100%);
+  --card-border: #eab308;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  /* Colorful, distinguishable text in light mode */
+  --text-primary: #0f172a;
+  --text-body: #1e293b;
+  --text-muted: #475569;
+  --text-coral: #c2410c;
+  --text-fuchsia: #86198f;
+  --text-sky: #0369a1;
+  --text-green: #15803d;
+  --text-rose: #9f1239;
+  --text-amber: #b45309;
+  --text-violet: #5b21b6;
+  --text-teal: #0f766e;
+  --text-indigo: #3730a3;
 }
 
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+[data-theme="light"] .app-canvas::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 10%, rgba(236, 232, 229, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(217, 70, 239, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 45% at 50% 90%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 5% 70%, rgba(163, 230, 53, 0.04) 0%, transparent 45%);
+  opacity: 1;
 }
 
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+[data-theme="light"] .app-canvas::after {
+  background-image:
+    linear-gradient(rgba(254, 251, 251, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(252, 250, 250, 0.035) 1px, transparent 1px);
+  opacity: 0.9;
+}
+
+[data-theme="light"] .app-canvas .dashboard-tabs {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-blue) !important;
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+}
+[data-theme="light"] .app-canvas .dashboard-tabs button:not([class*="from-sky"]):not([class*="from-fuchsia"]):not([class*="from-orange"]) {
+  color: var(--muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-tabs button:hover:not([class*="from-sky"]):not([class*="from-fuchsia"]):not([class*="from-orange"]) {
+  color: var(--foreground) !important;
+  background: var(--surface-muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-control {
+  background: var(--card-coral) !important;
+  border: 1px solid var(--border-red) !important;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.6) inset, 0 2px 20px rgba(220, 38, 38, 0.08) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-card,
+[data-theme="light"] .app-canvas .dashboard-panel {
+  background: var(--card-fuchsia) !important;
+  border: 1px solid var(--border-pink) !important;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.7) inset, 0 2px 20px rgba(219, 39, 119, 0.06) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-control h2,
+[data-theme="light"] .app-canvas .dashboard-control h3 {
+  color: var(--text-coral) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-panel h2,
+[data-theme="light"] .app-canvas .app-canvas .dashboard-panel h2,
+[data-theme="light"] .app-canvas .dashboard-panel h3 {
+  color: var(--text-fuchsia) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-control p {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-panel p,
+[data-theme="light"] .app-canvas .dashboard-panel span:not([class*="rounded-full"]) {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-input-wrap {
+  background: var(--card-sky) !important;
+  border: 1px solid var(--border-blue) !important;
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.8) inset, 0 2px 16px rgba(37, 99, 235, 0.05) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-input-wrap input,
+[data-theme="light"] .app-canvas .dashboard-input-wrap select,
+[data-theme="light"] .app-canvas .dashboard-input-wrap label {
+  background: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border-cyan) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-input-wrap input::placeholder,
+[data-theme="light"] .app-canvas .dashboard-input-wrap .text-sky-200,
+[data-theme="light"] .app-canvas .dashboard-input-wrap .text-fuchsia-200,
+[data-theme="light"] .app-canvas .dashboard-input-wrap .text-fuchsia-300,
+[data-theme="light"] .app-canvas .dashboard-input-wrap .text-gray-400 {
+  color: var(--muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-step-inactive {
+  border: 1px solid var(--border-yellow) !important;
+  background: var(--card-lavender) !important;
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(255, 255, 255, 0.7) inset !important;
+}
+[data-theme="light"] .app-canvas .dashboard-step-inactive:hover {
+  border-color: var(--border-amber) !important;
+  box-shadow: var(--shadow-md), 0 2px 12px rgba(234, 179, 8, 0.2) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-step-inactive span.text-white {
+  color: var(--foreground) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-step-progress {
+  background: linear-gradient(90deg, rgba(129, 140, 248, 0.35), rgba(167, 139, 250, 0.4)) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log {
+  background: var(--card-mint) !important;
+  border: 1px solid var(--border-green) !important;
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.8) inset, 0 2px 16px rgba(22, 163, 74, 0.04) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log span {
+  color: var(--muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log h3 {
+  color: var(--foreground) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-domain-pills {
+  background: transparent !important;
+}
+[data-theme="light"] .app-canvas .dashboard-domain-pills button:not([class*="from-"]) {
+  color: var(--muted) !important;
+  border: 1px solid var(--border-teal) !important;
+  background: var(--surface) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-domain-pills button:hover:not([class*="from-"]) {
+  color: var(--foreground) !important;
+  background: var(--surface-muted) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-control h2.bg-gradient-to-r {
+  background: linear-gradient(90deg, var(--text-coral), var(--text-fuchsia), var(--text-sky));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="light"] .app-canvas .dashboard-step-inner {
+  background: var(--card-lavender) !important;
+  border: 1px solid var(--border-violet) !important;
+  box-shadow: var(--shadow-sm), 0 0 0 1px rgba(255, 255, 255, 0.6) inset !important;
+}
+
+/* Light: colorful, distinguishable text – primary and body */
+[data-theme="light"] .app-canvas .text-white {
+  color: var(--text-primary) !important;
+}
+/* Keep white text on gradient buttons (Run Pipeline, Download) and on dark boxes (active step) */
+[data-theme="light"] .app-canvas .bg-gradient-to-r.text-white,
+[data-theme="light"] .app-canvas button.bg-gradient-to-r .text-white,
+[data-theme="light"] .app-canvas .bg-slate-900 .text-white,
+[data-theme="light"] .app-canvas .bg-slate-900\/95 .text-white,
+[data-theme="light"] .app-canvas [class*="from-fuchsia-500"][class*="text-white"],
+[data-theme="light"] .app-canvas [class*="from-lime-500"][class*="text-white"] {
+  color: #ffffff !important;
+}
+[data-theme="light"] .app-canvas .text-gray-200,
+[data-theme="light"] .app-canvas .text-gray-300 {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .app-canvas .text-gray-100 {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .text-white\/90 {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .app-canvas .text-orange-100,
+[data-theme="light"] .app-canvas .text-fuchsia-100,
+[data-theme="light"] .app-canvas .text-green-100 {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas h2.text-white,
+[data-theme="light"] .app-canvas h3.text-white {
+  color: var(--text-primary) !important;
+}
+/* Accent text → rich, readable colors */
+[data-theme="light"] .app-canvas .text-sky-200,
+[data-theme="light"] .app-canvas .text-sky-300 {
+  color: var(--text-sky) !important;
+}
+[data-theme="light"] .app-canvas .text-fuchsia-200,
+[data-theme="light"] .app-canvas .text-fuchsia-300 {
+  color: var(--text-fuchsia) !important;
+}
+[data-theme="light"] .app-canvas .text-lime-100,
+[data-theme="light"] .app-canvas .text-lime-300 {
+  color: var(--text-green) !important;
+}
+[data-theme="light"] .app-canvas .text-rose-100,
+[data-theme="light"] .app-canvas .text-rose-300 {
+  color: var(--text-rose) !important;
+}
+[data-theme="light"] .app-canvas .text-amber-300,
+[data-theme="light"] .app-canvas .text-orange-300 {
+  color: var(--text-amber) !important;
+}
+[data-theme="light"] .app-canvas .text-indigo-400 {
+  color: var(--text-indigo) !important;
+}
+[data-theme="light"] .app-canvas .text-orange-400,
+[data-theme="light"] .app-canvas .text-fuchsia-400,
+[data-theme="light"] .app-canvas .text-rose-400,
+[data-theme="light"] .app-canvas .text-lime-400 {
+  color: var(--text-body) !important;
+}
+/* Active step inner has dark bg – keep icon colors visible; inactive steps use body color above */
+[data-theme="light"] .app-canvas .bg-slate-900 .text-orange-400 { color: #fb923c !important; }
+[data-theme="light"] .app-canvas .bg-slate-900 .text-fuchsia-400 { color: #e879f9 !important; }
+[data-theme="light"] .app-canvas .bg-slate-900 .text-rose-400 { color: #fb7185 !important; }
+[data-theme="light"] .app-canvas .bg-slate-900 .text-lime-400 { color: #a3e635 !important; }
+/* Section-specific: labels use their accent (sky/fuchsia from class), “total” span stays fuchsia */
+[data-theme="light"] .app-canvas .dashboard-control label:not([class*="text-"]) {
+  color: var(--text-sky) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-input-wrap .text-fuchsia-300 {
+  color: var(--text-fuchsia) !important;
+}
+/* Request log: step names violet, messages body, success/error colored */
+[data-theme="light"] .app-canvas .dashboard-request-log h3 {
+  color: var(--text-violet) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log .font-semibold {
+  color: var(--text-indigo) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log p,
+[data-theme="light"] .app-canvas .dashboard-request-log .text-sky-200 {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log .bg-lime-500\/40 {
+  background: rgba(22, 163, 74, 0.18) !important;
+  color: var(--text-green) !important;
+}
+[data-theme="light"] .app-canvas .dashboard-request-log .bg-rose-500\/40 {
+  background: rgba(190, 18, 60, 0.15) !important;
+  color: var(--text-rose) !important;
+}
+/* Pipeline summary cards: keep labels distinctly colored */
+[data-theme="light"] .app-canvas [class*="card-hover"] .text-amber-300 {
+  color: var(--text-amber) !important;
+}
+[data-theme="light"] .app-canvas [class*="card-hover"] .text-sky-300 {
+  color: var(--text-sky) !important;
+}
+[data-theme="light"] .app-canvas [class*="card-hover"] .text-rose-300 {
+  color: var(--text-rose) !important;
+}
+[data-theme="light"] .app-canvas [class*="card-hover"] .text-lime-300 {
+  color: var(--text-green) !important;
+}
+[data-theme="light"] .app-canvas [class*="card-hover"] .text-3xl {
+  color: var(--text-primary) !important;
+}
+/* Gradient headings – colorful dark gradient */
+[data-theme="light"] .app-canvas h2.bg-clip-text,
+[data-theme="light"] .app-canvas h3.bg-clip-text {
+  background: linear-gradient(90deg, var(--text-coral), var(--text-fuchsia), var(--text-sky)) !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+[data-theme="light"] .app-canvas .bg-white\/5 {
+  background: var(--surface-muted) !important;
+}
+[data-theme="light"] .app-canvas .border-white\/10,
+[data-theme="light"] .app-canvas .border-white\/20 {
+  border-color: var(--border-indigo) !important;
+}
+[data-theme="light"] .app-canvas .placeholder-gray-500::placeholder {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .app-canvas .bg-black\/25 {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+[data-theme="light"] .app-canvas .bg-black\/20 {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+/* Live dialogue & running panel: role and message distinguishable */
+[data-theme="light"] .app-canvas .bg-black\/25 .font-medium {
+  color: var(--text-violet) !important;
+}
+[data-theme="light"] .app-canvas .bg-black\/25 .text-white {
+  color: var(--text-body) !important;
+}
+[data-theme="light"] .app-canvas .divide-white\/5 .text-gray-300,
+[data-theme="light"] .app-canvas .divide-white\/5 .text-gray-500 {
+  color: var(--text-body) !important;
 }

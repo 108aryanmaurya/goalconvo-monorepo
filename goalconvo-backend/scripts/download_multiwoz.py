@@ -48,7 +48,7 @@ class MultiWOZDownloader:
         try:
             # Clone the repository if it doesn't exist
             if not self.repo_dir.exists():
-                result = subprocess.run(
+                result = subprocess.run(s
                     ["git", "clone", "--depth", "1", self.multiwoz_repo_url, str(self.repo_dir)],
                     capture_output=True,
                     text=True,
