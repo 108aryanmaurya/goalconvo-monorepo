@@ -60,6 +60,67 @@ python backend_server.py
 # See BACKEND_SERVER_SETUP.md for detailed setup
 ```
 
+## Deploying the Python Backend
+
+Use one of the following deployment paths depending on your environment.
+
+### 1) Local/VM Deployment (Gunicorn)
+
+```bash
+cd goalconvo-backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install gunicorn
+
+# Configure your .env (API keys, OLLAMA settings, etc.)
+cp .env.example .env
+
+# Run in production mode
+gunicorn -w 4 -b 0.0.0.0:5000 --timeout 600 backend_server:app
+```
+
+Health check:
+
+```bash
+curl http://localhost:5000/health
+```
+
+### 2) Docker Deployment (Backend only)
+
+```bash
+cd goalconvo-backend
+docker build -t goalconvo-backend .
+docker run --rm -p 5000:5000 \
+  -e MISTRAL_API_KEY="$MISTRAL_API_KEY" \
+  -e OPENAI_API_KEY="$OPENAI_API_KEY" \
+  -e GEMINI_API_KEY="$GEMINI_API_KEY" \
+  -e OLLAMA_ENABLED=false \
+  goalconvo-backend
+```
+
+### 3) Docker Compose Deployment (Frontend + Backend)
+
+From repository root:
+
+```bash
+docker compose up -d --build
+docker compose ps
+```
+
+- Backend: `http://localhost:5000/health`
+- Frontend: `http://localhost:3000`
+
+### Required runtime configuration
+
+Set at least one provider before deployment:
+
+- `GROQ_API_KEY`
+- `DEEPSEEK_API_KEY`
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+- or `OLLAMA_ENABLED=true` with a reachable `OLLAMA_API_BASE`
+
 ### Option 2: Manual Setup
 ```bash
 # Install the package
